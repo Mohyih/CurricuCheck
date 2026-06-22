@@ -1,0 +1,95 @@
+import { useState } from 'react';
+import { Link, useNavigate } from "react-router";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import logoImg from "../../imports/CurricuCheck_Logo.png";
+import { useAuth } from '../../context/AuthContext';
+
+export function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [studentNumber, setStudentNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await login(studentNumber, password);
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col items-center justify-center p-4 relative">
+      <div className="absolute top-0 left-0 w-full p-6 sm:px-8 flex justify-start">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
+            <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />
+          </div>
+          <span className="font-bold text-lg text-[#085830] tracking-tight">CurricuCheck</span>
+        </Link>
+      </div>
+
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 sm:p-10 border border-[#C8E6D4]/50">
+          <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
+            {error && (
+              <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">Student ID Number</label>
+              <input
+                type="text"
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400"
+                placeholder="2020-12345"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-base disabled:opacity-60"
+              >
+                {loading ? 'Logging in...' : 'Access Dashboard'}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="mt-8 text-center text-sm text-gray-500 font-medium">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-[#136537] hover:text-[#F2AB50] transition-colors font-semibold">
+            Sign Up
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
