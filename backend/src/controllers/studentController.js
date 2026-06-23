@@ -131,6 +131,41 @@ const updatePreferredLoad = async (req, res) => {
 };
 
 
+// DELETE account
+const deleteAccount = async (req, res) => {
+  try {
+    // Get student record first
+    const { data: student } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+
+    // Delete academic records first (foreign key constraint)
+    await supabase
+      .from('academic_records')
+      .delete()
+      .eq('student_id', student.id);
+
+    // Delete student record
+    await supabase
+      .from('students')
+      .delete()
+      .eq('id', student.id);
+
+    // Delete Supabase auth user
+    const { error: authError } = await supabase.auth.admin.deleteUser(req.user.id);
+    if (authError) return res.status(500).json({ error: authError.message });
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 // PATCH update profile
 const updateProfile = async (req, res) => {
   const { first_name, last_name, middle_name, year_level, preferred_load } = req.body;
@@ -156,4 +191,4 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile };
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount };

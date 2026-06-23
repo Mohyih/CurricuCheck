@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router';
 import api from '../../lib/api';
 import { ChevronDown } from 'lucide-react';
 
@@ -16,18 +17,20 @@ interface Curriculum {
 }
 
 export function StudentInfo() {
-  const { student, refreshStudent } = useAuth();
+  const { student, refreshStudent, logout } = useAuth();
+  const navigate = useNavigate();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [yearLevel, setYearLevel] = useState('');
   const [preferredLoad, setPreferredLoad] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -61,7 +64,6 @@ export function StudentInfo() {
     setSaving(true);
     setMessage('');
     setError('');
-
     try {
       await api.patch('/student/me/profile', {
         first_name: firstName,
@@ -76,6 +78,19 @@ export function StudentInfo() {
       setError(err.response?.data?.error || 'Failed to save changes.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await api.delete('/student/me');
+      logout();
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to delete account.');
+      setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -94,58 +109,30 @@ export function StudentInfo() {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-8 sm:p-10">
-        <form onSubmit={handleSave}>
 
+        <form onSubmit={handleSave}>
           {/* Personal Information */}
           <section className="mb-10">
             <h2 className="text-sm font-bold text-[#136537] tracking-widest uppercase mb-6 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#F2AB50]"></div>
               Personal Information
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Last Name</label>
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className={inputClass}
-                />
+                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className={inputClass} />
               </div>
-
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">First Name</label>
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className={inputClass}
-                />
+                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={inputClass} />
               </div>
-
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">
-                  Middle Name <span className="text-gray-400 font-normal">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={middleName}
-                  onChange={(e) => setMiddleName(e.target.value)}
-                  className={inputClass}
-                />
+                <label className="text-sm font-medium text-gray-700">Middle Name <span className="text-gray-400 font-normal">(optional)</span></label>
+                <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)} className={inputClass} />
               </div>
-
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Student ID Number</label>
-                <input
-                  type="text"
-                  value={student.student_number}
-                  disabled
-                  className={disabledClass}
-                />
+                <input type="text" value={student.student_number} disabled className={disabledClass} />
               </div>
             </div>
           </section>
@@ -158,36 +145,19 @@ export function StudentInfo() {
               <div className="w-2 h-2 rounded-full bg-[#F2AB50]"></div>
               Academic Information
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Degree Program</label>
-                <input
-                  type="text"
-                  value={programs.find((p) => p.id === student.program_id)?.name || ''}
-                  disabled
-                  className={disabledClass}
-                />
+                <input type="text" value={programs.find((p) => p.id === student.program_id)?.name || ''} disabled className={disabledClass} />
               </div>
-
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Curriculum Version</label>
-                <input
-                  type="text"
-                  value={curriculums.find((c) => c.id === student.curriculum_id)?.version || ''}
-                  disabled
-                  className={disabledClass}
-                />
+                <input type="text" value={curriculums.find((c) => c.id === student.curriculum_id)?.version || ''} disabled className={disabledClass} />
               </div>
-
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Year Level</label>
                 <div className="relative">
-                  <select
-                    value={yearLevel}
-                    onChange={(e) => setYearLevel(e.target.value)}
-                    className={selectClass}
-                  >
+                  <select value={yearLevel} onChange={(e) => setYearLevel(e.target.value)} className={selectClass}>
                     <option value="1">First Year</option>
                     <option value="2">Second Year</option>
                     <option value="3">Third Year</option>
@@ -196,15 +166,10 @@ export function StudentInfo() {
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
-
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Preferred Academic Load</label>
                 <div className="relative">
-                  <select
-                    value={preferredLoad}
-                    onChange={(e) => setPreferredLoad(e.target.value)}
-                    className={selectClass}
-                  >
+                  <select value={preferredLoad} onChange={(e) => setPreferredLoad(e.target.value)} className={selectClass}>
                     <option value="light">Light (up to 12 units)</option>
                     <option value="normal">Normal (up to 18 units)</option>
                     <option value="heavy">Heavy (up to 21 units)</option>
@@ -236,8 +201,51 @@ export function StudentInfo() {
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
-
         </form>
+
+        {/* Danger Zone */}
+        <div className="mt-10 pt-8 border-t-2 border-dashed border-red-100">
+          <h2 className="text-sm font-bold text-red-500 tracking-widest uppercase mb-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-400"></div>
+            Danger Zone
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Deleting your account is permanent and cannot be undone. All your academic records will be removed.
+          </p>
+          {!showDeleteConfirm ? (
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-6 py-2.5 rounded-full border-2 border-red-300 text-red-500 text-sm font-medium hover:bg-red-50 transition-all"
+            >
+              Delete Account
+            </button>
+          ) : (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-5 space-y-4">
+              <p className="text-sm font-semibold text-red-600">
+                Are you sure? This will permanently delete your account and all academic records.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="px-6 py-2.5 rounded-full bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-all disabled:opacity-60"
+                >
+                  {deleting ? 'Deleting...' : 'Yes, Delete My Account'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-6 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
       </div>
     </Layout>
   );
