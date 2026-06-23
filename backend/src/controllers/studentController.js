@@ -130,4 +130,30 @@ const updatePreferredLoad = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad };
+
+// PATCH update profile
+const updateProfile = async (req, res) => {
+  const { first_name, last_name, middle_name, year_level, preferred_load } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from('students')
+      .update({ 
+        first_name, 
+        last_name, 
+        middle_name: middle_name || null,
+        year_level,
+        preferred_load
+      })
+      .eq('user_id', req.user.id)
+      .select()
+      .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Profile updated successfully', student: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile };

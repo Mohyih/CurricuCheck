@@ -19,9 +19,15 @@ export function StudentInfo() {
   const { student, refreshStudent } = useAuth();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
-  const [preferredLoad, setPreferredLoad] = useState(student?.preferred_load || 'normal');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [yearLevel, setYearLevel] = useState('');
+  const [preferredLoad, setPreferredLoad] = useState('');
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -41,26 +47,41 @@ export function StudentInfo() {
   }, [student?.program_id]);
 
   useEffect(() => {
-    if (student) setPreferredLoad(student.preferred_load);
+    if (student) {
+      setFirstName(student.first_name);
+      setLastName(student.last_name);
+      setMiddleName(student.middle_name || '');
+      setYearLevel(String(student.year_level));
+      setPreferredLoad(student.preferred_load);
+    }
   }, [student]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMessage('');
+    setError('');
 
     try {
-      // Note: only preferred_load is currently editable via backend.
-      // Program/curriculum changes would require a dedicated endpoint (not in current scope).
-      await api.patch('/student/me/preferred-load', { preferred_load: preferredLoad });
-      setMessage('Changes saved successfully!');
+      await api.patch('/student/me/profile', {
+        first_name: firstName,
+        last_name: lastName,
+        middle_name: middleName || null,
+        year_level: parseInt(yearLevel),
+        preferred_load: preferredLoad,
+      });
+      setMessage('Profile updated successfully!');
       await refreshStudent();
-    } catch (err) {
-      setMessage('Failed to save changes.');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to save changes.');
     } finally {
       setSaving(false);
     }
   };
+
+  const inputClass = 'w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400';
+  const selectClass = `${inputClass} appearance-none cursor-pointer`;
+  const disabledClass = 'w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed';
 
   if (!student) {
     return (
@@ -72,9 +93,10 @@ export function StudentInfo() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 p-8 sm:p-10">
+      <div className="max-w-4xl mx-auto bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-8 sm:p-10">
         <form onSubmit={handleSave}>
-          {/* Personal Information Section */}
+
+          {/* Personal Information */}
           <section className="mb-10">
             <h2 className="text-sm font-bold text-[#136537] tracking-widest uppercase mb-6 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#F2AB50]"></div>
@@ -86,9 +108,10 @@ export function StudentInfo() {
                 <label className="text-sm font-medium text-gray-700">Last Name</label>
                 <input
                   type="text"
-                  value={student.last_name}
-                  disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className={inputClass}
                 />
               </div>
 
@@ -96,19 +119,32 @@ export function StudentInfo() {
                 <label className="text-sm font-medium text-gray-700">First Name</label>
                 <input
                   type="text"
-                  value={`${student.first_name}${student.middle_name ? ' ' + student.middle_name : ''}`}
-                  disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className={inputClass}
                 />
               </div>
 
-              <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
+                  Middle Name <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={middleName}
+                  onChange={(e) => setMiddleName(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Student ID Number</label>
                 <input
                   type="text"
                   value={student.student_number}
                   disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed"
+                  className={disabledClass}
                 />
               </div>
             </div>
@@ -116,7 +152,7 @@ export function StudentInfo() {
 
           <hr className="border-gray-100 my-8" />
 
-          {/* Academic Information Section */}
+          {/* Academic Information */}
           <section className="mb-10">
             <h2 className="text-sm font-bold text-[#136537] tracking-widest uppercase mb-6 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#F2AB50]"></div>
@@ -130,7 +166,7 @@ export function StudentInfo() {
                   type="text"
                   value={programs.find((p) => p.id === student.program_id)?.name || ''}
                   disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed"
+                  className={disabledClass}
                 />
               </div>
 
@@ -140,17 +176,34 @@ export function StudentInfo() {
                   type="text"
                   value={curriculums.find((c) => c.id === student.curriculum_id)?.version || ''}
                   disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-[#085830] bg-gray-100 cursor-not-allowed"
+                  className={disabledClass}
                 />
               </div>
 
-              <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">Year Level</label>
+                <div className="relative">
+                  <select
+                    value={yearLevel}
+                    onChange={(e) => setYearLevel(e.target.value)}
+                    className={selectClass}
+                  >
+                    <option value="1">First Year</option>
+                    <option value="2">Second Year</option>
+                    <option value="3">Third Year</option>
+                    <option value="4">Fourth Year</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Preferred Academic Load</label>
                 <div className="relative">
                   <select
                     value={preferredLoad}
                     onChange={(e) => setPreferredLoad(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white appearance-none pr-10"
+                    className={selectClass}
                   >
                     <option value="light">Light (up to 12 units)</option>
                     <option value="normal">Normal (up to 18 units)</option>
@@ -168,15 +221,22 @@ export function StudentInfo() {
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-end pt-8 border-t border-gray-100">
+          {error && (
+            <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          <div className="flex justify-end pt-8 border-t border-gray-100">
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60"
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
+
         </form>
       </div>
     </Layout>
