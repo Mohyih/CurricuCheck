@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, Upload } from 'lucide-react';
+import { ChevronDown, Upload, Check, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
@@ -34,6 +34,9 @@ export function SignUp() {
   const [curriculumId, setCurriculumId] = useState('');
   const [yearLevel, setYearLevel] = useState('');
   const [preferredLoad, setPreferredLoad] = useState('');
+  const [idVerified, setIdVerified] = useState(false);
+  const [idVerifying, setIdVerifying] = useState(false);
+  const [idError, setIdError] = useState('');
 
   const passwordStrength = password.length === 0
     ? null
@@ -76,6 +79,46 @@ export function SignUp() {
     };
     fetchCurriculums();
   }, [programId]);
+
+const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!studentNumber || !firstName || !lastName) {
+      setIdError('Please fill in your name and student number first before uploading your ID.');
+      return;
+    }
+
+    setIdVerifying(true);
+    setIdVerified(false);
+    setIdError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('id_image', file);
+      formData.append('student_number', studentNumber);
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+
+      const res = await api.post('/scan-id', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.data.verified) {
+        setIdVerified(true);
+        setIdError('');
+      } else {
+        setIdVerified(false);
+        setIdError(res.data.error || 'Verification failed.');
+      }
+    } catch (err: any) {
+      setIdVerified(false);
+      setIdError(err.response?.data?.error || 'Could not verify ID. Please try again.');
+    } finally {
+      setIdVerifying(false);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,16 +279,42 @@ export function SignUp() {
                   <label className="text-xs font-medium text-gray-700">
                     Upload School ID <span className="text-gray-400 font-normal">(photo or scan)</span>
                   </label>
-                  <label className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-[#136537]/40 bg-[#F5FAF7] cursor-pointer hover:bg-[#EEF7F2] transition-all h-[38px]">
-                    <div className="w-6 h-6 rounded-full bg-[#EEF7F2] flex items-center justify-center flex-shrink-0">
-                      <Upload className="w-3 h-3 text-[#136537]" />
+                  <label className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed cursor-pointer transition-all h-[38px] ${
+                    idVerified 
+                      ? 'border-[#136537] bg-[#EEF7F2]' 
+                      : idError
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-[#136537]/40 bg-[#F5FAF7] hover:bg-[#EEF7F2]'
+                  }`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      idVerified ? 'bg-[#136537]' : idError ? 'bg-red-100' : 'bg-[#EEF7F2]'
+                    }`}>
+                      {idVerifying ? (
+                        <div className="w-3 h-3 border-2 border-[#136537] border-t-transparent rounded-full animate-spin" />
+                      ) : idVerified ? (
+                        <Check className="w-3 h-3 text-white" />
+                      ) : idError ? (
+                        <X className="w-3 h-3 text-red-500" />
+                      ) : (
+                        <Upload className="w-3 h-3 text-[#136537]" />
+                      )}
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-[#136537]">Attach ID</p>
+                      <p className={`text-xs font-medium ${idVerified ? 'text-[#136537]' : idError ? 'text-red-500' : 'text-[#136537]'}`}>
+                        {idVerifying ? 'Verifying...' : idVerified ? 'ID Verified!' : idError ? 'Verification Failed' : 'Attach ID'}
+                      </p>
                       <p className="text-[10px] text-gray-400">JPG, PNG, PDF</p>
                     </div>
-                    <input type="file" accept="image/*,.pdf" className="hidden" />
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      className="hidden"
+                      onChange={handleIdUpload}
+                    />
                   </label>
+                  {idError && (
+                    <p className="text-[10px] text-red-500">{idError}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -314,8 +383,8 @@ export function SignUp() {
             <div className="pt-1">
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60"
+                disabled={loading || !idVerified}
+                className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
