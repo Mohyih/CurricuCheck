@@ -1,4 +1,4 @@
-const supabase = require('../config/supabase');
+const { supabase, supabaseAdmin } = require('../config/supabase');
 
 // GET student profile
 const getMe = async (req, res) => {
@@ -134,7 +134,6 @@ const updatePreferredLoad = async (req, res) => {
 // DELETE account
 const deleteAccount = async (req, res) => {
   try {
-    // Get student record first
     const { data: student } = await supabase
       .from('students')
       .select('id')
@@ -143,21 +142,18 @@ const deleteAccount = async (req, res) => {
 
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    // Delete academic records first (foreign key constraint)
     await supabase
       .from('academic_records')
       .delete()
       .eq('student_id', student.id);
 
-    // Delete student record
     await supabase
       .from('students')
       .delete()
       .eq('id', student.id);
 
-    // Delete Supabase auth user
-    const { error: authError } = await supabase.auth.admin.deleteUser(req.user.id);
-    if (authError) return res.status(500).json({ error: authError.message });
+    // Delete auth user using admin client
+    await supabaseAdmin.auth.admin.deleteUser(req.user.id);
 
     res.json({ message: 'Account deleted successfully' });
   } catch (err) {

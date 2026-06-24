@@ -1,4 +1,4 @@
-const supabase = require('../config/supabase');
+const { supabase } = require('../config/supabase');
 
 const evaluate = async (req, res) => {
   const { target_year_level, target_semester } = req.query;

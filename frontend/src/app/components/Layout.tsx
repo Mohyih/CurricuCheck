@@ -28,7 +28,7 @@ export function Layout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-[#C8E6D4]/50 shadow-[4px_0_24px_rgb(0,0,0,0.02)] flex flex-col z-10 flex-shrink-0">
         <div className="h-20 flex items-center px-6 border-b border-gray-100">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
               <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />
             </div>
