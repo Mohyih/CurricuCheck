@@ -24,6 +24,13 @@ const register = async (req, res) => {
       });
     }
 
+    const studentNumberRegex = /^\d{2}-\d{4}-\d{3}$/;
+if (!studentNumberRegex.test(student_number)) {
+  return res.status(400).json({
+    error: 'Invalid student number format. Expected format: YY-XXXX-XXX (e.g. 23-1998-610)'
+  });
+}
+
     // Check if student number already exists
     const { data: existing } = await supabase
       .from('students')

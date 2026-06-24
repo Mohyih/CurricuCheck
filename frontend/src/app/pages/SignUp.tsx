@@ -217,7 +217,7 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">Student ID Number</label>
-                  <input type="text" required value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} className={inputClass} placeholder="2020-12345" />
+                  <input type="text" required value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} className={inputClass} placeholder="23-1998-610" />
                 </div>
               </div>
 

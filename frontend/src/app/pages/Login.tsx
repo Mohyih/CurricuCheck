@@ -55,7 +55,7 @@ export function Login() {
                 onChange={(e) => setStudentNumber(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400"
-                placeholder="2020-12345"
+                placeholder="23-1998-610"
               />
             </div>
 
