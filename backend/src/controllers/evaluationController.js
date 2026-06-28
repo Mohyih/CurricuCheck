@@ -4,7 +4,6 @@ const evaluate = async (req, res) => {
   const { target_year_level, target_semester } = req.query;
 
   try {
-    // Get student
     const { data: student } = await supabase
       .from('students')
       .select('*, programs(*), curriculums(*)')
@@ -13,10 +12,14 @@ const evaluate = async (req, res) => {
 
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    // Get all subjects for this curriculum
+    // Get all subjects with prerequisites AND corequisites
     const { data: allSubjects } = await supabase
       .from('subjects')
-      .select('*, prerequisites!subject_id(required_subject_id)')
+      .select(`
+        *,
+        prerequisites!subject_id(required_subject_id),
+        corequisites!subject_id(required_subject_id)
+      `)
       .eq('curriculum_id', student.curriculum_id);
 
     // Get student academic records
@@ -25,33 +28,37 @@ const evaluate = async (req, res) => {
       .select('*')
       .eq('student_id', student.id);
 
-    // Build a map of subject_id -> record
+    // Build maps
     const recordMap = {};
     records.forEach(r => { recordMap[r.subject_id] = r; });
 
-    // Build passed subject IDs set
     const passedIds = new Set(
-      records
-        .filter(r => r.status === 'passed')
-        .map(r => r.subject_id)
+      records.filter(r => r.status === 'passed').map(r => r.subject_id)
     );
-
-    // Build failed subject IDs set
     const failedIds = new Set(
-      records
-        .filter(r => r.status === 'failed')
-        .map(r => r.subject_id)
+      records.filter(r => r.status === 'failed').map(r => r.subject_id)
     );
-
-    // Build INC subject IDs set
     const incIds = new Set(
-      records
-        .filter(r => r.status === 'inc')
-        .map(r => r.subject_id)
+      records.filter(r => r.status === 'inc').map(r => r.subject_id)
     );
 
     const targetYearLevel = parseInt(target_year_level);
     const targetSemester = target_semester;
+
+    // First pass — find all eligible subject IDs for this term
+    // (needed for corequisite checking)
+    const potentiallyEligibleIds = new Set();
+    for (const subject of allSubjects) {
+      if (passedIds.has(subject.id)) continue;
+      if (subject.subject_type === 'nstp') continue;
+
+      const isTargetTerm = subject.year_level === targetYearLevel && subject.semester === targetSemester;
+      if (!isTargetTerm) continue;
+
+      const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+      const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+      if (prereqsMet) potentiallyEligibleIds.add(subject.id);
+    }
 
     const eligible = [];
     const blocked = [];
@@ -61,13 +68,10 @@ const evaluate = async (req, res) => {
     const nstp = [];
 
     for (const subject of allSubjects) {
-      const record = recordMap[subject.id];
       const alreadyPassed = passedIds.has(subject.id);
-
-      // Skip already passed subjects unless failed (retake)
       if (alreadyPassed) continue;
 
-      // Handle INC subjects
+      // Handle INC
       if (incIds.has(subject.id)) {
         incWarnings.push({
           ...subject,
@@ -78,9 +82,7 @@ const evaluate = async (req, res) => {
 
       // Handle NSTP separately
       if (subject.subject_type === 'nstp') {
-        if (!alreadyPassed) {
-          nstp.push(subject);
-        }
+        nstp.push(subject);
         continue;
       }
 
@@ -88,32 +90,60 @@ const evaluate = async (req, res) => {
       const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
       const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
 
-      // Check if subject is for target year and semester
-      const isTargetTerm = 
-        subject.year_level === targetYearLevel &&
+      // Check standing requirement
+      const standingMet = !subject.standing_requirement ||
+        targetYearLevel >= subject.standing_requirement;
+
+      // Check corequisites
+      const coreqIds = subject.corequisites.map(c => c.required_subject_id);
+      const coreqsMet = coreqIds.every(cid =>
+        passedIds.has(cid) || potentiallyEligibleIds.has(cid)
+      );
+
+      const isTargetTerm = subject.year_level === targetYearLevel &&
         subject.semester === targetSemester;
 
       // Handle failed subjects (retakes)
       if (failedIds.has(subject.id)) {
-        if (prereqsMet && isTargetTerm) {
+        if (prereqsMet && standingMet && coreqsMet && isTargetTerm) {
           retakes.push({ ...subject, is_retake: true });
         }
         continue;
       }
 
-      // Only evaluate subjects for target year level and semester
       if (!isTargetTerm) continue;
 
+      // Build missing reasons
+      const missingReasons = [];
+
       if (!prereqsMet) {
-        // Find which prerequisites are missing
         const missingPrereqs = prereqIds
           .filter(pid => !passedIds.has(pid))
           .map(pid => allSubjects.find(s => s.id === pid)?.code)
           .filter(Boolean);
+        missingReasons.push(`Missing prerequisites: ${missingPrereqs.join(', ')}`);
+      }
 
+      if (!standingMet) {
+        missingReasons.push(`Requires Year ${subject.standing_requirement} standing`);
+      }
+
+      if (!coreqsMet) {
+        const missingCoreqs = coreqIds
+          .filter(cid => !passedIds.has(cid) && !potentiallyEligibleIds.has(cid))
+          .map(cid => allSubjects.find(s => s.id === cid)?.code)
+          .filter(Boolean);
+        missingReasons.push(`Must be taken with: ${missingCoreqs.join(', ')}`);
+      }
+
+      if (missingReasons.length > 0) {
         blocked.push({
           ...subject,
-          missing_prerequisites: missingPrereqs
+          missing_prerequisites: prereqIds
+            .filter(pid => !passedIds.has(pid))
+            .map(pid => allSubjects.find(s => s.id === pid)?.code)
+            .filter(Boolean),
+          missing_reasons: missingReasons
         });
       } else {
         eligible.push(subject);

@@ -11,6 +11,7 @@ interface Subject {
   units: number;
   is_retake?: boolean;
   missing_prerequisites?: string[];
+  missing_reasons?: string[];
 }
 
 interface EvaluationData {
@@ -214,9 +215,13 @@ export function SubjectEligibility() {
                       <td className="px-6 py-4 font-semibold text-[#085830]">{subject.code}</td>
                       <td className="px-6 py-4 text-gray-600 whitespace-normal leading-relaxed">
                         {subject.name}
-                        {subject.status === 'Blocked' && subject.missing_prerequisites && (
-                          <div className="text-xs text-red-500 mt-1">
-                            Requires: {subject.missing_prerequisites.join(', ')}
+                        {subject.status === 'Blocked' && subject.missing_reasons && (
+                          <div className="mt-1 space-y-0.5">
+                            {subject.missing_reasons.map((reason: string, i: number) => (
+                              <div key={i} className="text-xs text-red-500">
+                                {reason}
+                              </div>
+                            ))}
                           </div>
                         )}
                       </td>
