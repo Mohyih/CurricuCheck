@@ -310,9 +310,72 @@ export function AdvisingSummary() {
 
             <div className="pt-6 border-t border-gray-100">
               <h3 className="text-sm font-bold text-[#136537] mb-3">Scope Disclaimer:</h3>
-              <p className="text-xs italic text-gray-500 leading-relaxed">
-                CurricuCheck is a decision support prototype and does not replace official academic advising, registrar evaluation, or enrollment approval. Always verify your final subject lineup with your designated academic adviser.
-              </p>
+              <p className="text-xs text-gray-500 mt-2 italic">
+          Please consult your academic adviser or program coordinator for available elective subjects this term. Below are the recommended professional elective courses for your program:
+        </p>
+        {student?.programs?.code === 'BSECE' && (
+          <ul className="mt-2 space-y-1">
+            {[
+              'Advance Communication System Design',
+              'Advance Networking ICT Infrastructure',
+              'Electronics Auxiliary System',
+              'Computer System Architecture',
+              'Operating System & Advance Programming Language',
+              'Broadcasting Production Engineering',
+              'Broadcast Transmission Distribution',
+              'Emerging Technologies',
+            ].map((elective) => (
+              <li key={elective} className="text-xs text-[#085830] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#F2AB50] flex-shrink-0"></div>
+                {elective}
+              </li>
+            ))}
+          </ul>
+        )}
+        {student?.programs?.code === 'BSIT' && (
+          <ul className="mt-2 space-y-1">
+            {[
+              'Computer Graphics',
+              'White Hat Hacking',
+              'CISCO 3',
+              'CISCO 4',
+              'Animation and Game Development',
+              'Advanced 2D Game Development',
+              'Advanced 3D Game Development',
+              'Web Services',
+              'Basic Android App Development',
+              'Advanced Android App Development',
+              'Fundamentals of Business Analytics',
+              'Fundamentals of Enterprise Data Management',
+              'Descriptive Analytics (IBM Cognos)',
+              'Predictive Analytics (IBM SPSS)',
+              'Advanced Web Technologies',
+              'Cross Platform Development',
+              'Advanced Topic in IAS',
+              'Cyber Security',
+              'Advanced Special Topics',
+            ].map((elective) => (
+              <li key={elective} className="text-xs text-[#085830] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#F2AB50] flex-shrink-0"></div>
+                {elective}
+              </li>
+            ))}
+          </ul>
+        )}
+        {student?.programs?.code === 'BSCpE' && (
+          <ul className="mt-2 space-y-1">
+            {[
+              'Software Development 1 (ELECT1)',
+              'Software Development 2 (ELECT2)',
+              'Software Development 3 (ELECT3)',
+            ].map((elective) => (
+              <li key={elective} className="text-xs text-[#085830] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#F2AB50] flex-shrink-0"></div>
+                {elective}
+              </li>
+            ))}
+          </ul>
+        )}
             </div>
           </div>
         </div>
