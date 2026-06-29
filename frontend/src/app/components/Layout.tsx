@@ -65,9 +65,9 @@ export function Layout({ children }: { children: ReactNode }) {
           {/* App Info */}
           <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2">
             <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830] space-y-1">
-              <p className="font-bold">CurricuCheck</p>
-              <p className="text-[#136537]/70">College of Engineering and Computer Technology</p>
-              <p className="text-[#136537]/70">Wesleyan University Philippines</p>
+              <div className="font-bold">Contact Support</div>
+              <div className="text-gray-600">Contact: <a href="mailto:Curricucheck@gmail.com" className="underline text-[#136537]/90">Curricucheck@gmail.com</a></div>
+              <div className="text-gray-500">© 2026 CurricuCheck. All rights reserved.</div>
             </div>
           </div>
         </nav>
