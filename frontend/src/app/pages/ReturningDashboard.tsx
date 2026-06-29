@@ -133,13 +133,13 @@ export function ReturningDashboard() {
         await api.patch('/student/me/year-level', { year_level: yearLevel });
       }
 
-      // Build records payload - only subjects with a grade entered
+      // Build records payload - include subjects the user explicitly touched (including "-" / empty => Not Taken)
       const records = subjects
-        .filter((s) => grades[s.id] && grades[s.id] !== '')
+        .filter((s) => grades[s.id] !== undefined)
         .map((s) => ({
           subject_id: s.id,
-          grade: grades[s.id] === 'INC' ? null : grades[s.id],
-          status: interpretGrade(grades[s.id]),
+          grade: grades[s.id] === 'INC' || grades[s.id] === '' ? null : grades[s.id],
+          status: interpretGrade(grades[s.id] ?? ''),
         }));
 
       if (records.length > 0) {
