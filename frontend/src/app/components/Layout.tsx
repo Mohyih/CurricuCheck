@@ -36,19 +36,40 @@ export function Layout({ children }: { children: ReactNode }) {
           </Link>
         </div>
 
-        <nav className="flex-1 py-6 px-4 space-y-2">
+        <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
+          {/* Main Navigation */}
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-1">
+            Main
+          </div>
           <Link to="/dashboard" className={navLinkClass('/dashboard')}>
             <LayoutDashboard className="w-5 h-5" />
             Dashboard
           </Link>
+
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
+            Academic
+          </div>
           <Link to="/dashboard/checklist" className={navLinkClass('/dashboard/checklist')}>
             <ListChecks className="w-5 h-5" />
             Curriculum Checklist
           </Link>
+
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
+            Profile
+          </div>
           <Link to="/dashboard/student-info" className={navLinkClass('/dashboard/student-info')}>
             <User className="w-5 h-5" />
             Student Information
           </Link>
+
+          {/* App Info */}
+          <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2">
+            <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830] space-y-1">
+              <p className="font-bold">CurricuCheck</p>
+              <p className="text-[#136537]/70">College of Engineering and Computer Technology</p>
+              <p className="text-[#136537]/70">Wesleyan University Philippines</p>
+            </div>
+          </div>
         </nav>
       </aside>
 
