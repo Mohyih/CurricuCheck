@@ -27,9 +27,38 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const persistAuthSession = (nextToken: string | null, nextRefreshToken: string | null, nextStudent: Student | null) => {
+  if (nextToken) {
+    localStorage.setItem('token', nextToken);
+  } else {
+    localStorage.removeItem('token');
+  }
+
+  if (nextRefreshToken) {
+    localStorage.setItem('refresh_token', nextRefreshToken);
+  } else {
+    localStorage.removeItem('refresh_token');
+  }
+
+  if (nextStudent) {
+    localStorage.setItem('student', JSON.stringify(nextStudent));
+  } else {
+    localStorage.removeItem('student');
+  }
+};
+
+const readStoredStudent = (): Student | null => {
+  try {
+    const storedStudent = localStorage.getItem('student');
+    return storedStudent ? JSON.parse(storedStudent) : null;
+  } catch {
+    return null;
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [student, setStudent] = useState<Student | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [student, setStudent] = useState<Student | null>(() => readStoredStudent());
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   const tryRefreshToken = async (): Promise<boolean> => {
@@ -38,8 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const res = await api.post('/auth/refresh', { refresh_token: refreshToken });
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('refresh_token', res.data.refresh_token);
+      persistAuthSession(res.data.token, res.data.refresh_token, student);
       setToken(res.data.token);
       return true;
     } catch (err) {
@@ -50,7 +78,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchStudent = async () => {
     try {
       const res = await api.get('/student/me');
-      setStudent(res.data.student);
+      const nextStudent = res.data.student;
+      setStudent(nextStudent);
+      persistAuthSession(localStorage.getItem('token'), localStorage.getItem('refresh_token'), nextStudent);
     } catch (err) {
       console.log('First fetch failed, trying refresh...');
       const refreshed = await tryRefreshToken();
@@ -58,15 +88,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (refreshed) {
         try {
           const res = await api.get('/student/me');
-          setStudent(res.data.student);
+          const nextStudent = res.data.student;
+          setStudent(nextStudent);
+          persistAuthSession(localStorage.getItem('token'), localStorage.getItem('refresh_token'), nextStudent);
           console.log('Second fetch succeeded');
         } catch (err2) {
-          console.log('Second fetch also failed:', err2);
-          handleLogoutCleanup();
+          console.log('Second fetch also failed, keeping session for now:', err2);
         }
       } else {
-        console.log('Refresh failed, logging out');
-        handleLogoutCleanup();
+        console.log('Refresh failed, keeping existing session for now');
       }
     } finally {
       setLoading(false);
@@ -76,8 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleLogoutCleanup = () => {
     setStudent(null);
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
+    persistAuthSession(null, null, null);
   };
 
   useEffect(() => {
@@ -93,8 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       student_number: studentNumber,
       password,
     });
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('refresh_token', res.data.refresh_token);
+    persistAuthSession(res.data.token, res.data.refresh_token, res.data.student);
     setToken(res.data.token);
     setStudent(res.data.student);
   };
