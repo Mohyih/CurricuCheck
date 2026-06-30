@@ -52,16 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await api.get('/student/me');
       setStudent(res.data.student);
     } catch (err) {
-      // Token might be expired, try refreshing once
+      console.log('First fetch failed, trying refresh...');
       const refreshed = await tryRefreshToken();
+      console.log('Refresh result:', refreshed);
       if (refreshed) {
         try {
           const res = await api.get('/student/me');
           setStudent(res.data.student);
+          console.log('Second fetch succeeded');
         } catch (err2) {
+          console.log('Second fetch also failed:', err2);
           handleLogoutCleanup();
         }
       } else {
+        console.log('Refresh failed, logging out');
         handleLogoutCleanup();
       }
     } finally {
