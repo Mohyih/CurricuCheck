@@ -102,7 +102,8 @@ const login = async (req, res) => {
     if (authError) return res.status(401).json({ error: 'Invalid student number or password' });
 
     const token = authData.session.access_token;
-    const user_id = authData.user.id;
+const refreshToken = authData.session.refresh_token;
+const user_id = authData.user.id;
 
     // Get student record
     const { data: studentData, error: studentError } = await supabase
@@ -113,11 +114,12 @@ const login = async (req, res) => {
 
     if (studentError) return res.status(400).json({ error: studentError.message });
 
-    res.json({
-      message: 'Login successful',
-      token,
-      student: studentData
-    });
+   res.json({
+  message: 'Login successful',
+  token,
+  refresh_token: refreshToken,
+  student: studentData
+});
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -134,4 +136,24 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout };
+// REFRESH TOKEN
+const refresh = async (req, res) => {
+  const { refresh_token } = req.body;
+
+  try {
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token });
+
+    if (error || !data.session) {
+      return res.status(401).json({ error: 'Invalid or expired refresh token' });
+    }
+
+    res.json({
+      token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { register, login, logout, refresh };

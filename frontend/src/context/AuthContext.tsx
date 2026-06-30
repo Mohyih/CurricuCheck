@@ -32,17 +32,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  const tryRefreshToken = async (): Promise<boolean> => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) return false;
+
+    try {
+      const res = await api.post('/auth/refresh', { refresh_token: refreshToken });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('refresh_token', res.data.refresh_token);
+      setToken(res.data.token);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
   const fetchStudent = async () => {
     try {
       const res = await api.get('/student/me');
       setStudent(res.data.student);
     } catch (err) {
-      setStudent(null);
-      setToken(null);
-      localStorage.removeItem('token');
+      // Token might be expired, try refreshing once
+      const refreshed = await tryRefreshToken();
+      if (refreshed) {
+        try {
+          const res = await api.get('/student/me');
+          setStudent(res.data.student);
+        } catch (err2) {
+          handleLogoutCleanup();
+        }
+      } else {
+        handleLogoutCleanup();
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogoutCleanup = () => {
+    setStudent(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
   };
 
   useEffect(() => {
@@ -59,14 +90,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     });
     localStorage.setItem('token', res.data.token);
+    localStorage.setItem('refresh_token', res.data.refresh_token);
     setToken(res.data.token);
     setStudent(res.data.student);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setStudent(null);
+    handleLogoutCleanup();
   };
 
   const refreshStudent = async () => {
