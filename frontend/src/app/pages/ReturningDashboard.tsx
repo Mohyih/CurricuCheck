@@ -242,21 +242,21 @@ export function ReturningDashboard() {
         <div className="mb-10">
           <div className="flex items-center justify-between max-w-3xl mx-auto relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
-            <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white shadow-sm ring-2 ring-[#136537]/20"></div>
-              <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Academic Records</span>
+              <span className="text-sm font-bold text-[#136537]">Academic Records</span>
             </div>
-            <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-xs md:text-sm font-medium text-gray-400 text-center w-20">Subject Eligibility</span>
+              <span className="text-sm font-medium text-gray-400">Subject Eligibility</span>
             </div>
-            <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-[0.625rem] md:text-[0.625rem] font-medium text-gray-400 text-center w-14 leading-tight">Recommendations</span>
+              <span className="text-sm font-medium text-gray-400">Recommendations</span>
             </div>
-            <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-xs md:text-sm font-medium text-gray-400 text-center w-20">Advising Summary</span>
+              <span className="text-sm font-medium text-gray-400">Advising Summary</span>
             </div>
           </div>
         </div>
