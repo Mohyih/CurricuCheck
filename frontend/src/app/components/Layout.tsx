@@ -65,7 +65,16 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2">
             <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830] space-y-1">
               <div className="font-bold mb-2">Contact Support:</div>
-              <div className="text-gray-600"> <a href="mailto:curricucheck@gmail.com" className="underline text-[#136537]/90">curricucheck@gmail.com</a></div>
+              <div className="text-gray-600">
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=curricucheck@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#136537]/90"
+                >
+                  curricucheck@gmail.com
+                </a>
+              </div>
             </div>
         </div>
       </nav>
