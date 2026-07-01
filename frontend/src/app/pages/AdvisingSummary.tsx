@@ -170,14 +170,14 @@ export function AdvisingSummary() {
           <div className="flex items-center justify-between max-w-3xl mx-auto relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-indigo-200 rounded-full z-0"></div>
             {['Academic Records', 'Subject Eligibility', 'Recommendations'].map((label) => (
-              <div key={label} className="relative z-10 flex flex-col items-center gap-2">
+              <div key={label} className="relative z-10 flex flex-col items-center gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
                 <span className={`font-bold text-[#136537] text-center ${label === 'Recommendations' ? 'text-[0.625rem] md:text-[0.625rem] w-14 leading-tight' : 'text-xs md:text-sm w-20'}`}>{label}</span>
               </div>
             ))}
-            <div className="relative z-10 flex flex-col items-center gap-2">
+            <div className="relative z-10 flex flex-col items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
               <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Advising Summary</span>
             </div>
