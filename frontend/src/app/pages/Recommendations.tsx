@@ -140,32 +140,50 @@ export function Recommendations() {
     <Layout>
       <div className="max-w-[1000px] mx-auto">
         {/* Progress Indicator */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between max-w-3xl mx-auto relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[66%] h-1 bg-indigo-200 rounded-full z-0"></div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
-              </div>
-              <span className="text-sm font-bold text-[#136537]">Academic Records</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
-              </div>
-              <span className="text-sm font-bold text-[#136537]">Subject Eligibility</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
-              <span className="text-xs font-bold text-[#136537] text-center w-16">Recommendations</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Advising Summary</span>
-            </div>
-          </div>
+        <div className="mb-10 px-2 md:px-0">
+  <div className="relative max-w-4xl mx-auto">
+
+    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+
+    <div className="absolute top-3 left-[12.5%] w-[50%] h-1 bg-[#136537] rounded-full"></div>
+
+    <div className="grid grid-cols-4">
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-[#136537] flex items-center justify-center text-white">
+          <Check className="w-3 h-3"/>
         </div>
+        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center">
+          Academic<br/>Records
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-[#136537] flex items-center justify-center text-white">
+          <Check className="w-3 h-3"/>
+        </div>
+        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center">
+          Subject<br/>Eligibility
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/30"></div>
+        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center">
+          Recommendation
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
+        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+          Advising<br/>Summary
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
         {/* Load Selector */}
         <div className="mb-6 bg-white rounded-2xl border border-[#C8E6D4]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-5 flex items-center justify-between">

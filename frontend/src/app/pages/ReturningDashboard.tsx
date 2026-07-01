@@ -238,28 +238,46 @@ export function ReturningDashboard() {
           </button>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between max-w-3xl mx-auto relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white shadow-sm ring-2 ring-[#136537]/20"></div>
-              <span className="text-sm font-bold text-[#136537]">Academic Records</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Subject Eligibility</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-xs font-medium text-gray-400 text-center w-16">Recommendations</span>
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Advising Summary</span>
-            </div>
-          </div>
-        </div>
+       {/* Progress Indicator */}
+<div className="mb-10 px-2 md:px-0">
+  <div className="relative max-w-4xl mx-auto">
+
+    {/* Line */}
+    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+
+    <div className="grid grid-cols-4">
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/20 z-10"></div>
+        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center leading-tight">
+          Academic<br />Records
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+          Subject<br />Eligibility
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+          Recommendation
+        </span>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+          Advising<br />Summary
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
         {/* Tables */}
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden mb-8">

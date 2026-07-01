@@ -165,24 +165,41 @@ export function AdvisingSummary() {
   return (
     <Layout>
       <div className="max-w-[1000px] mx-auto">
-        {/* Progress Indicator */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between max-w-3xl mx-auto relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-indigo-200 rounded-full z-0"></div>
-            {['Academic Records', 'Subject Eligibility', 'Recommendations'].map((label) => (
-              <div key={label} className="relative z-10 flex flex-col items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                </div>
-                <span className={`font-bold text-[#136537] text-center ${label === 'Recommendations' ? 'text-xs w-16' : 'text-sm'}`}>{label}</span>
-              </div>
-            ))}
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
-              <span className="text-sm font-bold text-[#136537]">Advising Summary</span>
-            </div>
+       {/* Progress Indicator */}
+<div className="mb-10 px-2 md:px-0">
+  <div className="relative max-w-4xl mx-auto">
+
+    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+
+    <div className="absolute top-3 left-[12.5%] w-[75%] h-1 bg-[#136537] rounded-full"></div>
+
+    <div className="grid grid-cols-4">
+
+      {["Academic Records","Subject Eligibility","Recommendation"].map(label=>(
+        <div key={label} className="flex flex-col items-center">
+          <div className="w-6 h-6 rounded-full bg-[#136537] flex items-center justify-center text-white">
+            <Check className="w-3 h-3"/>
           </div>
+
+          <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center leading-tight">
+            {label==="Academic Records" && <>Academic<br/>Records</>}
+            {label==="Subject Eligibility" && <>Subject<br/>Eligibility</>}
+            {label==="Recommendation" && <>Recommendation</>}
+          </span>
         </div>
+      ))}
+
+      <div className="flex flex-col items-center">
+        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/30"></div>
+
+        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center leading-tight">
+          Advising<br/>Summary
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
         {/* Student Profile Card */}
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 p-8 mb-6">
