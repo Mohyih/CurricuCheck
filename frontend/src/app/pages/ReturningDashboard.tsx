@@ -244,19 +244,19 @@ export function ReturningDashboard() {
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white shadow-sm ring-2 ring-[#136537]/20"></div>
-              <span className="text-sm font-bold text-[#136537]">Academic Records</span>
+              <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Academic Records</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Subject Eligibility</span>
+              <span className="text-xs md:text-sm font-medium text-gray-400 text-center w-20">Subject Eligibility</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Recommendations</span>
+              <span className="text-xs md:text-xs font-medium text-gray-400 text-center w-16">Recommendations</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-sm font-medium text-gray-400">Advising Summary</span>
+              <span className="text-xs md:text-sm font-medium text-gray-400 text-center w-20">Advising Summary</span>
             </div>
           </div>
         </div>
@@ -282,14 +282,14 @@ export function ReturningDashboard() {
                   </div>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm whitespace-nowrap">
+                    <table className="w-full text-left text-sm">
                       <thead>
                         <tr className="text-gray-500 border-b border-gray-100">
-                          <th className="px-6 py-3 font-medium w-32">Subject Code</th>
-                          <th className="px-6 py-3 font-medium">Subject Name</th>
-                          <th className="px-6 py-3 font-medium w-20 text-center">Units</th>
-                          <th className="px-6 py-3 font-medium w-36 text-center">Grade</th>
-                          <th className="px-6 py-3 font-medium w-40 text-center">Status</th>
+                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-16 md:w-32">Code</th>
+                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm flex-1">Subject</th>
+                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-10 md:w-20 text-center">Units</th>
+                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-20 md:w-36 text-center">Grade</th>
+                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-16 md:w-40 text-center">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -298,26 +298,26 @@ export function ReturningDashboard() {
                           const status = interpretGrade(gradeValue);
 
                           return (
-                            <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors">
-                              <td className="px-6 py-3 font-semibold text-[#085830]">{subject.code}</td>
-                              <td className="px-6 py-3 text-gray-600 whitespace-normal">{subject.name}</td>
-                              <td className="px-6 py-3 text-center text-gray-600">{subject.units}</td>
-                              <td className="px-6 py-3">
-                                <div className="relative w-28 mx-auto">
+                            <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0">
+                              <td className="px-2 md:px-6 py-2 md:py-3 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
+                              <td className="px-2 md:px-6 py-2 md:py-3 text-gray-600 text-xs md:text-sm"><div className="line-clamp-2 md:line-clamp-none">{subject.name}</div></td>
+                              <td className="px-2 md:px-6 py-2 md:py-3 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>
+                              <td className="px-2 md:px-6 py-2 md:py-3">
+                                <div className="relative w-20 md:w-28 mx-auto">
                                   <select
                                     value={gradeValue}
                                     onChange={(e) => handleGradeChange(subject.id, e.target.value)}
-                                    className="w-full appearance-none px-3 py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-sm text-center"
+                                    className="w-full appearance-none px-2 md:px-3 py-1 md:py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-xs md:text-sm text-center"
                                   >
                                     <option value="">-</option>
                                     {GRADE_OPTIONS.map((g) => (
                                       <option key={g} value={g}>{g}</option>
                                     ))}
                                   </select>
-                                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+                                  <ChevronDown className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
                                 </div>
                               </td>
-                              <td className="px-6 py-3 text-center">
+                              <td className="px-2 md:px-6 py-2 md:py-3 text-center text-xs md:text-sm">
                                 <StatusBadge status={status} />
                               </td>
                             </tr>

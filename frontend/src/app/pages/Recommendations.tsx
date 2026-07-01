@@ -148,21 +148,21 @@ export function Recommendations() {
               <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
                 <Check className="w-3.5 h-3.5 stroke-[3]" />
               </div>
-              <span className="text-xs md:text-sm font-bold text-[#136537]">Academic Records</span>
+              <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Academic Records</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
                 <Check className="w-3.5 h-3.5 stroke-[3]" />
               </div>
-              <span className="text-xs md:text-sm font-bold text-[#136537]">Subject Eligibility</span>
+              <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Subject Eligibility</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
-              <span className="text-xs md:text-sm font-bold text-[#136537]">Recommendations</span>
+              <span className="text-xs md:text-xs font-bold text-[#136537] text-center w-16">Recommendations</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-xs md:text-sm font-medium text-gray-400">Advising Summary</span>
+              <span className="text-xs md:text-sm font-medium text-gray-400 text-center w-20">Advising Summary</span>
             </div>
           </div>
         </div>

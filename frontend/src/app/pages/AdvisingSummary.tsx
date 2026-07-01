@@ -174,12 +174,12 @@ export function AdvisingSummary() {
                 <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
-                <span className="text-sm font-bold text-[#136537]">{label}</span>
+                <span className={`font-bold text-[#136537] text-center ${label === 'Recommendations' ? 'text-xs md:text-xs w-16' : 'text-xs md:text-sm w-20'}`}>{label}</span>
               </div>
             ))}
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
-              <span className="text-sm font-bold text-[#136537]">Advising Summary</span>
+              <span className="text-xs md:text-sm font-bold text-[#136537] text-center w-20">Advising Summary</span>
             </div>
           </div>
         </div>
@@ -224,33 +224,33 @@ export function AdvisingSummary() {
             <h3 className="text-lg font-bold text-[#085830]">Confirmed Subject Enrollment</h3>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-gray-500 border-b border-gray-100 bg-gray-50/30">
-                  <th className="px-6 py-4 font-medium w-32">Subject Code</th>
-                  <th className="px-6 py-4 font-medium">Subject Name</th>
-                  <th className="px-6 py-4 font-medium w-24 text-center">Units</th>
+                  <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm w-16 md:w-32">Code</th>
+                  <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm flex-1">Subject</th>
+                  <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm w-10 md:w-24 text-center">Units</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {confirmedSubjects.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="px-6 py-8 text-center text-gray-400">
+                    <td colSpan={3} className="px-2 md:px-6 py-4 md:py-8 text-center text-gray-400 text-xs md:text-sm">
                       No subjects confirmed.
                     </td>
                   </tr>
                 ) : (
                   <>
                     {confirmedSubjects.map((s) => (
-                      <tr key={s.id} className="hover:bg-[#EEF7F2]/30 transition-colors">
-                        <td className="px-6 py-4 font-semibold text-[#085830]">{s.code}</td>
-                        <td className="px-6 py-4 text-gray-600 whitespace-normal">{s.name}</td>
-                        <td className="px-6 py-4 text-center text-gray-600">{s.units}</td>
+                      <tr key={s.id} className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0">
+                        <td className="px-2 md:px-6 py-2 md:py-4 font-semibold text-[#085830] text-xs md:text-sm">{s.code}</td>
+                        <td className="px-2 md:px-6 py-2 md:py-4 text-gray-600 text-xs md:text-sm"><div className="line-clamp-2 md:line-clamp-none">{s.name}</div></td>
+                        <td className="px-2 md:px-6 py-2 md:py-4 text-center text-gray-600 text-xs md:text-sm">{s.units}</td>
                       </tr>
                     ))}
                     <tr className="bg-[#EEF7F2]/50 border-t-2 border-[#A8D5BB]">
-                      <td className="px-6 py-4 font-bold text-[#085830]" colSpan={2}>Total Units:</td>
-                      <td className="px-6 py-4 text-center font-bold text-[#136537]">{confirmedUnits}</td>
+                      <td className="px-2 md:px-6 py-2 md:py-4 font-bold text-[#085830] text-xs md:text-sm" colSpan={2}>Total Units:</td>
+                      <td className="px-2 md:px-6 py-2 md:py-4 text-center font-bold text-[#136537] text-xs md:text-sm">{confirmedUnits}</td>
                     </tr>
                   </>
                 )}
