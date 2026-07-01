@@ -169,11 +169,11 @@ export function AdvisingSummary() {
 <div className="mb-10 px-2 md:px-0">
   <div className="relative max-w-4xl mx-auto">
 
-    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full z-0"></div>
 
-    <div className="absolute top-3 left-[12.5%] w-[75%] h-1 bg-[#136537] rounded-full"></div>
+    <div className="absolute top-3 left-[12.5%] w-[75%] h-1 bg-[#136537] rounded-full z-0"></div>
 
-    <div className="grid grid-cols-4">
+    <div className="grid grid-cols-4 relative z-10">
 
       {["Academic Records","Subject Eligibility","Recommendation"].map(label=>(
         <div key={label} className="flex flex-col items-center">

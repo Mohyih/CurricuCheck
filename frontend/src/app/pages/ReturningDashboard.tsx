@@ -243,7 +243,7 @@ export function ReturningDashboard() {
   <div className="relative max-w-4xl mx-auto">
 
     {/* Line */}
-    <div className="absolute top-3 left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+    <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
 
     <div className="grid grid-cols-4">
 
