@@ -162,10 +162,10 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const selectClass = `${inputClass} appearance-none cursor-pointer`;
 
   return (
-    <div className="h-screen bg-[#F5FAF7] font-['Inter'] flex overflow-hidden">
+    <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col md:flex-row overflow-hidden md:h-screen">
 
       {/* Left Panel - Branding */}
-      <div className="w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-8 text-white">
+      <div className="w-full md:w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-6 md:p-8 text-white">
         <div className="w-24 h-24 mb-5">
           <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-contain drop-shadow-lg" />
         </div>
@@ -183,7 +183,7 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
         <div className="bg-white w-full max-w-xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-6">
           <form className="space-y-4" onSubmit={handleSubmit}>
 

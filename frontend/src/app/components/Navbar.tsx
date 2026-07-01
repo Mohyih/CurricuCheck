@@ -25,25 +25,21 @@ export function Navbar() {
           <span className="font-bold text-lg text-[#085830] tracking-tight">CurricuCheck</span>
         </div>
         
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#085830]">
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1E1E2E]">
           <button onClick={() => scrollTo('home')} className="hover:text-[#136537] transition-colors">Home</button>
           <button onClick={() => scrollTo('about')} className="hover:text-[#136537] transition-colors">About</button>
           <button onClick={() => scrollTo('help')} className="hover:text-[#136537] transition-colors">Help</button>
-          
           <div className="flex items-center gap-3 ml-4">
-            <button 
-              onClick={() => navigate('/login')}
-              className="text-[#136537] hover:text-[#F2AB50] transition-colors font-semibold"
-            >
-              Log In
-            </button>
-            <button 
-              onClick={() => navigate('/signup')}
-              className="px-4 py-2 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-sm hover:shadow transition-all"
-            >
-              Sign Up
-            </button>
+            <button onClick={() => navigate('/login')} className="text-[#136537] hover:text-[#A8C957] transition-colors font-semibold">Log In</button>
+            <button onClick={() => navigate('/signup')} className="px-4 py-2 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-sm hover:shadow transition-all">Sign Up</button>
           </div>
+        </div>
+
+        {/* Mobile nav buttons */}
+        <div className="flex md:hidden items-center gap-2">
+          <button onClick={() => navigate('/login')} className="px-3 py-1.5 text-sm text-[#136537] font-semibold">Log In</button>
+          <button onClick={() => navigate('/signup')} className="px-3 py-1.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm font-medium">Sign Up</button>
         </div>
       </div>
     </nav>
