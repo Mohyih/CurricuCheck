@@ -145,7 +145,7 @@ export function Recommendations() {
 
     <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
 
-    <div className="absolute top-[11px] left-[12.5%] w-[50%] h-1 bg-[#136537] rounded-full"></div>
+    <div className="absolute top-[11px] left-[12.5%] w-[37.5%] h-1 bg-[#136537] rounded-full"></div>
 
     <div className="grid grid-cols-4">
 
