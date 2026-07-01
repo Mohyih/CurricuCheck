@@ -183,7 +183,10 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
+      <div
+        className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         <div className="bg-white w-full max-w-xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-6">
           <form className="space-y-4" onSubmit={handleSubmit}>
 

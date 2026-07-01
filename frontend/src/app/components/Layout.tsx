@@ -27,12 +27,19 @@ export function Layout({ children }: { children: ReactNode }) {
   const SidebarContent = () => (
     <>
       <div className="h-20 flex items-center px-6 border-b border-[#C8E6D4]">
-        <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <button
+          type="button"
+          onClick={() => {
+            setIsSidebarOpen(false);
+            navigate('/dashboard');
+          }}
+          className="flex items-center gap-2 hover:opacity-90 transition-opacity"
+        >
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
             <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-bold text-lg text-[#085830] tracking-tight">CurricuCheck</span>
-        </Link>
+        </button>
       </div>
 
       <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
@@ -63,15 +70,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
       </nav>
 
-      <div className="p-4 border-t border-[#C8E6D4]">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-full transition-all"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
-      </div>
+
     </>
   );
 
