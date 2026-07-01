@@ -145,7 +145,7 @@ export function Recommendations() {
 
     <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
 
-    <div className="absolute top-[11px] left-[12.5%] w-[37.5%] h-1 bg-[#136537] rounded-full"></div>
+    <div className="absolute top-[11px] left-[12.5%] w-[50%] h-1 bg-[#136537] rounded-full"></div>
 
     <div className="grid grid-cols-4">
 
@@ -168,7 +168,7 @@ export function Recommendations() {
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/30"></div>
+        <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-white ring-2 ring-[#136537]/30"></div>
         <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center">
           Recommendation
         </span>
@@ -248,7 +248,7 @@ export function Recommendations() {
                         <div className="line-clamp-2 md:line-clamp-none">
                           {subject.name}
                           {subject.subject_type === 'nstp' && (
-                            <span className="block text-xs text-[#F2AB50]">(0u)</span>
+                            <span className="block text-xs text-[#F2AB50]">(excluded from the academic-unit total)</span>
                           )}
                         </div>
                       </td>
