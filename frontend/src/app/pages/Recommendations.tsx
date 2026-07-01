@@ -158,7 +158,7 @@ export function Recommendations() {
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-[#F5FAF7] shadow-sm ring-2 ring-[#136537]/30"></div>
-              <span className="text-sm font-bold text-[#136537]">Recommendations</span>
+              <span className="text-xs font-bold text-[#136537] text-center w-16">Recommendations</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
