@@ -252,7 +252,7 @@ export function ReturningDashboard() {
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
-              <span className="text-xs md:text-xs font-medium text-gray-400 text-center w-16">Recommendations</span>
+              <span className="text-[0.625rem] md:text-[0.625rem] font-medium text-gray-400 text-center w-14 leading-tight">Recommendations</span>
             </div>
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>

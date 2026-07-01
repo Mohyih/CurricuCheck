@@ -174,7 +174,7 @@ export function AdvisingSummary() {
                 <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-[#136537] shadow-sm flex items-center justify-center text-white">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
-                <span className={`font-bold text-[#136537] text-center ${label === 'Recommendations' ? 'text-xs md:text-xs w-16' : 'text-xs md:text-sm w-20'}`}>{label}</span>
+                <span className={`font-bold text-[#136537] text-center ${label === 'Recommendations' ? 'text-[0.625rem] md:text-[0.625rem] w-14 leading-tight' : 'text-xs md:text-sm w-20'}`}>{label}</span>
               </div>
             ))}
             <div className="relative z-10 flex flex-col items-center gap-2">
