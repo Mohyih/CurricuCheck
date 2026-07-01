@@ -143,11 +143,11 @@ export function Recommendations() {
         <div className="mb-10 px-2 md:px-0">
   <div className="relative max-w-4xl mx-auto">
 
-    <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+    <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full z-0"></div>
 
-    <div className="absolute top-[11px] left-[12.5%] w-[50%] h-1 bg-[#136537] rounded-full"></div>
+    <div className="absolute top-[11px] left-[12.5%] w-[49.2%] h-1 bg-[#136537] rounded-full z-0"></div>
 
-    <div className="grid grid-cols-4">
+    <div className="relative z-10 grid grid-cols-4">
 
       <div className="flex flex-col items-center">
         <div className="w-6 h-6 rounded-full bg-[#136537] flex items-center justify-center text-white">
@@ -168,7 +168,7 @@ export function Recommendations() {
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-[#136537] border-2 border-white ring-2 ring-[#136537]/30"></div>
+        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/30"></div>
         <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center">
           Recommendation
         </span>
