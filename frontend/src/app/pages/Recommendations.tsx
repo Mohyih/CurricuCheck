@@ -140,8 +140,9 @@ export function Recommendations() {
     <Layout>
       <div className="max-w-[1000px] mx-auto">
         {/* Progress Indicator */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between max-w-3xl mx-auto relative">
+        <div className="mb-10 px-3 md:px-0">
+          {/* Desktop */}
+          <div className="hidden md:flex items-center justify-between max-w-3xl mx-auto relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[66%] h-1 bg-indigo-200 rounded-full z-0"></div>
             <div className="relative z-10 flex flex-col items-center gap-2">
@@ -163,6 +164,24 @@ export function Recommendations() {
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300"></div>
               <span className="text-sm font-medium text-gray-400">Advising Summary</span>
+            </div>
+          </div>
+          
+          {/* Mobile */}
+          <div className="md:hidden flex items-center justify-center gap-3">
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-5 h-5 rounded-full bg-[#136537] border-2 border-[#136537] flex items-center justify-center text-white"><Check className="w-2.5 h-2.5" /></div>
+              <span className="text-xs font-bold text-[#136537]">Rec</span>
+            </div>
+            <div className="w-3 h-0.5 bg-indigo-200"></div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-5 h-5 rounded-full bg-[#136537] border-2 border-[#136537]"></div>
+              <span className="text-xs font-bold text-[#136537]">Elig</span>
+            </div>
+            <div className="w-3 h-0.5 bg-indigo-200"></div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-5 h-5 rounded-full bg-[#136537]"></div>
+              <span className="text-xs font-bold text-[#136537]">Pick</span>
             </div>
           </div>
         </div>
@@ -203,16 +222,16 @@ export function Recommendations() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden mb-6">
+        <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden mb-6 mx-3 md:mx-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-gray-500 border-b border-gray-100 bg-gray-50/30">
-                  <th className="px-6 py-4 font-medium w-32">Subject Code</th>
-                  <th className="px-6 py-4 font-medium">Subject Name</th>
-                  <th className="px-6 py-4 font-medium w-24 text-center">Units</th>
-                  <th className="px-6 py-4 font-medium w-40 text-center">Priority</th>
-                  <th className="px-6 py-4 font-medium w-24 text-center">Select</th>
+                  <th className="px-2 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm">Code</th>
+                  <th className="px-2 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm">Subject</th>
+                  <th className="px-2 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm text-center">Units</th>
+                  <th className="px-2 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm text-center">Priority</th>
+                  <th className="px-2 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm text-center">Select</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -224,19 +243,21 @@ export function Recommendations() {
                   </tr>
                 ) : (
                   allSubjects.map((subject) => (
-                    <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors">
-                      <td className="px-6 py-4 font-semibold text-[#085830]">{subject.code}</td>
-                      <td className="px-6 py-4 text-gray-600 whitespace-normal leading-relaxed">
-                        {subject.name}
-                        {subject.subject_type === 'nstp' && (
-                          <span className="ml-2 text-xs text-[#F2AB50]">(0 units — excluded from load)</span>
-                        )}
+                    <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0">
+                      <td className="px-2 md:px-6 py-2 md:py-4 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
+                      <td className="px-2 md:px-6 py-2 md:py-4 text-gray-600 text-xs md:text-sm">
+                        <div className="line-clamp-2">
+                          {subject.name}
+                          {subject.subject_type === 'nstp' && (
+                            <span className="block text-xs text-[#F2AB50]">(0 units)</span>
+                          )}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-center text-gray-600">{subject.units}</td>
-                      <td className="px-6 py-4 text-center">
-                        <PriorityBadge category={subject.category} />
+                      <td className="px-2 md:px-6 py-2 md:py-4 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>
+                      <td className="px-2 md:px-6 py-2 md:py-4 text-center">
+                        <div className="flex justify-center"><PriorityBadge category={subject.category} /></div>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-2 md:px-6 py-2 md:py-4 text-center">
                         <input
                           type="checkbox"
                           checked={selectedIds.has(subject.id)}
