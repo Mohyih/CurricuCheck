@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
-import { Check, Lightbulb, AlertCircle, ChevronDown } from 'lucide-react';
+import { Check, Lightbulb, AlertCircle } from 'lucide-react';
 
 interface Subject {
   id: string;
@@ -185,22 +185,7 @@ export function Recommendations() {
   </div>
 </div>
 
-        {/* Load Selector */}
-        <div className="mb-6 bg-white rounded-2xl border border-[#C8E6D4]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-5 flex items-center justify-between">
-          <div className="text-sm font-bold text-[#085830]">Academic Load</div>
-          <div className="relative w-48">
-            <select
-              value={selectedLoad}
-              onChange={(e) => handleLoadChange(e.target.value)}
-              className="w-full appearance-none px-4 py-2 rounded-lg border border-gray-200 focus:border-[#F2AB50] outline-none text-sm text-[#085830] bg-gray-50/50 pr-8"
-            >
-              <option value="light">Light (up to 12 units)</option>
-              <option value="normal">Normal (up to 18 units)</option>
-              <option value="heavy">Heavy (up to 21 units)</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
-        </div>
+        
 
         {/* Summary Counts */}
         <div className="flex flex-wrap gap-4 mb-6">
@@ -284,19 +269,21 @@ export function Recommendations() {
               <div className="flex gap-3">
                 {['light', 'normal', 'heavy'].map((load) => {
                   const info = LOAD_LIMITS[load];
-                  const isActive = getLoadLabel(selectedUnits).toLowerCase() === load;
+                  const isSelected = selectedLoad === load;
                   return (
-                    <div
+                    <button
                       key={load}
+                      type="button"
+                      onClick={() => handleLoadChange(load)}
                       className={`flex-1 px-4 py-3 rounded-xl border text-center transition-all ${
-                        isActive
+                        isSelected
                           ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white border-transparent shadow-md'
-                          : 'bg-gray-50 text-gray-500 border-gray-200'
+                          : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-[#136537] hover:text-[#136537] cursor-pointer'
                       }`}
                     >
                       <p className="text-xs font-medium mb-0.5">{info.label}</p>
                       <p className="text-[10px] opacity-80">{info.range}</p>
-                    </div>
+                    </button>
                   );
                 })}
               </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, Upload, Check, X } from 'lucide-react';
+import { ChevronDown, Upload, Check, X, Eye, EyeOff} from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
 import api from '../../lib/api';
+
 
 interface Program {
   id: string;
@@ -37,6 +38,8 @@ export function SignUp() {
   const [idVerified, setIdVerified] = useState(false);
   const [idVerifying, setIdVerifying] = useState(false);
   const [idError, setIdError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const passwordStrength = password.length === 0
     ? null
@@ -226,16 +229,25 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
               <div className="grid grid-cols-2 gap-3">
                 {/* Password with reserved strength indicator space */}
-                <div className="space-y-1">
+               <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={inputClass}
-                    placeholder="••••••••"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`${inputClass} pr-8`}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#136537]"
+                    >
+                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
                   {/* Always reserves h-7 so layout never shifts */}
                   <div className="h-3">
                     {passwordStrength && (
@@ -258,14 +270,23 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 {/* Confirm Password */}
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">Confirm Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`${inputClass} ${confirmPassword && confirmPassword !== password ? 'border-red-300 focus:border-red-400' : ''}`}
-                    placeholder="••••••••"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className={`${inputClass} pr-8 ${confirmPassword && confirmPassword !== password ? 'border-red-300 focus:border-red-400' : ''}`}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#136537]"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
                   <div className="h-3">
                     {confirmPassword && confirmPassword !== password && (
                       <p className="text-xs text-red-500 font-medium">Passwords do not match</p>

@@ -1,9 +1,11 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect  } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
 import { ChevronDown, LogOut, HelpCircle, Info, LayoutDashboard, ListChecks, User, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+
+
 
 export function Layout({ children }: { children: ReactNode }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,6 +13,22 @@ export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { student, logout } = useAuth();
+  
+
+const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+
 
   const handleLogout = () => {
     logout();
@@ -61,8 +79,19 @@ export function Layout({ children }: { children: ReactNode }) {
           Student Information
         </Link>
 
+
+        
+
           {/* App Info */}
-          <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2">
+          <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2 space-y-2">
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-full transition-all"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
             <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830] space-y-1">
               <div className="font-bold mb-2">Contact Support:</div>
               <div className="text-gray-600">
@@ -85,6 +114,13 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex">
+
+      {/* Offline Indicator */}
+      {!isOnline && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
+          ⚠️ You are offline. Some features may not work until you reconnect.
+        </div>
+      )}
 
       {/* Mobile Overlay */}
       {isSidebarOpen && (
@@ -132,16 +168,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <ChevronDown className="w-4 h-4 text-gray-400" />
             </button>
 
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-[#C8E6D4] py-2 z-50">
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" /> Log Out
-                </button>
-              </div>
-            )}
+            
           </div>
         </header>
 
