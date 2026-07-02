@@ -29,7 +29,7 @@ export function Login() {
 
   return (
     <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col items-center justify-center p-4 relative">
-      <div className="absolute top-0 left-0 w-full p-6 sm:px-8 flex justify-start">
+      <div className="absolute top-0 left-0 w-full h-16 px-10 lg:px-8 flex items-center">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
             <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />

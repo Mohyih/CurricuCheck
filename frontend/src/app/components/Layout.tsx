@@ -2,13 +2,13 @@ import { ReactNode, useState, useEffect  } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
-import { ChevronDown, LogOut, HelpCircle, Info, LayoutDashboard, ListChecks, User, Menu, X } from 'lucide-react';
+import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 
 
 export function Layout({ children }: { children: ReactNode }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,29 +83,30 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
         
 
           {/* App Info */}
-          <div className="mt-auto pt-6 border-t border-[#C8E6D4]/50 mx-2 space-y-2">
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-full transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
-            <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830] space-y-1">
-              <div className="font-bold mb-2">Contact Support:</div>
-              <div className="text-gray-600">
-                <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=curricucheck@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline text-[#136537]/90"
-                >
-                  curricucheck@gmail.com
-                </a>
-              </div>
-            </div>
-        </div>
+          <div className="mt-auto mx-2">
+  <button
+    onClick={handleLogout}
+    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-full transition-all"
+  >
+    <LogOut className="w-4 h-4" />
+    Logout
+  </button>
+
+  <div className="border-t border-[#C8E6D4]/50 my-4"></div>
+
+  <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830]">
+    <div className="font-bold mb-2">Contact Support:</div>
+
+    <a
+      href="https://mail.google.com/mail/?view=cm&fs=1&to=curricucheck@gmail.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline text-[#136537]/90"
+    >
+      curricucheck@gmail.com
+    </a>
+  </div>
+</div>
       </nav>
 
 
@@ -118,7 +119,7 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
       {/* Offline Indicator */}
       {!isOnline && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
-          ⚠️ You are offline. Some features may not work until you reconnect.
+          You are offline. Some features may not work until you reconnect.
         </div>
       )}
 
@@ -152,24 +153,17 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
           <div className="flex-1 md:flex-none" />
 
           {/* User dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 md:gap-3 text-left focus:outline-none hover:bg-white/60 p-2 rounded-xl transition-colors"
-            >
-              <div className="text-right">
-                <div className="text-xs md:text-sm font-bold text-[#085830]">
-                  {student ? `${student.last_name}, ${student.first_name}` : 'Loading...'}
-                </div>
-                <div className="text-[10px] md:text-xs text-gray-500">
-                  {student?.programs?.code} — {student?.curriculums?.version}
-                </div>
-              </div>
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            </button>
+          <div className="flex items-center p-2 pr-0">
+  <div className="text-right">
+    <div className="text-xs md:text-sm font-bold text-[#085830]">
+      {student ? `${student.last_name}, ${student.first_name}` : 'Loading...'}
+    </div>
 
-            
-          </div>
+    <div className="text-[10px] md:text-xs text-gray-500">
+      {student?.programs?.code} — {student?.curriculums?.version}
+    </div>
+  </div>
+</div>
         </header>
 
         <div className="flex-1 p-4 md:p-8 overflow-y-auto">{children}</div>
