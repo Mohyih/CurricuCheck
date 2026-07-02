@@ -41,6 +41,20 @@ export function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const passwordStrength = password.length === 0
     ? null
     : password.length < 8
@@ -166,6 +180,14 @@ const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   return (
     <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col md:flex-row overflow-hidden md:h-screen">
+
+
+      {/* Offline Indicator */}
+      {!isOnline && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
+          You are offline. Some features may not work until you reconnect.
+        </div>
+      )}
 
       {/* Left Panel - Branding */}
       <div className="w-full md:w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-6 md:p-8 text-white">

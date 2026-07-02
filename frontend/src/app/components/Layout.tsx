@@ -118,7 +118,7 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
 
       {/* Offline Indicator */}
       {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
           You are offline. Some features may not work until you reconnect.
         </div>
       )}

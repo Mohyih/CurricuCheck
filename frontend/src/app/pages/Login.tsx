@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
 import { Link, useNavigate } from "react-router";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import logoImg from "../../imports/CurricuCheck_Logo.png";
@@ -11,6 +11,19 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +41,8 @@ export function Login() {
   };
 
   return (
+
+  
     <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col items-center justify-center p-4 relative">
       <div className="absolute top-0 left-0 w-full h-16 px-10 lg:px-8 flex items-center">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
@@ -37,6 +52,14 @@ export function Login() {
           <span className="font-bold text-lg text-[#085830] tracking-tight">CurricuCheck</span>
         </Link>
       </div>
+
+{/* Offline Indicator */}
+      {!isOnline && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-red-500 text-white text-center text-xs py-2 font-medium">
+          You are offline. Some features may not work until you reconnect.
+        </div>
+      )}
+
 
       <div className="w-full max-w-md">
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 sm:p-10 border border-[#C8E6D4]/50">
