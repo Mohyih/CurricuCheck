@@ -35,6 +35,8 @@ const STATUS_STYLES: Record<string, string> = {
   not_taken: 'bg-gray-100 text-gray-500',
 };
 
+const STATUS_ICON_STYLE_MOBILE_ONLY = 'hidden sm:inline';
+
 const STATUS_LABELS: Record<string, string> = {
   passed: 'Passed',
   failed: 'Failed',
@@ -107,23 +109,23 @@ export function Checklist() {
               return (
                 <div key={semester} className="border-b border-gray-100 last:border-b-0">
                   <div className="px-6 py-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
-                    <h2 className="font-bold text-[#085830]">
+<h2 className="font-bold text-[#085830] text-sm sm:text-base">
                       {YEAR_LABELS[year]} - {semester}
                     </h2>
-                    <div className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
+<div className="text-[11.5px] sm:text-sm font-medium text-gray-500 bg-white px-2 py-1 rounded-full shadow-sm border border-gray-100">
                       {completedCount}/{semSubjects.length} Completed
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto">
+<div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]">
                     <table className="w-full text-left text-sm whitespace-nowrap">
                       <thead>
                         <tr className="text-gray-500 border-b border-gray-100">
-                          <th className="px-6 py-3 font-medium w-32">Subject Code</th>
-                          <th className="px-6 py-3 font-medium">Subject Name</th>
-                          <th className="px-6 py-3 font-medium w-20 text-center">Units</th>
-                          <th className="px-6 py-3 font-medium w-32 text-center">Grade</th>
-                          <th className="px-6 py-3 font-medium w-36 text-center">Status</th>
+<th className="px-1 sm:px-6 py-2 sm:py-3 font-medium w-20 sm:w-32 text-[11px] sm:text-xs">Subject Code</th>
+<th className="px-1 sm:px-6 py-2 sm:py-3 font-medium text-[11px] sm:text-xs">Subject Name</th>
+<th className="px-1 sm:px-6 py-2 sm:py-3 font-medium w-14 sm:w-20 text-center text-[10px] sm:text-xs">Units</th>
+<th className="px-1 sm:px-6 py-2 sm:py-3 font-medium w-18 sm:w-32 text-center text-[10px] sm:text-xs">Grade</th>
+<th className="px-1 sm:px-6 py-2 sm:py-3 font-medium w-18 sm:w-36 text-center text-[11px] sm:text-xs">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -133,15 +135,15 @@ export function Checklist() {
 
                           return (
                             <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors">
-                              <td className="px-6 py-3 font-semibold text-[#085830]">{subject.code}</td>
-                              <td className="px-6 py-3 text-gray-600 whitespace-normal">{subject.name}</td>
-                              <td className="px-6 py-3 text-center text-gray-600">{subject.units}</td>
-                              <td className="px-6 py-3 text-center text-gray-600">
+<td className="px-2 sm:px-6 py-2 sm:py-3 font-semibold text-[#085830] text-xs sm:text-sm">{subject.code}</td>
+<td className="px-2 sm:px-6 py-2 sm:py-3 text-gray-600 whitespace-normal text-xs sm:text-sm">{subject.name}</td>
+<td className="px-2 sm:px-6 py-2 sm:py-3 text-center text-gray-600 text-[10px] sm:text-sm">{subject.units}</td>
+<td className="px-2 sm:px-6 py-2 sm:py-3 text-center text-gray-600 text-[10px] sm:text-sm">
                                 {record?.grade || '-'}
                               </td>
-                              <td className="px-6 py-3 text-center">
+<td className="px-2 sm:px-6 py-2 sm:py-3 text-center">
                                 <span
-                                  className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold ${STATUS_STYLES[status]}`}
+                                  className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${STATUS_STYLES[status]}`}
                                 >
                                   {STATUS_LABELS[status]}
                                 </span>

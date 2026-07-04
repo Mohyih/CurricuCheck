@@ -252,16 +252,23 @@ export function SubjectEligibility() {
         </div>
 
         {/* Bottom Actions */}
-        <div className="mt-12 mb-8">
-          <div className="w-full border-t border-[#C8E6D4]/50 pt-8 flex justify-between items-center px-4">
-            <Link to="/dashboard/returning" className="text-gray-500 font-medium text-sm flex items-center gap-2 hover:text-[#136537] transition-colors">
-              &lt; Academic Records
-            </Link>
-            <Link to="/dashboard/recommendations" className="text-gray-500 font-medium text-sm flex items-center gap-2 hover:text-[#136537] transition-colors">
-              Recommendations &gt;
-            </Link>
-          </div>
-        </div>
+<div className="mt-12 mb-8 flex flex-col items-center gap-6">
+  <button
+    onClick={() => navigate("/dashboard/recommendations")}
+    className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all"
+  >
+    Recommendations
+  </button>
+
+  <div className="w-full border-t border-[#C8E6D4]/50 pt-8 flex justify-start items-center px-4">
+    <Link
+      to="/dashboard/returning"
+      className="text-gray-500 font-medium text-sm hover:text-[#136537] transition-colors"
+    >
+      &lt; Academic Records
+    </Link>
+  </div>
+</div>
       </div>
     </Layout>
   );

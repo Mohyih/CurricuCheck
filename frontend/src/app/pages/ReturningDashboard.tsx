@@ -48,25 +48,25 @@ const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
     case 'passed':
       return (
-        <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold border border-green-200 shadow-sm w-32">
-          <Check className="w-3 h-3" /> Passed
+        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-200 shadow-sm whitespace-nowrap max-sm:px-1 max-sm:py-[0px] max-sm:text-[8px]">
+          Passed
         </span>
       );
     case 'failed':
       return (
-        <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200 shadow-sm w-32">
-          <X className="w-3 h-3" /> Failed
+        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[10px] font-bold border border-red-200 shadow-sm whitespace-nowrap max-sm:px-1 max-sm:py-[0px] max-sm:text-[8px]">
+          Failed
         </span>
       );
     case 'inc':
       return (
-        <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold border border-orange-200 shadow-sm w-32">
-          <Clock className="w-3 h-3" /> Incomplete
+        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 text-[10px] font-bold border border-orange-200 shadow-sm whitespace-nowrap max-sm:px-1 max-sm:py-[0px] max-sm:text-[8px]">
+          INC
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold w-32 border border-gray-200">
+        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-semibold border border-gray-200 whitespace-nowrap max-sm:px-1 max-sm:py-[0px] max-sm:text-[8px]">
           Not Taken
         </span>
       );
@@ -128,12 +128,10 @@ export function ReturningDashboard() {
   const handleSaveChanges = async () => {
     setSaving(true);
     try {
-      // Save year level if changed
       if (yearLevel !== student?.year_level) {
         await api.patch('/student/me/year-level', { year_level: yearLevel });
       }
 
-      // Build records payload - include subjects the user explicitly touched (including "-" / empty => Not Taken)
       const records = subjects
         .filter((s) => grades[s.id] !== undefined)
         .map((s) => ({
@@ -147,7 +145,7 @@ export function ReturningDashboard() {
         const academicYear = `${now.getFullYear()}-${now.getFullYear() + 1}`;
         await api.post('/student/me/records', {
           academic_year: academicYear,
-          term: 'First Semester', // historical record term; refined later if needed
+          term: 'First Semester',
           records,
         });
       }
@@ -204,13 +202,12 @@ export function ReturningDashboard() {
   const yearLevels = Object.keys(grouped).map(Number).sort((a, b) => a - b);
 
   const hasSummerTerm = subjects.some(
-  (s) => s.year_level === yearLevel && s.semester === 'Summer'
-);
+    (s) => s.year_level === yearLevel && s.semester === 'Summer'
+  );
 
   return (
     <Layout>
       <div className="max-w-[1200px] mx-auto">
-        {/* Year Level Confirmation */}
         <div className="mb-8 bg-white rounded-2xl border border-[#C8E6D4]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 flex items-center justify-between">
           <div>
             <div className="text-sm font-bold text-[#136537]">Current Year Level</div>
@@ -226,7 +223,7 @@ export function ReturningDashboard() {
                 <option value={4}>Fourth Year</option>
               </select>
             ) : (
-              <div className="text-lg font-bold text-[#085830]">{YEAR_LABELS[yearLevel]}</div>
+              <div className="text-base sm:text-lg font-bold text-[#085830]">{YEAR_LABELS[yearLevel]}</div>
             )}
           </div>
           <button
@@ -238,48 +235,42 @@ export function ReturningDashboard() {
           </button>
         </div>
 
-       {/* Progress Indicator */}
-<div className="mb-10 px-2 md:px-0">
-  <div className="relative max-w-4xl mx-auto">
+        <div className="mb-10 px-2 md:px-0">
+          <div className="relative max-w-4xl mx-auto">
+            <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
 
-    {/* Line */}
-    <div className="absolute top-[11px] left-[12.5%] right-[12.5%] h-1 bg-gray-200 rounded-full"></div>
+            <div className="grid grid-cols-4">
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/20 z-10"></div>
+                <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center leading-tight">
+                  Academic<br />Records
+                </span>
+              </div>
 
-    <div className="grid grid-cols-4">
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+                <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+                  Subject<br />Eligibility
+                </span>
+              </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-[#136537] border-4 border-white ring-2 ring-[#136537]/20 z-10"></div>
-        <span className="mt-2 text-xs md:text-sm font-bold text-[#136537] text-center leading-tight">
-          Academic<br />Records
-        </span>
-      </div>
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+                <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+                  Recommendation
+                </span>
+              </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
-        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
-          Subject<br />Eligibility
-        </span>
-      </div>
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
+                <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
+                  Advising<br />Summary
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
-        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
-          Recommendation
-        </span>
-      </div>
-
-      <div className="flex flex-col items-center">
-        <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300 z-10"></div>
-        <span className="mt-2 text-xs md:text-sm text-gray-400 text-center leading-tight">
-          Advising<br />Summary
-        </span>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-        {/* Tables */}
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden mb-8">
           {yearLevels.map((year) =>
             SEMESTER_ORDER.filter((sem) => grouped[year][sem]).map((semester) => {
@@ -291,23 +282,23 @@ export function ReturningDashboard() {
               return (
                 <div key={`${year}-${semester}`} className="border-b border-gray-100 last:border-b-0">
                   <div className="px-6 py-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
-                    <h2 className="font-bold text-[#085830]">
+                    <h2 className="font-bold text-[#085830] text-base sm:text-lg">
                       {YEAR_LABELS[year]} - {semester}
                     </h2>
-                    <div className="text-sm font-bold text-[#136537] bg-[#EEF7F2] px-4 py-1.5 rounded-full shadow-sm border border-[#C8E6D4]">
+                    <div className="text-sm sm:text-sm md:text-sm font-bold text-[#136537] bg-[#EEF7F2] px-3 py-1 rounded-full shadow-sm border border-[#C8E6D4] flex items-center justify-center">
                       {completedCount}/{semSubjects.length} Completed
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-1">
                     <table className="w-full text-left text-sm">
                       <thead>
                         <tr className="text-gray-500 border-b border-gray-100">
-                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-16 md:w-32">Code</th>
-                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm flex-1">Subject</th>
-                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-10 md:w-20 text-center">Units</th>
-                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-20 md:w-36 text-center">Grade</th>
-                          <th className="px-2 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm w-16 md:w-40 text-center">Status</th>
+                          <th className="px-1.5 md:px-6 py-1.5 md:py-3 font-medium text-[10px] md:text-sm w-16 md:w-32">Code</th>
+                          <th className="px-1.5 md:px-6 py-1.5 md:py-3 font-medium text-[10px] md:text-sm flex-1">Subject</th>
+                          <th className="px-1.5 md:px-6 py-1.5 md:py-3 font-medium text-[10px] md:text-sm w-10 md:w-20 text-center">Units</th>
+                          <th className="px-1.5 md:px-6 py-1.5 md:py-3 font-medium text-[10px] md:text-sm w-20 md:w-36 text-center">Grade</th>
+                          <th className="px-1.5 md:px-6 py-1.5 md:py-3 font-medium text-[10px] md:text-sm w-16 md:w-40 text-center">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -316,16 +307,21 @@ export function ReturningDashboard() {
                           const status = interpretGrade(gradeValue);
 
                           return (
-                            <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0">
+                            <tr
+                              key={subject.id}
+                              className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0"
+                            >
                               <td className="px-2 md:px-6 py-2 md:py-3 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
-                              <td className="px-2 md:px-6 py-2 md:py-3 text-gray-600 text-xs md:text-sm"><div className="line-clamp-2 md:line-clamp-none">{subject.name}</div></td>
+                              <td className="px-2 md:px-6 py-2 md:py-3 text-gray-600 text-xs md:text-sm">
+                                <div className="line-clamp-2 md:line-clamp-none">{subject.name}</div>
+                              </td>
                               <td className="px-2 md:px-6 py-2 md:py-3 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>
                               <td className="px-2 md:px-6 py-2 md:py-3">
-                                <div className="relative w-20 md:w-28 mx-auto">
+                                <div className="relative w-12 md:w-28 mx-auto">
                                   <select
                                     value={gradeValue}
                                     onChange={(e) => handleGradeChange(subject.id, e.target.value)}
-                                    className="w-full appearance-none px-2 md:px-3 py-1 md:py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-xs md:text-sm text-center"
+                                    className="w-full appearance-none px-1.5 md:px-3 py-1 md:py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-xs md:text-sm text-center"
                                   >
                                     <option value="">-</option>
                                     {GRADE_OPTIONS.map((g) => (
@@ -370,20 +366,20 @@ export function ReturningDashboard() {
             </h2>
 
             <div className="space-y-3 mb-8">
-  {['1st Semester', '2nd Semester', ...(hasSummerTerm ? ['Summer'] : [])].map((term) => (
-    <button
-      key={term}
-      onClick={() => setSelectedTerm(term)}
-      className={`w-full px-6 py-3.5 rounded-full font-medium transition-all ${
-        selectedTerm === term
-          ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white shadow-md'
-          : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-[#136537]'
-      }`}
-    >
-      {term}
-    </button>
-  ))}
-</div>
+              {['1st Semester', '2nd Semester', ...(hasSummerTerm ? ['Summer'] : [])].map((term) => (
+                <button
+                  key={term}
+                  onClick={() => setSelectedTerm(term)}
+                  className={`w-full px-6 py-3.5 rounded-full font-medium transition-all ${
+                    selectedTerm === term
+                      ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white shadow-md'
+                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-[#136537]'
+                  }`}
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
 
             <button
               onClick={handleConfirmTerm}
@@ -402,3 +398,4 @@ export function ReturningDashboard() {
     </Layout>
   );
 }
+

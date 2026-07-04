@@ -32,14 +32,14 @@ const LOAD_LIMITS: Record<string, { label: string; range: string; max: number }>
 const PriorityBadge = ({ category }: { category: string }) => {
   if (category === 'recommended') {
     return (
-      <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7F2] text-[#136537] text-xs font-bold border border-[#A8D5BB] shadow-sm w-32">
-        <Check className="w-3 h-3" /> Recommended
+      <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#EEF7F2] text-[#136537] text-[10px] font-bold border border-[#A8D5BB] shadow-sm whitespace-nowrap">
+        Recommended
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold border border-orange-200 shadow-sm w-32">
-      <Lightbulb className="w-3 h-3" /> Optional
+    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 text-[10px] font-bold border border-orange-200 shadow-sm whitespace-nowrap">
+      Optional
     </span>
   );
 };
@@ -50,7 +50,8 @@ export function Recommendations() {
   const [data, setData] = useState<RecommendationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedLoad, setSelectedLoad] = useState(student?.preferred_load || 'normal');
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set<string>());
+
 
   const fetchRecommendations = async (load: string) => {
     const targetYearLevel = localStorage.getItem('target_year_level');
@@ -65,7 +66,7 @@ export function Recommendations() {
       });
       setData(res.data);
       // Auto-select all recommended subjects
-      const recommendedIds = new Set(
+      const recommendedIds = new Set<string>(
         res.data.recommended.map((s: Subject) => s.id)
       );
       setSelectedIds(recommendedIds);
