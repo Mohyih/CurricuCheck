@@ -281,11 +281,11 @@ export function ReturningDashboard() {
 
               return (
                 <div key={`${year}-${semester}`} className="border-b border-gray-100 last:border-b-0">
-                  <div className="px-6 py-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
-                    <h2 className="font-bold text-[#085830] text-base sm:text-lg">
+                  <div className="px-4 sm:px-6 py-4 bg-gray-50/50 flex items-center justify-between gap-3 border-b border-gray-100">
+                    <h2 className="font-bold text-[#085830] text-[13.5px] sm:text-lg flex-1">
                       {YEAR_LABELS[year]} - {semester}
                     </h2>
-                    <div className="text-sm sm:text-sm md:text-sm font-bold text-[#136537] bg-[#EEF7F2] px-3 py-1 rounded-full shadow-sm border border-[#C8E6D4] flex items-center justify-center">
+                    <div className="shrink-0 text-[11px] sm:text-sm font-bold text-[#136537] bg-[#EEF7F2] px-2 sm:px-3 py-1 rounded-full border border-[#C8E6D4] shadow-sm whitespace-nowrap">
                       {completedCount}/{semSubjects.length} Completed
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export function ReturningDashboard() {
                                   <select
                                     value={gradeValue}
                                     onChange={(e) => handleGradeChange(subject.id, e.target.value)}
-                                    className="w-full appearance-none px-1.5 md:px-3 py-1 md:py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-xs md:text-sm text-center"
+                                    className="w-full appearance-none px-1.5 md:px-3 py-1 md:py-1.5 rounded-md border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white text-[10px] md:text-sm text-center"
                                   >
                                     <option value="">-</option>
                                     {GRADE_OPTIONS.map((g) => (
