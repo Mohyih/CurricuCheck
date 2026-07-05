@@ -17,7 +17,7 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#C8E6D4] shadow-sm">
-      <div className="w-full px-10 lg:px-8 h-16 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollTo('home')}>
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
             <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />
@@ -38,7 +38,7 @@ export function Navbar() {
 
         {/* Mobile nav buttons */}
         <div className="flex md:hidden items-center gap-2">
-          <button onClick={() => navigate('/login')} className="px-3 py-1.5 text-sm text-[#136537] font-semibold">Log In</button>
+          <button onClick={() => navigate('/login')} className="px-2.5 py-1.5 text-sm text-[#136537] font-semibold">Log In</button>
           <button onClick={() => navigate('/signup')} className="px-3 py-1.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm font-medium">Sign Up</button>
         </div>
       </div>

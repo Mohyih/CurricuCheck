@@ -143,7 +143,7 @@ export function Checklist() {
                               </td>
 <td className="px-2 sm:px-6 py-2 sm:py-3 text-center">
                                 <span
-                                  className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${STATUS_STYLES[status]}`}
+                                  className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs max-sm:text-[8px] font-semibold ${STATUS_STYLES[status]}`}
                                 >
                                   {STATUS_LABELS[status]}
                                 </span>
