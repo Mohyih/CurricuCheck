@@ -169,7 +169,7 @@ export function SignUp() {
       {/* Right Panel */}
       <div className="flex-1 flex items-center justify-center p-4 md:p-4">
 
-        <div className="bg-white w-full max-w-2xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-4">
+        <div className="bg-white w-full max-w-[760px] rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-3.5">
 
           <form className="space-y-3" onSubmit={handleSubmit}>
 
@@ -356,11 +356,13 @@ export function SignUp() {
                   <input type="file" accept="image/*,.pdf" className="hidden" onChange={handleIdUpload} />
                 </label>
 
-                {idError && (
-                  <div className="px-3 py-2 rounded-lg bg-red-50 border border-red-100 text-red-600 text-xs">
-                    {idError}
-                  </div>
-                )}
+               {idError && (
+  <div className="h-[40px] overflow-y-auto rounded-lg border border-red-200 bg-red-50 px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <p className="text-xs leading-5 text-red-600 whitespace-pre-wrap break-words">
+      {idError}
+    </p>
+  </div>
+)}
 
               </div>
             </div>
