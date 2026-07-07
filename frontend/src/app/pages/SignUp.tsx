@@ -316,7 +316,7 @@ export function SignUp() {
             </div>
 
             {/* ID VERIFICATION */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2">
               <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
                 ID Verification
               </h2>
@@ -325,7 +325,7 @@ export function SignUp() {
                 <label className="text-xs font-medium text-gray-700">
                   Upload School ID <span className="text-gray-400 font-normal">(photo or scan)</span>
                 </label>
-                <label className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
+                <label className={`flex items-center gap-3 px-4 py-1 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
                   idVerified
                     ? 'border-[#136537] bg-[#EEF7F2]'
                     : idError
