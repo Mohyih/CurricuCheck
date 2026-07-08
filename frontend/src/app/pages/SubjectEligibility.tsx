@@ -113,8 +113,8 @@ export function SubjectEligibility() {
     );
   }
 
-  const allRows = [
-  ...data.eligible.map((s: any) => ({ ...s, status: s.category === 'nstp' ? 'NSTP' : 'Eligible' })),
+const allRows = [
+  ...data.eligible.map((s: any) => ({ ...s, status: 'Eligible' })),
   ...data.retakes.map((s: any) => ({ ...s, status: 'Retake' })),
   ...data.blocked.map((s: any) => ({ ...s, status: 'Blocked' })),
   ...data.deferred.map((s: any) => ({ ...s, status: 'Deferred' })),
