@@ -114,17 +114,11 @@ export function SubjectEligibility() {
   }
 
   const allRows = [
-    ...data.eligible.map((s) => ({ ...s, status: 'Eligible' })),
-    ...data.retakes.map((s) => ({ ...s, status: 'Retake' })),
-    ...data.blocked.map((s) => ({ ...s, status: 'Blocked' })),
-    ...data.deferred.map((s) => ({ ...s, status: 'Deferred' })),
-      ...data.nstp
-    .filter((s: any) => s.status === 'eligible')
-    .map((s: any) => ({ ...s, status: 'NSTP' })),
-  ...data.nstp
-    .filter((s: any) => s.status === 'blocked')
-    .map((s: any) => ({ ...s, status: 'Blocked' })),
-  ];
+  ...data.eligible.map((s: any) => ({ ...s, status: s.category === 'nstp' ? 'NSTP' : 'Eligible' })),
+  ...data.retakes.map((s: any) => ({ ...s, status: 'Retake' })),
+  ...data.blocked.map((s: any) => ({ ...s, status: 'Blocked' })),
+  ...data.deferred.map((s: any) => ({ ...s, status: 'Deferred' })),
+];
 
   return (
     <Layout>

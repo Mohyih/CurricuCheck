@@ -65,8 +65,7 @@ const evaluate = async (req, res) => {
     const deferred = [];
     const retakes = [];
     const incWarnings = [];
-    const nstp = [];
-
+   
     for (const subject of allSubjects) {
       const alreadyPassed = passedIds.has(subject.id);
       if (alreadyPassed) continue;
@@ -80,23 +79,24 @@ const evaluate = async (req, res) => {
         continue;
       }
 
-      // Handle NSTP separately
       // Handle NSTP
+// Handle NSTP with prerequisite checking
 if (subject.subject_type === 'nstp') {
-  // Check if NSTP 1 is required before NSTP 2
+  if (passedIds.has(subject.id)) continue; // already passed, skip
+
   const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
   const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
 
   if (prereqsMet) {
-    nstp.push({ ...subject, status: 'eligible' });
+    eligible.push({ ...subject, category: 'nstp' });
   } else {
     const missingPrereqs = prereqIds
       .filter(pid => !passedIds.has(pid))
       .map(pid => allSubjects.find(s => s.id === pid)?.code)
       .filter(Boolean);
-    nstp.push({
+    blocked.push({
       ...subject,
-      status: 'blocked',
+      category: 'nstp',
       missing_prerequisites: missingPrereqs,
       missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
     });
@@ -184,7 +184,7 @@ if (subject.subject_type === 'nstp') {
         deferred,
         retakes,
         inc_warnings: incWarnings,
-        nstp
+        nstp: [] // kept for frontend compatibility
       }
     });
 

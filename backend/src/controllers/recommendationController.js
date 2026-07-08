@@ -40,11 +40,17 @@ const recommend = async (req, res) => {
     const eligibleSubjects = [];
 
     for (const subject of allSubjects) {
-      if (passedIds.has(subject.id)) continue;
-      if (subject.subject_type === 'nstp') {
-        eligibleSubjects.push(subject);
-        continue;
-      }
+  if (passedIds.has(subject.id)) continue;
+
+  // NSTP with prerequisite check
+  if (subject.subject_type === 'nstp') {
+    const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+    const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+    if (prereqsMet) {
+      eligibleSubjects.push(subject);
+    }
+    continue;
+  }
 
       const isTargetTerm = subject.year_level === targetYearLevel && subject.semester === target_semester;
       const isRetake = failedIds.has(subject.id);
