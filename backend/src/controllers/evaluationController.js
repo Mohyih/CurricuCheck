@@ -81,10 +81,28 @@ const evaluate = async (req, res) => {
       }
 
       // Handle NSTP separately
-      if (subject.subject_type === 'nstp') {
-        nstp.push(subject);
-        continue;
-      }
+      // Handle NSTP
+if (subject.subject_type === 'nstp') {
+  // Check if NSTP 1 is required before NSTP 2
+  const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+  const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+
+  if (prereqsMet) {
+    nstp.push({ ...subject, status: 'eligible' });
+  } else {
+    const missingPrereqs = prereqIds
+      .filter(pid => !passedIds.has(pid))
+      .map(pid => allSubjects.find(s => s.id === pid)?.code)
+      .filter(Boolean);
+    nstp.push({
+      ...subject,
+      status: 'blocked',
+      missing_prerequisites: missingPrereqs,
+      missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
+    });
+  }
+  continue;
+}
 
       // Check prerequisites
       const prereqIds = subject.prerequisites.map(p => p.required_subject_id);

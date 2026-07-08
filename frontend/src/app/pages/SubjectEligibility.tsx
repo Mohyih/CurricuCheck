@@ -49,6 +49,12 @@ const StatusBadge = ({ status }: { status: string }) => {
           Retake
         </span>
       );
+      case 'NSTP':
+      return (
+        <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 shadow-sm w-28">
+          NSTP
+        </span>
+      );
     default:
       return null;
   }
@@ -112,6 +118,12 @@ export function SubjectEligibility() {
     ...data.retakes.map((s) => ({ ...s, status: 'Retake' })),
     ...data.blocked.map((s) => ({ ...s, status: 'Blocked' })),
     ...data.deferred.map((s) => ({ ...s, status: 'Deferred' })),
+      ...data.nstp
+    .filter((s: any) => s.status === 'eligible')
+    .map((s: any) => ({ ...s, status: 'NSTP' })),
+  ...data.nstp
+    .filter((s: any) => s.status === 'blocked')
+    .map((s: any) => ({ ...s, status: 'Blocked' })),
   ];
 
   return (
@@ -203,6 +215,14 @@ export function SubjectEligibility() {
             </div>
           )}
         </div>
+        {data.nstp.filter((s: any) => s.status === 'eligible').length > 0 && (
+            <div className="bg-white px-5 py-3 rounded-xl border border-indigo-50/50 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div>
+              <span className="font-semibold text-gray-600 text-sm">
+                NSTP: <span className="text-blue-600 font-bold ml-1">{data.nstp.filter((s: any) => s.status === 'eligible').length}</span>
+              </span>
+            </div>
+          )}
 
         {/* Subject Eligibility Table */}
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden">
