@@ -21,6 +21,8 @@ export function StudentInfo() {
   const navigate = useNavigate();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [curriculumsLoading, setCurriculumsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -34,18 +36,34 @@ export function StudentInfo() {
 
   useEffect(() => {
     const fetchPrograms = async () => {
-      const res = await api.get('/curriculum/programs');
-      setPrograms(res.data.programs);
+      try {
+        setProgramsLoading(true);
+        const res = await api.get('/curriculum/programs');
+        setPrograms(res.data.programs);
+      } finally {
+        setProgramsLoading(false);
+      }
     };
     fetchPrograms();
   }, []);
 
   useEffect(() => {
-    if (!student?.program_id) return;
+    if (!student?.program_id) {
+      setCurriculumsLoading(false);
+      setCurriculums([]);
+      return;
+    }
+
     const fetchCurriculums = async () => {
-      const res = await api.get(`/curriculum/programs/${student.program_id}/curriculums`);
-      setCurriculums(res.data.curriculums);
+      try {
+        setCurriculumsLoading(true);
+        const res = await api.get(`/curriculum/programs/${student.program_id}/curriculums`);
+        setCurriculums(res.data.curriculums);
+      } finally {
+        setCurriculumsLoading(false);
+      }
     };
+
     fetchCurriculums();
   }, [student?.program_id]);
 
@@ -148,11 +166,29 @@ export function StudentInfo() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Degree Program</label>
-                <input type="text" value={programs.find((p) => p.id === student.program_id)?.name || ''} disabled className={disabledClass} />
+                <input
+                  type="text"
+                  value={
+                    programsLoading
+                      ? 'Loading...'
+                      : programs.find((p) => p.id === student.program_id)?.name || ''
+                  }
+                  disabled
+                  className={disabledClass}
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Curriculum Version</label>
-                <input type="text" value={curriculums.find((c) => c.id === student.curriculum_id)?.version || ''} disabled className={disabledClass} />
+                <input
+                  type="text"
+                  value={
+                    curriculumsLoading
+                      ? 'Loading...'
+                      : curriculums.find((c) => c.id === student.curriculum_id)?.version || ''
+                  }
+                  disabled
+                  className={disabledClass}
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Year Level</label>
