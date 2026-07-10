@@ -246,12 +246,11 @@ const allRows = [
                         {subject.status === 'Blocked' && subject.missing_reasons && (
                           <div className="mt-1 space-y-0.5">
                             {subject.missing_reasons.map((reason: string, i: number) => (
-                              <div key={i} className="text-xs text-red-500">{reason}</div>
+                              <div key={i} className="text-xs text-red-500">
+                                {reason}
+                              </div>
                             ))}
                           </div>
-                        )}
-                        {subject.status === 'Deferred' && subject.deferred_reason && (
-                          <div className="text-xs text-orange-500 mt-1">{subject.deferred_reason}</div>
                         )}
                       </td>
                       <td className="px-2 md:px-6 py-2 md:py-4 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>

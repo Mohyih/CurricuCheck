@@ -28,6 +28,7 @@ const evaluate = async (req, res) => {
       .select('*')
       .eq('student_id', student.id);
 
+    // Build maps
     const recordMap = {};
     records.forEach(r => { recordMap[r.subject_id] = r; });
 
@@ -44,15 +45,14 @@ const evaluate = async (req, res) => {
     const targetYearLevel = parseInt(target_year_level);
     const targetSemester = target_semester;
 
-    // First pass — find all potentially eligible subject IDs for corequisite checking
+    // First pass — find all eligible subject IDs for this term
+    // (needed for corequisite checking)
     const potentiallyEligibleIds = new Set();
     for (const subject of allSubjects) {
       if (passedIds.has(subject.id)) continue;
-      if (failedIds.has(subject.id)) continue;
-      if (incIds.has(subject.id)) continue;
+      if (subject.subject_type === 'nstp') continue;
 
-      const isTargetTerm = subject.year_level === targetYearLevel &&
-        subject.semester === targetSemester;
+      const isTargetTerm = subject.year_level === targetYearLevel && subject.semester === targetSemester;
       if (!isTargetTerm) continue;
 
       const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
@@ -65,11 +65,10 @@ const evaluate = async (req, res) => {
     const deferred = [];
     const retakes = [];
     const incWarnings = [];
-
+   
     for (const subject of allSubjects) {
-
-      // Skip already passed
-      if (passedIds.has(subject.id)) continue;
+      const alreadyPassed = passedIds.has(subject.id);
+      if (alreadyPassed) continue;
 
       // Handle INC
       if (incIds.has(subject.id)) {
@@ -80,11 +79,46 @@ const evaluate = async (req, res) => {
         continue;
       }
 
+      // Handle NSTP
+// Handle NSTP with prerequisite checking
+// Handle NSTP with prerequisite checking and term filtering
+if (subject.subject_type === 'nstp') {
+  if (passedIds.has(subject.id)) continue;
+
+  const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+  const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+  const isRetake = failedIds.has(subject.id);
+
+  // Only show NSTP subjects that belong to the target semester
+  // OR if it's a retake (failed before, can retake in any sem)
+  const isTargetTerm = subject.semester === targetSemester;
+  if (!isTargetTerm && !isRetake) continue;
+
+  if (prereqsMet) {
+    if (isRetake) {
+      retakes.push({ ...subject, is_retake: true });
+    } else {
+      eligible.push({ ...subject });
+    }
+  } else {
+    const missingPrereqs = prereqIds
+      .filter(pid => !passedIds.has(pid))
+      .map(pid => allSubjects.find(s => s.id === pid)?.code)
+      .filter(Boolean);
+    blocked.push({
+      ...subject,
+      missing_prerequisites: missingPrereqs,
+      missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
+    });
+  }
+  continue;
+}
+
       // Check prerequisites
       const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
       const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
 
-      // Check standing requirement (STRICT MODE)
+      // Check standing requirement
       const standingMet = !subject.standing_requirement ||
         targetYearLevel >= subject.standing_requirement;
 
@@ -94,44 +128,20 @@ const evaluate = async (req, res) => {
         passedIds.has(cid) || potentiallyEligibleIds.has(cid)
       );
 
-      // Is this subject offered during the target term?
-      const isOfferedThisTerm = subject.year_level === targetYearLevel &&
+      const isTargetTerm = subject.year_level === targetYearLevel &&
         subject.semester === targetSemester;
 
-      // Handle NSTP with term filtering
-      if (subject.subject_type === 'nstp') {
-        const isRetake = failedIds.has(subject.id);
-        const isTargetSem = subject.semester === targetSemester;
-
-        if (!isTargetSem && !isRetake) continue;
-
-        if (!prereqsMet) {
-          const missingPrereqs = prereqIds
-            .filter(pid => !passedIds.has(pid))
-            .map(pid => allSubjects.find(s => s.id === pid)?.code)
-            .filter(Boolean);
-          blocked.push({
-            ...subject,
-            missing_prerequisites: missingPrereqs,
-            missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
-          });
-        } else if (isRetake) {
-          if (isTargetSem) {
-            retakes.push({ ...subject, is_retake: true });
-          } else {
-            deferred.push({
-              ...subject,
-              is_retake: true,
-              deferred_reason: 'NSTP retake not offered this semester'
-            });
-          }
-        } else {
-          eligible.push(subject);
+      // Handle failed subjects (retakes)
+      if (failedIds.has(subject.id)) {
+        if (prereqsMet && standingMet && coreqsMet && isTargetTerm) {
+          retakes.push({ ...subject, is_retake: true });
         }
         continue;
       }
 
-      // Build missing reasons for non-NSTP subjects
+      if (!isTargetTerm) continue;
+
+      // Build missing reasons
       const missingReasons = [];
 
       if (!prereqsMet) {
@@ -154,35 +164,7 @@ const evaluate = async (req, res) => {
         missingReasons.push(`Must be taken with: ${missingCoreqs.join(', ')}`);
       }
 
-      // Handle failed subjects (retakes)
-      if (failedIds.has(subject.id)) {
-        if (missingReasons.length > 0) {
-          // Failed + blocked by prereqs/standing/coreqs → Blocked
-          blocked.push({
-            ...subject,
-            missing_prerequisites: prereqIds
-              .filter(pid => !passedIds.has(pid))
-              .map(pid => allSubjects.find(s => s.id === pid)?.code)
-              .filter(Boolean),
-            missing_reasons: missingReasons
-          });
-        } else if (isOfferedThisTerm) {
-          // Failed + all checks pass + offered this term → Retake
-          retakes.push({ ...subject, is_retake: true });
-        } else {
-          // Failed + all checks pass + NOT offered this term → Deferred Retake
-          deferred.push({
-            ...subject,
-            is_retake: true,
-            deferred_reason: 'Previously failed — not offered this semester'
-          });
-        }
-        continue;
-      }
-
-      // Non-failed subjects
       if (missingReasons.length > 0) {
-        // Blocked — prerequisites/standing/coreqs not met
         blocked.push({
           ...subject,
           missing_prerequisites: prereqIds
@@ -191,15 +173,8 @@ const evaluate = async (req, res) => {
             .filter(Boolean),
           missing_reasons: missingReasons
         });
-      } else if (isOfferedThisTerm) {
-        // All checks pass + offered this term → Eligible
-        eligible.push(subject);
       } else {
-        // All checks pass + NOT offered this term → Deferred
-        deferred.push({
-          ...subject,
-          deferred_reason: 'Prerequisites met but not offered this semester'
-        });
+        eligible.push(subject);
       }
     }
 
@@ -219,7 +194,7 @@ const evaluate = async (req, res) => {
         deferred,
         retakes,
         inc_warnings: incWarnings,
-        nstp: []
+        nstp: [] // kept for frontend compatibility
       }
     });
 
