@@ -157,15 +157,23 @@ const evaluate = async (req, res) => {
       // Handle failed subjects (retakes)
       if (failedIds.has(subject.id)) {
         if (missingReasons.length > 0) {
-          // Failed + blocked by prereqs/standing/coreqs → Blocked
-          blocked.push({
-            ...subject,
-            missing_prerequisites: prereqIds
-              .filter(pid => !passedIds.has(pid))
-              .map(pid => allSubjects.find(s => s.id === pid)?.code)
-              .filter(Boolean),
-            missing_reasons: missingReasons
-          });
+          // Only show blocked failed subjects if they belong to target term
+          if (isOfferedThisTerm) {
+            blocked.push({
+              ...subject,
+              missing_prerequisites: prereqIds
+                .filter(pid => !passedIds.has(pid))
+                .map(pid => allSubjects.find(s => s.id === pid)?.code)
+                .filter(Boolean),
+              missing_reasons: missingReasons
+            });
+          } else {
+            deferred.push({
+              ...subject,
+              is_retake: true,
+              deferred_reason: 'Previously failed — prerequisites not met and not offered this semester'
+            });
+          }
         } else if (isOfferedThisTerm) {
           // Failed + all checks pass + offered this term → Retake
           retakes.push({ ...subject, is_retake: true });
@@ -182,20 +190,26 @@ const evaluate = async (req, res) => {
 
       // Non-failed subjects
       if (missingReasons.length > 0) {
-        // Blocked — prerequisites/standing/coreqs not met
-        blocked.push({
-          ...subject,
-          missing_prerequisites: prereqIds
-            .filter(pid => !passedIds.has(pid))
-            .map(pid => allSubjects.find(s => s.id === pid)?.code)
-            .filter(Boolean),
-          missing_reasons: missingReasons
-        });
+        // Only block subjects that belong to the target term
+        if (isOfferedThisTerm) {
+          blocked.push({
+            ...subject,
+            missing_prerequisites: prereqIds
+              .filter(pid => !passedIds.has(pid))
+              .map(pid => allSubjects.find(s => s.id === pid)?.code)
+              .filter(Boolean),
+            missing_reasons: missingReasons
+          });
+        } else {
+          // Wrong term + blocked → just defer silently, don't show
+          deferred.push({
+            ...subject,
+            deferred_reason: 'Prerequisites not yet met — not offered this semester'
+          });
+        }
       } else if (isOfferedThisTerm) {
-        // All checks pass + offered this term → Eligible
         eligible.push(subject);
       } else {
-        // All checks pass + NOT offered this term → Deferred
         deferred.push({
           ...subject,
           deferred_reason: 'Prerequisites met but not offered this semester'
