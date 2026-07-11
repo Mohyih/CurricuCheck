@@ -113,7 +113,7 @@ export function AdvisingSummary() {
     doc.setFont('helvetica', 'bold');
     doc.text('Preferred Load:', 110, 50);
     doc.setFont('helvetica', 'normal');
-    doc.text(student?.preferred_load || '', 141, 50);
+    doc.text(localStorage.getItem('session_load') || student?.preferred_load || '', 141, 50);
 
     const tableData = confirmedSubjects.map((s) => [s.code, s.name, s.units.toString()]);
     tableData.push(['', 'Total Units:', confirmedUnits.toString()]);
@@ -229,7 +229,9 @@ export function AdvisingSummary() {
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-1">Preferred Academic Load</p>
-                <p className="text-sm font-semibold text-[#085830] capitalize">{student?.preferred_load}</p>
+                <p className="text-sm font-semibold text-[#085830] capitalize">
+                  {localStorage.getItem('session_load') || student?.preferred_load}
+                </p>
               </div>
             </div>
           </div>
@@ -319,8 +321,8 @@ export function AdvisingSummary() {
                   <span><span className="font-semibold text-gray-700">Total Units:</span> {confirmedUnits} ({getLoadLabel(confirmedUnits)} load)</span>
                 </li>
                 <li className="flex items-start gap-2.5 text-sm text-gray-600">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#F2AB50] mt-1.5 flex-shrink-0"></div>
-                  <span><span className="font-semibold text-gray-700">Preferred Load:</span> <span className="capitalize">{student?.preferred_load}</span></span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#A8C957] mt-1.5 flex-shrink-0"></div>
+                  <span><span className="font-semibold text-gray-700">Preferred Load:</span> <span className="capitalize">{localStorage.getItem('session_load') || student?.preferred_load}</span></span>
                 </li>
               </ul>
             </div>

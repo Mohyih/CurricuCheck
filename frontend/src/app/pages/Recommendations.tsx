@@ -78,11 +78,13 @@ export function Recommendations() {
   };
 
   useEffect(() => {
+    localStorage.setItem('session_load', selectedLoad);
     fetchRecommendations(selectedLoad);
   }, []);
 
   const handleLoadChange = (load: string) => {
     setSelectedLoad(load);
+    localStorage.setItem('session_load', load);
     setLoading(true);
     fetchRecommendations(load);
   };
@@ -313,7 +315,7 @@ export function Recommendations() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500 mb-1">Preferred Load</p>
-                  <p className="text-sm font-semibold text-[#085830] capitalize">{student?.preferred_load} ({LOAD_LIMITS[student?.preferred_load || 'normal'].range})</p>
+                  <p className="text-sm font-semibold text-[#085830] capitalize">{selectedLoad} ({LOAD_LIMITS[selectedLoad].range})</p>
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500 mb-1">Selected Units</p>
