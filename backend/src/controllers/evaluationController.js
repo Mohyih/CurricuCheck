@@ -189,31 +189,29 @@ const evaluate = async (req, res) => {
       }
 
       // Non-failed subjects
-      if (missingReasons.length > 0) {
-        // Only block subjects that belong to the target term
-        if (isOfferedThisTerm) {
-          blocked.push({
-            ...subject,
-            missing_prerequisites: prereqIds
-              .filter(pid => !passedIds.has(pid))
-              .map(pid => allSubjects.find(s => s.id === pid)?.code)
-              .filter(Boolean),
-            missing_reasons: missingReasons
-          });
-        } else {
-          // Wrong term + blocked → just defer silently, don't show
+      if (!isOfferedThisTerm) {
+        // Not this term — only show if prerequisites ARE met (Deferred)
+        // If prerequisites NOT met → hide completely
+        if (missingReasons.length === 0) {
           deferred.push({
             ...subject,
-            deferred_reason: 'Prerequisites not yet met — not offered this semester'
+            deferred_reason: 'Prerequisites met but not offered this semester'
           });
         }
-      } else if (isOfferedThisTerm) {
-        eligible.push(subject);
-      } else {
-        deferred.push({
+        continue;
+      }
+
+      if (missingReasons.length > 0) {
+        blocked.push({
           ...subject,
-          deferred_reason: 'Prerequisites met but not offered this semester'
+          missing_prerequisites: prereqIds
+            .filter(pid => !passedIds.has(pid))
+            .map(pid => allSubjects.find(s => s.id === pid)?.code)
+            .filter(Boolean),
+          missing_reasons: missingReasons
         });
+      } else {
+        eligible.push(subject);
       }
     }
 
