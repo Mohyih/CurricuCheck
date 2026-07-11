@@ -98,14 +98,12 @@ const evaluate = async (req, res) => {
       const isOfferedThisTerm = subject.year_level === targetYearLevel &&
         subject.semester === targetSemester;
 
-      // Handle NSTP with term filtering
+      // Handle NSTP — always available every semester
       if (subject.subject_type === 'nstp') {
-        const isRetake = failedIds.has(subject.id);
-        const isTargetSem = subject.semester === targetSemester;
-
-        if (!isTargetSem && !isRetake) continue;
+        if (passedIds.has(subject.id)) continue; // already passed, skip
 
         if (!prereqsMet) {
+          // NSTP 2 blocked because NSTP 1 not passed yet
           const missingPrereqs = prereqIds
             .filter(pid => !passedIds.has(pid))
             .map(pid => allSubjects.find(s => s.id === pid)?.code)
@@ -115,17 +113,11 @@ const evaluate = async (req, res) => {
             missing_prerequisites: missingPrereqs,
             missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
           });
-        } else if (isRetake) {
-          if (isTargetSem) {
-            retakes.push({ ...subject, is_retake: true });
-          } else {
-            deferred.push({
-              ...subject,
-              is_retake: true,
-              deferred_reason: 'NSTP retake not offered this semester'
-            });
-          }
+        } else if (failedIds.has(subject.id)) {
+          // Previously failed NSTP → Retake (always available)
+          retakes.push({ ...subject, is_retake: true });
         } else {
+          // Not yet taken → Eligible (always available)
           eligible.push(subject);
         }
         continue;
