@@ -185,9 +185,13 @@ const evaluate = async (req, res) => {
         // Not this term — only show if prerequisites ARE met (Deferred)
         // If prerequisites NOT met → hide completely
         if (missingReasons.length === 0) {
+          const sameSemester = subject.semester === targetSemester;
           deferred.push({
             ...subject,
-            deferred_reason: `Prerequisites met — Year ${subject.year_level} ${subject.semester} subject`
+            same_semester: sameSemester,
+            deferred_reason: sameSemester
+              ? `Prerequisites met — Year ${subject.year_level} ${subject.semester} subject (different year level)`
+              : `Prerequisites met — Year ${subject.year_level} ${subject.semester} subject`
           });
         }
         continue;

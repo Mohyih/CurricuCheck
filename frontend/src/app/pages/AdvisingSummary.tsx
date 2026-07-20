@@ -31,8 +31,9 @@ export function AdvisingSummary() {
   const navigate = useNavigate();
   const { student } = useAuth();
   const [summaryData, setSummaryData] = useState<AdvisingSummaryData | null>(null);
-  const [confirmedSubjects, setConfirmedSubjects] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(true);
+const [confirmedSubjects, setConfirmedSubjects] = useState<Subject[]>([]);
+const [loading, setLoading] = useState(true);
+const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
   const targetSemester = localStorage.getItem('target_semester') || '';
   const targetYearLevel = localStorage.getItem('target_year_level') || '';
@@ -44,21 +45,37 @@ export function AdvisingSummary() {
 
     // Fetch advising summary from backend
     const fetchSummary = async () => {
-      try {
-        const res = await api.get('/evaluation/advising-summary', {
-          params: {
-            target_year_level: targetYearLevel,
-            target_semester: targetSemester,
-          },
-        });
-        setSummaryData(res.data);
-      } catch (err) {
-        console.error('Failed to load advising summary', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSummary();
+  try {
+    const [summaryRes, evalRes] = await Promise.all([
+      api.get('/evaluation/advising-summary', {
+        params: {
+          target_year_level: targetYearLevel,
+          target_semester: targetSemester,
+        },
+      }),
+      api.get('/evaluation/evaluate', {
+        params: {
+          target_year_level: targetYearLevel,
+          target_semester: targetSemester,
+        },
+      }),
+    ]);
+
+    setSummaryData(summaryRes.data);
+
+    const deferred = evalRes.data.evaluation.deferred || [];
+    setSameSemesterDeferred(
+      deferred.filter((s: any) => s.same_semester === true)
+    );
+
+  } catch (err) {
+    console.error('Failed to load advising summary', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+fetchSummary();
   }, []);
 
   const confirmedUnits = confirmedSubjects
@@ -326,6 +343,43 @@ export function AdvisingSummary() {
                 </li>
               </ul>
             </div>
+
+            {sameSemesterDeferred.length > 0 && (
+  <div className="pt-6 border-t border-gray-100">
+    <h3 className="text-sm font-bold text-[#136537] mb-3 flex items-center gap-2">
+      <AlertCircle className="w-4 h-4 text-amber-500" />
+      Subjects for Adviser Consultation:
+    </h3>
+
+    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+      <p className="text-xs text-amber-700">
+        The following subjects are offered this semester but belong to a
+        different year level. These are not included in your confirmed
+        enrollment — please consult your academic adviser to determine if
+        you are eligible to enroll in them this term.
+      </p>
+
+      <ul className="space-y-2">
+        {sameSemesterDeferred.map((s: any) => (
+          <li
+            key={s.id}
+            className="flex items-start gap-2 text-xs text-amber-700"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1"></div>
+
+            <span>
+              <span className="font-semibold">{s.code}</span> — {s.name}
+
+              <span className="text-amber-500 ml-1">
+                ({s.units} units · {s.deferred_reason})
+              </span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+)}
 
             <div className="pt-6 border-t border-gray-100">
               <h3 className="text-sm font-bold text-[#136537] mb-3">Scope Disclaimer:</h3>

@@ -48,34 +48,56 @@ export function Recommendations() {
   const navigate = useNavigate();
   const { student } = useAuth();
   const [data, setData] = useState<RecommendationData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedLoad, setSelectedLoad] = useState(student?.preferred_load || 'normal');
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set<string>());
+const [loading, setLoading] = useState(true);
+const [selectedLoad, setSelectedLoad] = useState(student?.preferred_load || 'normal');
+const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set<string>());
+const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
 
   const fetchRecommendations = async (load: string) => {
-    const targetYearLevel = localStorage.getItem('target_year_level');
-    const targetSemester = localStorage.getItem('target_semester');
-    if (!targetYearLevel || !targetSemester) {
-      navigate('/dashboard/returning');
-      return;
-    }
-    try {
-      const res = await api.get('/recommendation/recommend', {
-        params: { target_year_level: targetYearLevel, target_semester: targetSemester, load },
-      });
-      setData(res.data);
-      // Auto-select all recommended subjects
-      const recommendedIds = new Set<string>(
-        res.data.recommended.map((s: Subject) => s.id)
-      );
-      setSelectedIds(recommendedIds);
-    } catch (err) {
-      console.error('Failed to load recommendations', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const targetYearLevel = localStorage.getItem('target_year_level');
+  const targetSemester = localStorage.getItem('target_semester');
+
+  if (!targetYearLevel || !targetSemester) {
+    navigate('/dashboard/returning');
+    return;
+  }
+
+  try {
+    const [recRes, evalRes] = await Promise.all([
+      api.get('/recommendation/recommend', {
+        params: {
+          target_year_level: targetYearLevel,
+          target_semester: targetSemester,
+          load,
+        },
+      }),
+      api.get('/evaluation/evaluate', {
+        params: {
+          target_year_level: targetYearLevel,
+          target_semester: targetSemester,
+        },
+      }),
+    ]);
+
+    setData(recRes.data);
+
+    const recommendedIds = new Set<string>(
+      recRes.data.recommended.map((s: Subject) => s.id)
+    );
+    setSelectedIds(recommendedIds);
+
+    // Filter deferred subjects that are offered this semester
+    const deferred = evalRes.data.evaluation.deferred || [];
+    setSameSemesterDeferred(
+      deferred.filter((s: any) => s.same_semester === true)
+    );
+  } catch (err) {
+    console.error('Failed to load recommendations', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     localStorage.setItem('session_load', selectedLoad);
@@ -340,6 +362,48 @@ export function Recommendations() {
             </div>
           </div>
         </div>
+
+        {/* Same Semester Deferred Info Banner */}
+{sameSemesterDeferred.length > 0 && (
+  <div className="bg-amber-50 border border-amber-200 rounded-[1.25rem] p-6 mb-4">
+    <div className="flex items-start gap-3">
+      <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+
+      <div>
+        <p className="text-sm font-bold text-amber-700 mb-2">
+          Subjects Available This Semester — Adviser Confirmation Required
+        </p>
+
+        <p className="text-xs text-amber-600 mb-3">
+          The following subjects are offered this semester but belong to a
+          different year level. You may be eligible to enroll — consult your
+          academic adviser for confirmation.
+        </p>
+
+        <div className="space-y-1">
+          {sameSemesterDeferred.map((s: any) => (
+            <div
+              key={s.id}
+              className="flex items-center gap-2 text-xs text-amber-700"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></div>
+
+              <span className="font-medium">{s.code}</span>
+
+              <span className="text-amber-600">
+                — {s.name}
+              </span>
+
+              <span className="text-amber-500">
+                ({s.units} units)
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Bottom Actions */}
         <div className="mt-12 mb-8 flex flex-col items-center gap-6">
