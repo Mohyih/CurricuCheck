@@ -298,7 +298,7 @@ export function SubjectEligibility() {
                         <td className="px-2 md:px-6 py-2 md:py-4 text-gray-600 text-xs md:text-sm">
                           <div className="line-clamp-2 md:line-clamp-none">{subject.name}</div>
                           {subject.deferred_reason && (
-                            <div className="text-xs text-orange-500 mt-1">{subject.deferred_reason}</div>
+                            <div className="text-xs text-gray-600 mt-1">{subject.deferred_reason}</div>
                           )}
                         </td>
                         <td className="px-2 md:px-6 py-2 md:py-4 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>

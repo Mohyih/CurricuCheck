@@ -375,9 +375,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
         </p>
 
         <p className="text-xs text-amber-600 mb-3">
-          The following subjects are offered this semester but belong to a
-          different year level. You may be eligible to enroll — consult your
-          academic adviser for confirmation.
+          The following deferred subjects have satisfied all prerequisite requirements and are offered this semester. Depending on departmental policies and adviser approval, these subjects may also be considered for enrollment.
         </p>
 
         <div className="space-y-1">
