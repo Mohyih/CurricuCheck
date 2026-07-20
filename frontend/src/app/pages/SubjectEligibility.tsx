@@ -44,12 +44,17 @@ const StatusBadge = ({ status }: { status: string }) => {
           <Clock className="w-3 h-3" /> Deferred
         </span>
       );
-    case 'Retake':
-      return (
-        <span className="inline-flex items-center justify-center gap-1 px-2 md:px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200 shadow-sm w-20 md:w-28">
-          Retake
-        </span>
-      );
+   case 'Retake':
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="inline-flex items-center justify-center gap-1 px-2 md:px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold border border-green-200 shadow-sm w-20 md:w-28">
+        <Check className="w-3 h-3" /> Eligible
+      </span>
+      <span className="w-20 md:w-28 text-center translate-x-1 text-[10px] text-purple-600 font-medium">
+  Retake
+</span>
+    </div>
+  );
     default:
       return null;
   }
@@ -265,9 +270,9 @@ export function SubjectEligibility() {
             >
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-orange-500" />
-<span className="text-xs md:text-sm font-bold text-orange-700">
-                  {deferredRows.length} Deferred Subject{deferredRows.length > 1 ? 's' : ''} — Prerequisites met but not offered this term
-                </span>
+<span className="text-sm font-bold text-orange-700">
+                {deferredRows.length} Deferred Subject{deferredRows.length > 1 ? 's' : ''} — Subjects from other terms, consult your adviser
+              </span>
               </div>
               {showDeferred
                 ? <ChevronUp className="w-4 h-4 text-orange-400" />

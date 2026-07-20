@@ -163,7 +163,7 @@ const evaluate = async (req, res) => {
             deferred.push({
               ...subject,
               is_retake: true,
-              deferred_reason: 'Previously failed — prerequisites not met and not offered this semester'
+              deferred_reason: `Prerequisites not yet met — Year ${subject.year_level} ${subject.semester} subject`
             });
           }
         } else if (isOfferedThisTerm) {
@@ -174,7 +174,7 @@ const evaluate = async (req, res) => {
           deferred.push({
             ...subject,
             is_retake: true,
-            deferred_reason: 'Previously failed — not offered this semester'
+            deferred_reason: `Previously failed — Year ${subject.year_level} ${subject.semester} subject`
           });
         }
         continue;
@@ -187,7 +187,7 @@ const evaluate = async (req, res) => {
         if (missingReasons.length === 0) {
           deferred.push({
             ...subject,
-            deferred_reason: 'Prerequisites met but not offered this semester'
+            deferred_reason: `Prerequisites met — Year ${subject.year_level} ${subject.semester} subject`
           });
         }
         continue;
