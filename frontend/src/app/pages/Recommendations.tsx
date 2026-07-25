@@ -379,22 +379,30 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
           The following deferred subjects have satisfied all prerequisite requirements and are offered this semester. Depending on departmental policies and adviser approval, these subjects may also be considered for enrollment.
         </p>
 
-        <div className="space-y-1">
-          {sameSemesterDeferred.map((s: any) => (
-                    <div key={s.id} className="flex items-center gap-2 text-xs text-amber-700">
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></div>
-                      <span className="font-medium">{s.code}</span>
-                      <span className="text-amber-600">— {s.name}</span>
-                      <span className="text-amber-500 ml-1">
-                        ({s.units} units ·{' '}
-                        {s.same_semester
-                          ? 'Available this semester — consult adviser'
-                          : 'Previously failed'}
-                        )
-                      </span>
-                    </div>
-                  ))}
-        </div>
+        <div className="space-y-2">
+  {sameSemesterDeferred.map((s: any) => (
+    <div
+      key={s.id}
+      className="flex items-start gap-2 text-xs text-amber-700"
+    >
+      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></div>
+
+      <p className="leading-5 break-words">
+        <span className="font-medium">{s.code}</span>
+        {" — "}
+        <span className="text-amber-600">{s.name}</span>
+        <span className="text-amber-500">
+          {" "}
+          ({s.units} units ·{" "}
+          {s.same_semester
+            ? "Available this semester — consult adviser"
+            : "Previously failed"}
+          )
+        </span>
+      </p>
+    </div>
+  ))}
+</div>
       </div>
     </div>
   </div>
