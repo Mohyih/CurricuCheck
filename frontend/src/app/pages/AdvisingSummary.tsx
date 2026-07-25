@@ -161,7 +161,7 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
     doc.setFontSize(7);
     doc.setTextColor(120, 120, 120);
     doc.text(
-      'CurricuCheck — Wesleyan University Philippines · College of Engineering and Computer Technology',
+      'CurricuCheck',
       PAGE_WIDTH / 2,
       PAGE_HEIGHT - FOOTER_H + 5,
       { align: 'center' }
