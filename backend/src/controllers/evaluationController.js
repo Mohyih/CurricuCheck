@@ -44,12 +44,25 @@ const evaluate = async (req, res) => {
     const targetYearLevel = parseInt(target_year_level);
     const targetSemester = target_semester;
 
+     // Detect program for department-specific rules
+    const programCode = student.programs?.code || '';
+    const isIT = programCode === 'BSIT';
+
+    // IT strict standing rule — subjects beyond student's year level are hidden
+    const itStandingCheck = (subjectYearLevel) => {
+      if (!isIT) return true; // CPE and ECE don't use this rule
+      return subjectYearLevel <= targetYearLevel;
+    };
+
     // First pass — find all potentially eligible subject IDs for corequisite checking
     const potentiallyEligibleIds = new Set();
-    for (const subject of allSubjects) {
+     for (const subject of allSubjects) {
       if (passedIds.has(subject.id)) continue;
       if (failedIds.has(subject.id)) continue;
       if (incIds.has(subject.id)) continue;
+
+      // IT strict standing — skip subjects beyond student's year level
+      if (!itStandingCheck(subject.year_level)) continue;
 
       const isTargetTerm = subject.year_level === targetYearLevel &&
         subject.semester === targetSemester;
@@ -125,6 +138,12 @@ const evaluate = async (req, res) => {
 
       // Build missing reasons for non-NSTP subjects
       const missingReasons = [];
+
+       // IT strict standing — block subjects beyond student's year level
+      if (isIT && subject.year_level > targetYearLevel) {
+        // For IT, subjects beyond year level are completely hidden
+        continue;
+      }
 
       if (!prereqsMet) {
         const missingPrereqs = prereqIds
