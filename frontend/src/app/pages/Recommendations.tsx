@@ -395,7 +395,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
           {" "}
           ({s.units} units ·{" "}
           {s.same_semester
-            ? "Available this semester — consult adviser"
+            ? "Available this semester"
             : "Previously failed"}
           )
         </span>
