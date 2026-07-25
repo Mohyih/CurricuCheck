@@ -88,10 +88,11 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
     setSelectedIds(recommendedIds);
 
     // Filter deferred subjects that are offered this semester
-    const deferred = evalRes.data.evaluation.deferred || [];
-    setSameSemesterDeferred(
-      deferred.filter((s: any) => s.same_semester === true)
-    );
+    // Include both same-semester deferred AND failed-wrong-term deferred
+      const deferred = evalRes.data.evaluation.deferred || [];
+      setSameSemesterDeferred(deferred.filter((s: any) =>
+        s.same_semester === true || s.is_retake === true
+      ));
   } catch (err) {
     console.error('Failed to load recommendations', err);
   } finally {
@@ -380,23 +381,19 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
         <div className="space-y-1">
           {sameSemesterDeferred.map((s: any) => (
-            <div
-              key={s.id}
-              className="flex items-center gap-2 text-xs text-amber-700"
-            >
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></div>
-
-              <span className="font-medium">{s.code}</span>
-
-              <span className="text-amber-600">
-                — {s.name}
-              </span>
-
-              <span className="text-amber-500">
-                ({s.units} units)
-              </span>
-            </div>
-          ))}
+                    <div key={s.id} className="flex items-center gap-2 text-xs text-amber-700">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></div>
+                      <span className="font-medium">{s.code}</span>
+                      <span className="text-amber-600">— {s.name}</span>
+                      <span className="text-amber-500 ml-1">
+                        ({s.units} units ·{' '}
+                        {s.same_semester
+                          ? 'Available this semester — consult adviser'
+                          : 'Previously failed'}
+                        )
+                      </span>
+                    </div>
+                  ))}
         </div>
       </div>
     </div>

@@ -64,9 +64,9 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
     setSummaryData(summaryRes.data);
 
     const deferred = evalRes.data.evaluation.deferred || [];
-    setSameSemesterDeferred(
-      deferred.filter((s: any) => s.same_semester === true)
-    );
+        setSameSemesterDeferred(deferred.filter((s: any) =>
+          s.same_semester === true || s.is_retake === true
+        ));
 
   } catch (err) {
     console.error('Failed to load advising summary', err);
@@ -361,21 +361,20 @@ fetchSummary();
 
       <ul className="space-y-2">
         {sameSemesterDeferred.map((s: any) => (
-          <li
-            key={s.id}
-            className="flex items-start gap-2 text-xs text-amber-700"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1"></div>
-
-            <span>
-              <span className="font-semibold">{s.code}</span> — {s.name}
-
-              <span className="text-amber-500 ml-1">
-                ({s.units} units · {s.deferred_reason})
-              </span>
-            </span>
-          </li>
-        ))}
+                    <li key={s.id} className="flex items-start gap-2 text-xs text-amber-700">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1"></div>
+                      <span>
+                        <span className="font-semibold">{s.code}</span> — {s.name}
+                        <span className="text-amber-500 ml-1">
+                          ({s.units} units ·{' '}
+                          {s.same_semester
+                            ? 'Available this semester — consult adviser'
+                            : 'Previously failed'}
+                          )
+                        </span>
+                      </span>
+                    </li>
+                  ))}
       </ul>
     </div>
   </div>
