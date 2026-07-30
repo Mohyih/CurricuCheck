@@ -7,6 +7,7 @@ interface Student {
   first_name: string;
   last_name: string;
   middle_name: string | null;
+  email: string | null;
   program_id: string;
   curriculum_id: string;
   year_level: number;

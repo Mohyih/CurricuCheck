@@ -152,6 +152,10 @@ export function StudentInfo() {
                 <label className="text-sm font-medium text-gray-700">Student ID Number</label>
                 <input type="text" value={student.student_number} disabled className={disabledClass} />
               </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">Email Address</label>
+                <input type="text" value={student.email || '—'} disabled className={`w-full truncate ${disabledClass}`} />
+              </div>
             </div>
           </section>
 
@@ -174,7 +178,7 @@ export function StudentInfo() {
                       : programs.find((p) => p.id === student.program_id)?.name || ''
                   }
                   disabled
-                  className={disabledClass}
+                  className={`w-full truncate ${disabledClass}`}
                 />
               </div>
               <div className="space-y-1.5">
@@ -203,16 +207,20 @@ export function StudentInfo() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Preferred Academic Load</label>
-                <div className="relative">
-                  <select value={preferredLoad} onChange={(e) => setPreferredLoad(e.target.value)} className={selectClass}>
-                    <option value="light">Light (up to 12 units)</option>
-                    <option value="normal">Normal (up to 18 units)</option>
-                    <option value="heavy">Heavy (up to 21 units)</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
+  <label className="text-sm font-medium text-gray-700">Preferred Academic Load</label>
+  <div className="relative">
+    <select 
+      value={preferredLoad} 
+      onChange={(e) => setPreferredLoad(e.target.value)} 
+      className={`w-full truncate pr-10 appearance-none ${selectClass}`}
+    >
+      <option value="light">Light (up to 12 units)</option>
+      <option value="normal">Normal (up to 18 units)</option>
+      <option value="heavy">Heavy (up to 21 units)</option>
+    </select>
+    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+  </div>
+</div>
             </div>
           </section>
 
