@@ -71,7 +71,7 @@ const sendAdvisingSummaryPDF = async (
 
           <p style="color:#085830;font-size:16px;">
             Hello, <strong>${studentName}</strong>!
-          </p>s
+          </p>
 
           <p>
             Please find attached your CurricuCheck Advising Summary for
