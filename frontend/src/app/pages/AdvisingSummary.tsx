@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
-import { Check, AlertCircle, FileDown } from 'lucide-react';
+import { Check, AlertCircle, FileDown, Mail } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
@@ -68,6 +68,9 @@ export function AdvisingSummary() {
 
   const targetSemester = localStorage.getItem('target_semester') || '';
   const targetYearLevel = localStorage.getItem('target_year_level') || '';
+
+  const [sendingEmail, setSendingEmail] = useState(false);
+const [emailSent, setEmailSent] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('confirmed_subjects');
@@ -185,7 +188,7 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
     return yPos;
   };
 
-  const handleExportPDF = () => {
+  const buildPDF = () => {
     const doc = new jsPDF();
     const pageNum = { value: 1 };
 
@@ -387,8 +390,33 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
       addFooter(doc);
     }
 
-    doc.save('CurricuCheck_Advising_Summary.pdf');
+    return doc;
   };
+
+  const handleExportPDF = () => {
+    const doc = buildPDF();
+    doc.save('CurricuCheck_Advising_Summary.pdf');
+};
+
+const handleSendToEmail = async () => {
+    setSendingEmail(true);
+
+    try {
+        const doc = buildPDF();
+        const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+        await api.post('/student/me/send-advising-pdf', {
+            pdf_base64: pdfBase64,
+            target_semester: targetSemester,
+        });
+
+        setEmailSent(true);
+    } catch (err) {
+        console.error('Failed to send PDF to email:', err);
+    } finally {
+        setSendingEmail(false);
+    }
+};
 
   if (loading) {
     return (
@@ -653,13 +681,27 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
 
         {/* Bottom Actions */}
         <div className="flex flex-col items-center gap-8 mt-12 mb-8">
-          <button
-            onClick={handleExportPDF}
-            className="flex items-center gap-3 px-10 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
-          >
-            <FileDown className="w-5 h-5" />
-            Export to PDF
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <button
+              onClick={handleExportPDF}
+              className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+            >
+              <FileDown className="w-5 h-5" />
+              Download PDF
+            </button>
+            <button
+  onClick={handleSendToEmail}
+  disabled={sendingEmail}
+  className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
+>
+  <Mail className="w-5 h-5" />
+  {sendingEmail
+    ? 'Sending...'
+    : emailSent
+    ? 'Sent to Email ✓'
+    : 'Send to My Email'}
+</button>
+          </div>
           <div className="w-full border-t border-[#C8E6D4]/50 pt-8 flex justify-between items-center px-4">
             <Link to="/dashboard/recommendations" className="text-gray-500 font-medium text-sm hover:text-[#136537] transition-colors">
               &lt; Recommendations

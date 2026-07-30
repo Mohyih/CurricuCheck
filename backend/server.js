@@ -10,6 +10,7 @@ const evaluationRoutes = require('./src/routes/evaluationRoutes');
 const recommendationRoutes = require('./src/routes/recommendationRoutes');
 const scanRoutes = require('./src/routes/scanRoutes');
 const app = express();
+const otpRoutes = require('./src/routes/otpRoutes');
 
 app.use(cors({
   origin: '*',
@@ -37,6 +38,7 @@ app.use('/api/student', studentRoutes);
 app.use('/api/evaluation', evaluationRoutes);
 app.use('/api/recommendation', recommendationRoutes);
 app.use('/api', scanRoutes);
+app.use('/api/otp', otpRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

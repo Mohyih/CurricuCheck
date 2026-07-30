@@ -187,4 +187,36 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount };
+
+const { sendAdvisingSummaryPDF } = require('../config/emailService');
+
+// POST send advising summary PDF to email
+const sendAdvisingPDF = async (req, res) => {
+  const { pdf_base64, target_semester } = req.body;
+
+  try {
+    const { data: student } = await supabase
+      .from('students')
+      .select('first_name, last_name, email')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!student?.email) {
+      return res.status(400).json({ error: 'No email address found for this account.' });
+    }
+
+    await sendAdvisingSummaryPDF(
+      student.email,
+      pdf_base64,
+      `${student.last_name}, ${student.first_name}`,
+      target_semester
+    );
+
+    res.json({ message: `Advising summary sent to ${student.email}` });
+  } catch (err) {
+    console.error('PDF email error:', err);
+    res.status(500).json({ error: 'Failed to send PDF to email. Please try again.' });
+  }
+};
+
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF };

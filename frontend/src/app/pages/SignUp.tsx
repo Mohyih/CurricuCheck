@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, Upload, Check, X, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, Eye, EyeOff, Mail, CheckCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
@@ -24,21 +24,30 @@ export function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Form fields
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [studentNumber, setStudentNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [programId, setProgramId] = useState('');
   const [curriculumId, setCurriculumId] = useState('');
   const [yearLevel, setYearLevel] = useState('');
   const [preferredLoad, setPreferredLoad] = useState('');
+
+  // Password reveal
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [idVerified, setIdVerified] = useState(false);
-  const [idVerifying, setIdVerifying] = useState(false);
-  const [idError, setIdError] = useState('');
+
+  // OTP
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [otpError, setOtpError] = useState('');
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -49,11 +58,7 @@ export function SignUp() {
   }, []);
 
   useEffect(() => {
-    if (!programId) {
-      setCurriculums([]);
-      setCurriculumId('');
-      return;
-    }
+    if (!programId) { setCurriculums([]); setCurriculumId(''); return; }
     const fetchCurriculums = async () => {
       const res = await api.get(`/curriculum/programs/${programId}/curriculums`);
       setCurriculums(res.data.curriculums);
@@ -62,42 +67,32 @@ export function SignUp() {
     fetchCurriculums();
   }, [programId]);
 
-  const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!studentNumber || !firstName || !lastName) {
-      setIdError('Please fill in your name and student number first before uploading your ID.');
-      return;
-    }
-
-    setIdVerifying(true);
-    setIdVerified(false);
-    setIdError('');
-
+  const handleSendOTP = async () => {
+    setOtpError('');
+    if (!email) { setOtpError('Please enter your WUP email first.'); return; }
+    setSendingOtp(true);
     try {
-      const formData = new FormData();
-      formData.append('id_image', file);
-      formData.append('student_number', studentNumber);
-      formData.append('first_name', firstName);
-      formData.append('last_name', lastName);
-
-      const res = await api.post('/scan-id', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      if (res.data.verified) {
-        setIdVerified(true);
-        setIdError('');
-      } else {
-        setIdVerified(false);
-        setIdError(res.data.error || 'Verification failed.');
-      }
+      await api.post('/otp/send', { email, first_name: firstName || 'Student' });
+      setOtpSent(true);
     } catch (err: any) {
-      setIdVerified(false);
-      setIdError(err.response?.data?.error || 'Could not verify ID. Please try again.');
+      setOtpError(err.response?.data?.error || 'Failed to send OTP. Please try again.');
     } finally {
-      setIdVerifying(false);
+      setSendingOtp(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    setOtpError('');
+    if (!otpCode) { setOtpError('Please enter the OTP code.'); return; }
+    setVerifyingOtp(true);
+    try {
+      await api.post('/otp/verify', { email, otp_code: otpCode });
+      setEmailVerified(true);
+      setOtpError('');
+    } catch (err: any) {
+      setOtpError(err.response?.data?.error || 'Invalid OTP. Please try again.');
+    } finally {
+      setVerifyingOtp(false);
     }
   };
 
@@ -105,20 +100,11 @@ export function SignUp() {
     e.preventDefault();
     setError('');
 
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
+    if (!emailVerified) { setError('Please verify your WUP email before submitting.'); return; }
+    if (password.length < 8) { setError('Password must be at least 8 characters long.'); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     if (!programId || !curriculumId || !yearLevel || !preferredLoad) {
       setError('Please fill in all academic information fields.');
-      return;
-    }
-    if (!idVerified) {
-      setError('Please upload and verify your School ID before submitting.');
       return;
     }
 
@@ -134,6 +120,7 @@ export function SignUp() {
         curriculum_id: curriculumId,
         year_level: parseInt(yearLevel),
         preferred_load: preferredLoad,
+        email_address: email,
       });
       navigate('/login');
     } catch (err: any) {
@@ -143,12 +130,11 @@ export function SignUp() {
     }
   };
 
-  const inputClass =
-'w-full px-3 py-1.5 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400 text-sm';
+  const inputClass = 'w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400 text-sm';
   const selectClass = `${inputClass} appearance-none cursor-pointer`;
 
   return (
-    <div className="min-h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col md:flex-row overflow-hidden md:h-screen">
+    <div className="h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col md:flex-row overflow-hidden">
 
       {/* Left Panel */}
       <div className="w-full md:w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-6 md:p-8 text-white">
@@ -156,8 +142,6 @@ export function SignUp() {
           <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-contain drop-shadow-lg" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight mb-1 text-center">CurricuCheck</h1>
-        
-
         <div className="mt-10 w-full border-t border-white/20 pt-8 space-y-3">
           <p className="text-xs text-white/60 text-center">Already have an account?</p>
           <Link to="/login" className="block w-full text-center px-6 py-2.5 rounded-full border-2 border-white/40 text-white text-sm font-medium hover:bg-white/10 transition-all">
@@ -167,11 +151,9 @@ export function SignUp() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-4">
-
-        <div className="bg-white w-full max-w-[760px] rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-3.5">
-
-          <form className="space-y-3" onSubmit={handleSubmit}>
+      <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-hidden">
+        <div className="bg-white w-full max-w-xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-6">
+          <form className="space-y-4" onSubmit={handleSubmit}>
 
             {error && (
               <div className="px-4 py-2 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
@@ -180,7 +162,7 @@ export function SignUp() {
             )}
 
             {/* PERSONAL INFORMATION */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
                 Personal Information
               </h2>
@@ -198,7 +180,7 @@ export function SignUp() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Middle Name <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <label className="text-xs font-medium text-gray-700">Middle Name <span className="text-gray-400">(optional)</span></label>
                   <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)} className={inputClass} placeholder="Santos" />
                 </div>
                 <div className="space-y-1">
@@ -207,8 +189,68 @@ export function SignUp() {
                 </div>
               </div>
 
+              {/* WUP Email + OTP */}
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-700">WUP Email Address</label>
+                {!emailVerified ? (
+                  <>
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); setOtpSent(false); setOtpCode(''); setOtpError(''); }}
+                        className={`${inputClass} flex-1`}
+                        placeholder="lastname.firstname@wesleyan.edu.ph"
+                        disabled={otpSent}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSendOTP}
+                        disabled={sendingOtp || !email}
+                        className="px-3 py-2 rounded-lg bg-[#136537] text-white text-xs font-medium hover:bg-[#085830] transition-all disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {sendingOtp ? 'Sending...' : otpSent ? 'Resend' : 'Send OTP'}
+                      </button>
+                    </div>
+
+                    {otpSent && (
+                      <div className="flex gap-2 mt-1">
+                        <input
+                          type="text"
+                          value={otpCode}
+                          onChange={(e) => setOtpCode(e.target.value)}
+                          className={`${inputClass} flex-1 tracking-widest text-center font-bold`}
+                          placeholder="Enter 6-digit OTP"
+                          maxLength={6}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyOTP}
+                          disabled={verifyingOtp || !otpCode}
+                          className="px-3 py-2 rounded-lg bg-[#136537] text-white text-xs font-medium hover:bg-[#085830] transition-all disabled:opacity-50 whitespace-nowrap"
+                        >
+                          {verifyingOtp ? 'Verifying...' : 'Verify'}
+                        </button>
+                      </div>
+                    )}
+
+                    {otpError && (
+                      <p className="text-xs text-red-500 mt-1">{otpError}</p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#EEF7F2] border border-[#C8E6D4]">
+                    <CheckCircle className="w-4 h-4 text-[#136537] flex-shrink-0" />
+                    <span className="text-sm font-medium text-[#136537]">{email}</span>
+                    <span className="text-xs text-[#136537]/60 ml-auto">Verified ✓</span>
+                  </div>
+                )}
+              </div>
+
               <hr className="border-gray-100" />
 
+              {/* Passwords */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">Password</label>
@@ -227,7 +269,7 @@ export function SignUp() {
                   </div>
                   <div className="h-4">
                     {password.length > 0 && password.length < 8 && (
-                      <p className="text-xs text-red-500 font-medium">Min. 8 characters</p>
+                      <p className="text-xs text-red-500">Min. 8 characters</p>
                     )}
                   </div>
                 </div>
@@ -248,7 +290,7 @@ export function SignUp() {
                   </div>
                   <div className="h-4">
                     {confirmPassword && confirmPassword !== password && (
-                      <p className="text-xs text-red-500 font-medium">Passwords do not match</p>
+                      <p className="text-xs text-red-500">Passwords do not match</p>
                     )}
                   </div>
                 </div>
@@ -256,7 +298,7 @@ export function SignUp() {
             </div>
 
             {/* ACADEMIC INFORMATION */}
-           <div className="space-y-3 pb-1">
+            <div className="space-y-3">
               <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
                 Academic Information
               </h2>
@@ -315,66 +357,14 @@ export function SignUp() {
               </div>
             </div>
 
-            {/* ID VERIFICATION */}
-            <div className="space-y-2">
-              <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
-                ID Verification
-              </h2>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-700">
-                  Upload School ID <span className="text-gray-400 font-normal">(photo or scan)</span>
-                </label>
-                <label className={`flex items-center gap-3 px-4 py-1 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
-                  idVerified
-                    ? 'border-[#136537] bg-[#EEF7F2]'
-                    : idError
-                    ? 'border-red-300 bg-red-50'
-                    : 'border-[#136537]/40 bg-[#F5FAF7] hover:bg-[#EEF7F2]'
-                }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    idVerified ? 'bg-[#136537]' : idError ? 'bg-red-100' : 'bg-[#EEF7F2]'
-                  }`}>
-                    {idVerifying ? (
-                      <div className="w-4 h-4 border-2 border-[#136537] border-t-transparent rounded-full animate-spin" />
-                    ) : idVerified ? (
-                      <Check className="w-4 h-4 text-white" />
-                    ) : idError ? (
-                      <X className="w-4 h-4 text-red-500" />
-                    ) : (
-                      <Upload className="w-4 h-4 text-[#136537]" />
-                    )}
-                  </div>
-                  <div>
-                    <p className={`text-sm font-medium ${idVerified ? 'text-[#136537]' : idError ? 'text-red-500' : 'text-[#136537]'}`}>
-                      {idVerifying ? 'Verifying with AI...' : idVerified ? 'ID Verified Successfully!' : idError ? 'Verification Failed — Try Again' : 'Click to Upload School ID'}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {idVerified ? 'Your WUP ID has been confirmed' : 'JPG, PNG or PDF — max 5MB'}
-                    </p>
-                  </div>
-                  <input type="file" accept="image/*,.pdf" className="hidden" onChange={handleIdUpload} />
-                </label>
-
-               {idError && (
-  <div className="h-[40px] overflow-y-auto rounded-lg border border-red-200 bg-red-50 px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-    <p className="text-xs leading-5 text-red-600 whitespace-pre-wrap break-words">
-      {idError}
-    </p>
-  </div>
-)}
-
-              </div>
-            </div>
-
             {/* Submit */}
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 type="submit"
-                disabled={loading || !idVerified}
+                disabled={loading || !emailVerified}
                 className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {loading ? 'Creating Account...' : !idVerified ? 'Verify ID to Continue' : 'Create Account'}
+                {loading ? 'Creating Account...' : !emailVerified ? 'Verify Email to Continue' : 'Create Account'}
               </button>
             </div>
 

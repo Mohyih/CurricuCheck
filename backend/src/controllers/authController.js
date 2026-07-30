@@ -13,7 +13,8 @@ const register = async (req, res) => {
     program_id,
     curriculum_id,
     year_level,
-    preferred_load
+    preferred_load,
+    email_address
   } = req.body;
 
   try {
@@ -66,6 +67,7 @@ if (!studentNumberRegex.test(student_number)) {
         first_name,
         last_name,
         middle_name: middle_name || null,
+        email: email_address || null,
         program_id,
         curriculum_id,
         year_level,
