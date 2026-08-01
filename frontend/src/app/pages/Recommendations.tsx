@@ -351,15 +351,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
               </div>
             </div>
             <div>
-              <p className="text-gray-700 font-semibold mb-3 text-sm">Why these subjects were recommended:</p>
-              <ul className="space-y-2.5">
-                {data.recommended.slice(0, 3).map((s) => (
-                  <li key={s.id} className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#F2AB50] mt-1.5 flex-shrink-0"></div>
-                    <span><span className="font-medium text-gray-700">{s.code}</span> — {s.reason}</span>
-                  </li>
-                ))}
-              </ul>
+              
             </div>
           </div>
         </div>
