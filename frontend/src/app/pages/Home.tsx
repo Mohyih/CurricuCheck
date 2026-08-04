@@ -12,6 +12,18 @@ export function Home() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
+    const savedScroll = sessionStorage.getItem("homeScroll");
+
+    if (savedScroll) {
+  requestAnimationFrame(() => {
+    window.scrollTo({
+      top: Number(savedScroll),
+      behavior: "instant" as ScrollBehavior,
+    });
+
+    sessionStorage.removeItem("homeScroll");
+  });
+}
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);

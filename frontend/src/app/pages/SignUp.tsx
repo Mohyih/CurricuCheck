@@ -49,6 +49,74 @@ export function SignUp() {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
 
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  useEffect(() => {
+  const saved = sessionStorage.getItem("signupForm");
+
+  if (!saved) return;
+
+  const data = JSON.parse(saved);
+
+  setLastName(data.lastName || "");
+  setFirstName(data.firstName || "");
+  setMiddleName(data.middleName || "");
+  setStudentNumber(data.studentNumber || "");
+  setEmail(data.email || "");
+  setPassword(data.password || "");
+  setConfirmPassword(data.confirmPassword || "");
+  setProgramId(data.programId || "");
+  setCurriculumId(data.curriculumId || "");
+  setYearLevel(data.yearLevel || "");
+  setPreferredLoad(data.preferredLoad || "");
+  setAgreedToTerms(data.agreedToTerms || false);
+
+  setOtpSent(data.otpSent || false);
+setOtpCode(data.otpCode || "");
+setEmailVerified(data.emailVerified || false);
+}, []);
+
+useEffect(() => {
+  sessionStorage.setItem(
+    "signupForm",
+    JSON.stringify({
+      lastName,
+      firstName,
+      middleName,
+      studentNumber,
+      email,
+      password,
+      confirmPassword,
+      programId,
+      curriculumId,
+      yearLevel,
+      preferredLoad,
+      agreedToTerms,
+
+      otpSent,
+  otpCode,
+  emailVerified,
+    })
+  );
+}, [
+  lastName,
+  firstName,
+  middleName,
+  studentNumber,
+  email,
+  password,
+  confirmPassword,
+  programId,
+  curriculumId,
+  yearLevel,
+  preferredLoad,
+  agreedToTerms,
+
+  otpSent,
+  otpCode,
+  emailVerified,
+]);
+
   useEffect(() => {
     const fetchPrograms = async () => {
       const res = await api.get('/curriculum/programs');
@@ -122,7 +190,8 @@ export function SignUp() {
         preferred_load: preferredLoad,
         email_address: email,
       });
-      navigate('/login');
+      sessionStorage.removeItem("signupForm");
+navigate('/login');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
@@ -131,10 +200,10 @@ export function SignUp() {
   };
 
   const inputClass = 'w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400 text-sm';
-  const selectClass = `${inputClass} appearance-none cursor-pointer`;
+ const selectClass = `${inputClass} appearance-none cursor-pointer truncate pr-8`;
 
   return (
-    <div className="h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen lg:h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col lg:flex-row lg:overflow-hidden">
 
       {/* Left Panel */}
       <div className="w-full md:w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-6 md:p-8 text-white">
@@ -151,9 +220,9 @@ export function SignUp() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-3 lg:p-6 overflow-y-auto lg:overflow-hidden">
         <div className="bg-white w-full max-w-xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-6">
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-3 lg:space-y-2.5" onSubmit={handleSubmit}>
 
             {error && (
               <div className="px-4 py-2 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
@@ -162,7 +231,7 @@ export function SignUp() {
             )}
 
             {/* PERSONAL INFORMATION */}
-            <div className="space-y-3">
+            <div className="space-y-3 lg:space-y-2">
               <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
                 Personal Information
               </h2>
@@ -297,74 +366,125 @@ export function SignUp() {
               </div>
             </div>
 
-            {/* ACADEMIC INFORMATION */}
-            <div className="space-y-3">
-              <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
-                Academic Information
-              </h2>
+           {/* ACADEMIC INFORMATION */}
+<div className="space-y-3 lg:space-y-2">
+  <h2 className="text-xs font-bold text-gray-400 tracking-wider uppercase border-b border-gray-100 pb-2">
+    Academic Information
+  </h2>
 
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-700">Degree Program</label>
-                <div className="relative">
-                  <select required value={programId} onChange={(e) => setProgramId(e.target.value)} className={selectClass}>
-                    <option value="" disabled>Select Degree Program</option>
-                    {programs.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name} ({p.code})</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                </div>
-              </div>
+  <div className="space-y-1">
+    <label className="text-xs font-medium text-gray-700">Degree Program</label>
+    <div className="relative w-full min-w-0">
+      <select 
+        required 
+        value={programId} 
+        onChange={(e) => setProgramId(e.target.value)} 
+        className={`${selectClass} w-full truncate pr-8`}
+      >
+        <option value="" disabled>Select Degree Program</option>
+        {programs.map((p) => (
+          <option key={p.id} value={p.id}>{p.name} ({p.code})</option>
+        ))}
+      </select>
+      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+    </div>
+  </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Curriculum Version</label>
-                  <div className="relative">
-                    <select required value={curriculumId} onChange={(e) => setCurriculumId(e.target.value)} disabled={!programId} className={`${selectClass} disabled:opacity-50`}>
-                      <option value="" disabled>{programId ? 'Select Version' : 'Select program*'}</option>
-                      {curriculums.map((c) => (
-                        <option key={c.id} value={c.id}>{c.version} Curriculum</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Year Level</label>
-                  <div className="relative">
-                    <select required value={yearLevel} onChange={(e) => setYearLevel(e.target.value)} className={selectClass}>
-                      <option value="" disabled>Select</option>
-                      <option value="1">First Year</option>
-                      <option value="2">Second Year</option>
-                      <option value="3">Third Year</option>
-                      <option value="4">Fourth Year</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Preferred Load</label>
-                  <div className="relative">
-                    <select required value={preferredLoad} onChange={(e) => setPreferredLoad(e.target.value)} className={selectClass}>
-                      <option value="" disabled>Select</option>
-                      <option value="light">Light (≤12)</option>
-                      <option value="normal">Normal (≤18)</option>
-                      <option value="heavy">Heavy (≤21)</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                  </div>
-                </div>
-              </div>
+  <div className="grid grid-cols-3 gap-3">
+    {/* Curriculum Version */}
+    <div className="space-y-1 min-w-0">
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Curriculum Version</label>
+      <div className="relative w-full">
+        <select 
+          required 
+          value={curriculumId} 
+          onChange={(e) => setCurriculumId(e.target.value)} 
+          disabled={!programId} 
+          className={`${selectClass} w-full truncate pr-8 disabled:opacity-50`}
+        >
+          <option value="" disabled>{programId ? 'Select Version' : 'Select program*'}</option>
+          {curriculums.map((c) => (
+            <option key={c.id} value={c.id}>{c.version} Curriculum</option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+      </div>
+    </div>
+
+    {/* Target Year Level */}
+    <div className="space-y-1 min-w-0">
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Target Year Level</label>
+      <div className="relative w-full">
+        <select 
+          required 
+          value={yearLevel} 
+          onChange={(e) => setYearLevel(e.target.value)} 
+          className={`${selectClass} w-full truncate pr-8`}
+        >
+          <option value="" disabled>Select</option>
+          <option value="1">First Year</option>
+          <option value="2">Second Year</option>
+          <option value="3">Third Year</option>
+          <option value="4">Fourth Year</option>
+        </select>
+        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+      </div>
+    </div>
+
+    {/* Preferred Load */}
+    <div className="space-y-1 min-w-0">
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Preferred Load</label>
+      <div className="relative w-full">
+        <select 
+          required 
+          value={preferredLoad} 
+          onChange={(e) => setPreferredLoad(e.target.value)} 
+          className={`${selectClass} w-full truncate pr-8`}
+        >
+          <option value="" disabled>Select</option>
+          <option value="light">Light (≤12)</option>
+          <option value="normal">Normal (≤18)</option>
+          <option value="heavy">Heavy (≤21)</option>
+        </select>
+        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+      </div>
+    </div>
+  </div>
+</div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                id="terms"
+                required
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 text-[#136537] border-gray-300 rounded focus:ring-[#136537]/20 cursor-pointer flex-shrink-0"
+              />
+              <label htmlFor="terms" className="text-xs text-gray-600 cursor-pointer leading-relaxed">
+                I agree to the{' '}
+                <Link to="/terms-of-service" className="text-[#136537] hover:underline font-bold">
+                  Terms of Service
+                </Link>
+                {' '}and{' '}
+                <Link to="/privacy-notice" className="text-[#136537] hover:underline font-bold">
+                  Privacy Notice
+                </Link>
+              </label>
             </div>
+
+            {/* Submit */}
+            <div className="pt-1"></div>
 
             {/* Submit */}
             <div className="pt-1">
               <button
                 type="submit"
-                disabled={loading || !emailVerified}
+                disabled={loading || !emailVerified || !agreedToTerms}
                 className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {loading ? 'Creating Account...' : !emailVerified ? 'Verify Email to Continue' : 'Create Account'}
+                {loading ? 'Creating Account...' : !emailVerified ? 'Verify Email to Continue' : !agreedToTerms ? 'Please Agree to Terms' : 'Create Account'}
               </button>
             </div>
 

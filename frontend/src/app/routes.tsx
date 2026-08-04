@@ -11,6 +11,8 @@ import { SubjectEligibility } from "./pages/SubjectEligibility";
 import { Recommendations } from "./pages/Recommendations";
 import { AdvisingSummary } from "./pages/AdvisingSummary";
 import { ProtectedRoute } from "../routes/ProtectedRoute";
+import { TermsOfService } from './pages/TermsOfService';
+import { PrivacyNotice } from './pages/PrivacyNotice';
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ export const router = createBrowserRouter([
       { path: "dashboard/advising", element: <ProtectedRoute><AdvisingSummary /></ProtectedRoute> },
       { path: "dashboard/checklist", element: <ProtectedRoute><Checklist /></ProtectedRoute> },
       { path: "dashboard/student-info", element: <ProtectedRoute><StudentInfo /></ProtectedRoute> },
+      { path: 'terms-of-service', Component: TermsOfService },
+      { path: 'privacy-notice', Component: PrivacyNotice },
     ],
   },
 ]);

@@ -227,7 +227,7 @@ export function ReturningDashboard() {
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-8 bg-white rounded-2xl border border-[#C8E6D4]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-[#136537]">Current Year Level</div>
+            <div className="text-sm font-bold text-[#136537]">Target Year Level</div>
             {editingYear ? (
               <select
                 value={yearLevel}
