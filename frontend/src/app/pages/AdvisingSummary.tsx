@@ -196,47 +196,46 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
     addHeader(doc, pageNum.value);
     let yPos = CONTENT_TOP;
 
-    // ── STUDENT INFO BLOCK ──
-    doc.setFillColor(238, 247, 242);
-    doc.roundedRect(MARGIN, yPos, CONTENT_WIDTH, 26, 3, 3, 'F');
+    autoTable(doc, {
+  startY: yPos,
+  theme: 'grid',
+  head: [['Student Information', '']],
+  body: [
+    ['Student Name', `${student?.last_name}, ${student?.first_name}`],
+    ['Degree Program', `${student?.programs?.code} — Curriculum ${student?.curriculums?.version}`],
+    ['Term', targetSemester],
+    ['Academic Standing', student?.academic_standing || ''],
+    ['Preferred Load', sessionLoad],
+  ],
+  headStyles: {
+    fillColor: [19, 101, 55],
+    textColor: 255,
+    fontStyle: 'bold',
+    halign: 'left',
+  },
+  styles: {
+    font: 'helvetica',
+    fontSize: 9,
+    textColor: [8, 88, 48],
+    cellPadding: 3,
+  },
+  columnStyles: {
+    0: {
+      cellWidth: 50,
+      fontStyle: 'bold',
+      fillColor: [238, 247, 242],
+    },
+    1: {
+      cellWidth: CONTENT_WIDTH - 50,
+    },
+  },
+  margin: {
+    left: MARGIN,
+    right: MARGIN,
+  },
+});
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(19, 101, 55);
-    doc.text('Student Name:', MARGIN + 4, yPos + 8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(8, 88, 48);
-    doc.text(`${student?.last_name}, ${student?.first_name}`, MARGIN + 38, yPos + 8);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(19, 101, 55);
-    doc.text('Degree Program:', MARGIN + 4, yPos + 15);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(8, 88, 48);
-    doc.text(`${student?.programs?.code} — Curriculum ${student?.curriculums?.version}`, MARGIN + 42, yPos + 15);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(19, 101, 55);
-    doc.text('Term:', MARGIN + 4, yPos + 22);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(8, 88, 48);
-    doc.text(targetSemester, MARGIN + 18, yPos + 22);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(19, 101, 55);
-    doc.text('Academic Standing:', PAGE_WIDTH / 2 + 4, yPos + 8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(8, 88, 48);
-    doc.text(student?.academic_standing || '', PAGE_WIDTH / 2 + 42, yPos + 8);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(19, 101, 55);
-    doc.text('Preferred Load:', PAGE_WIDTH / 2 + 4, yPos + 15);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(8, 88, 48);
-    doc.text(sessionLoad, PAGE_WIDTH / 2 + 36, yPos + 15);
-
-    yPos += 40;
+yPos = (doc as any).lastAutoTable.finalY + 12;
 
     // ── CONFIRMED SUBJECTS TABLE ──
     const tableData = confirmedSubjects.map((s) => [s.code, s.name, s.units.toString()]);

@@ -112,25 +112,20 @@ const evaluate = async (req, res) => {
         subject.semester === targetSemester;
 
       // Handle NSTP — always available every semester
-      if (subject.subject_type === 'nstp') {
-        if (passedIds.has(subject.id)) continue; // already passed, skip
+     if (subject.subject_type === 'nstp') {
+        if (passedIds.has(subject.id)) continue;
 
-        if (!prereqsMet) {
-          // NSTP 2 blocked because NSTP 1 not passed yet
-          const missingPrereqs = prereqIds
-            .filter(pid => !passedIds.has(pid))
-            .map(pid => allSubjects.find(s => s.id === pid)?.code)
-            .filter(Boolean);
-          blocked.push({
-            ...subject,
-            missing_prerequisites: missingPrereqs,
-            missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
-          });
-        } else if (failedIds.has(subject.id)) {
-          // Previously failed NSTP → Retake (always available)
+        const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+        const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+
+        // If prerequisites not met → hide completely (don't show blocked)
+        // NSTP 2 should not appear at all until NSTP 1 is passed
+        if (!prereqsMet) continue;
+
+        // Prerequisites met
+        if (failedIds.has(subject.id)) {
           retakes.push({ ...subject, is_retake: true });
         } else {
-          // Not yet taken → Eligible (always available)
           eligible.push(subject);
         }
         continue;
