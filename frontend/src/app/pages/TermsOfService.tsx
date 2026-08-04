@@ -125,7 +125,9 @@ export function TermsOfService() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-base font-bold text-[#085830] mb-3">{title}</h2>
+      <h2 className="text-lg md:text-xl font-bold text-[#085830] mb-3">
+  {title}
+</h2>
       <div className="space-y-3">{children}</div>
     </div>
   );

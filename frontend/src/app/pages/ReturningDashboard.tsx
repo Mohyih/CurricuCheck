@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
@@ -76,6 +76,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 export function ReturningDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { student, refreshStudent } = useAuth();
 
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -88,7 +89,7 @@ export function ReturningDashboard() {
   const [selectedTerm, setSelectedTerm] = useState('');
 
 // Encoding method modal
-  const [showEncodingModal, setShowEncodingModal] = useState(true);
+  const [showEncodingModal, setShowEncodingModal] = useState(false);
   const [encodingMethod, setEncodingMethod] = useState<'manual' | 'ai' | null>(null);
 
   // AI Scan states
@@ -101,6 +102,15 @@ export function ReturningDashboard() {
   const suggestedScreenshots = student?.year_level || 1;
 
   const [showSampleImage, setShowSampleImage] = useState(false);
+
+  useEffect(() => {
+  if (location.state?.openModal) {
+    setShowEncodingModal(true);
+
+    // Clear the state so it won't reopen when returning
+    window.history.replaceState({}, "");
+  }
+}, []);
 
 
   useEffect(() => {

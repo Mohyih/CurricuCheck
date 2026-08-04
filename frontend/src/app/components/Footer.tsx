@@ -12,10 +12,10 @@ export function Footer() {
 
   return (
     <footer className="bg-white border-t border-[#C8E6D4] py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center space-y-5">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col items-center space-y-5 text-center">
 
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2 w-full">
           <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
             <ImageWithFallback
               src={logoImg}
@@ -30,7 +30,8 @@ export function Footer() {
         </div>
 
         {/* Footer Links */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[11px] sm:text-xs text-gray-400">
+        <div className="w-full flex justify-center">
+  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] sm:text-xs text-gray-400">
           <Link
   to="/terms-of-service"
   onClick={() => {
@@ -66,9 +67,9 @@ export function Footer() {
   Contact
 </a>
         </div>
-
+        </div>
         {/* Copyright */}
-        <p className="text-[11px] sm:text-xs text-center text-gray-400 leading-relaxed">
+        <p className="w-full text-[11px] sm:text-xs text-center text-gray-400 leading-relaxed">
           &copy; {new Date().getFullYear()} CurricuCheck. All rights reserved.
         </p>
 

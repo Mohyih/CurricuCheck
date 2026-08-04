@@ -14,7 +14,11 @@ export function Dashboard() {
           Begin encoding your completed subjects to evaluate curriculum progress and generate subject recommendations.
         </p>
         <button
-          onClick={() => navigate('/dashboard/returning')}
+          onClick={() =>
+  navigate('/dashboard/returning', {
+    state: { openModal: true },
+  })
+}
           className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
         >
           Add Academic Records

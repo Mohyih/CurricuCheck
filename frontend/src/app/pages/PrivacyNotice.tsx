@@ -65,7 +65,7 @@ export function PrivacyNotice() {
               <p>Contact: <a href="mailto:curricucheck@gmail.com" className="text-[#136537] hover:underline">curricucheck@gmail.com</a></p>
             </Section>
 
-            <Section title="2. Data We Collect">
+            <Section title="2. Information We Collect">
               <p>When you register and use CurricuCheck, we collect the following:</p>
               <p><strong className="text-[#085830]">Account Information:</strong></p>
               <ul className="list-disc pl-5 space-y-1">
@@ -89,7 +89,7 @@ export function PrivacyNotice() {
               </ul>
             </Section>
 
-            <Section title="3. Purpose of Collection">
+            <Section title="3. Why We Collect This Information">
               <p>We collect your data solely for the following purposes:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>To provide curriculum evaluation and subject recommendation features</li>
@@ -108,7 +108,7 @@ export function PrivacyNotice() {
               </ul>
             </Section>
 
-            <Section title="5. Data Storage and Security">
+            <Section title="5. Where Your Data Is Stored">
               <p>Your data is stored on <strong className="text-[#085830]">Supabase</strong>, a cloud database platform hosted in Singapore. Supabase applies industry-standard security practices including encryption at rest and in transit.</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>Passwords are never stored in plaintext — they are managed by Supabase Auth using secure hashing.</li>
@@ -118,7 +118,7 @@ export function PrivacyNotice() {
               <p>While we take reasonable steps to protect your data, no system is completely secure. We encourage you to use a strong, unique password.</p>
             </Section>
 
-            <Section title="6. Data Sharing">
+            <Section title="6. Who Has Access to Your Data">
               <p>We do not sell, rent, or share your personal data with third parties, except:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li><strong>Supabase</strong> — as our database and authentication provider (data processor)</li>
@@ -128,12 +128,12 @@ export function PrivacyNotice() {
               <p>We do not share your data with Wesleyan University-Philippines administrators, faculty, or staff.</p>
             </Section>
 
-            <Section title="7. Data Retention">
+            <Section title="7. Data Retention and Deletion">
               <p>Your data will be retained only for the duration of the thesis evaluation period. After this period concludes, all student accounts and associated academic records will be permanently deleted from our database.</p>
               <p>You may also request deletion of your account at any time through the Student Information page within the system.</p>
             </Section>
 
-            <Section title="8. Your Rights Under RA 10173">
+            <Section title="8. Your Rights">
               <p>Under the Data Privacy Act of 2012, you have the right to:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li><strong>Access</strong> — request a copy of the personal data we hold about you</li>
@@ -158,7 +158,7 @@ export function PrivacyNotice() {
               <p>We may update this Privacy Notice as the system develops. Any material changes will be communicated through the system interface or via the contact email on file.</p>
             </Section>
 
-            <Section title="11. Contact">
+            <Section title="11. Contact Us">
               <p>For any privacy-related concerns or requests, please contact us at:</p>
               <p><a href="mailto:curricucheck@gmail.com" className="text-[#136537] hover:underline font-medium">curricucheck@gmail.com</a></p>
             </Section>
@@ -176,7 +176,9 @@ export function PrivacyNotice() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-base font-bold text-[#085830] mb-3">{title}</h2>
+      <h2 className="text-lg md:text-xl font-bold text-[#085830] mb-3">
+  {title}
+</h2>
       <div className="space-y-3">{children}</div>
     </div>
   );
