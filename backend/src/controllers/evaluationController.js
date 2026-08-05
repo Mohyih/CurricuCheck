@@ -117,10 +117,25 @@ const evaluate = async (req, res) => {
 
         const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
         const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+        const isTargetSem = subject.semester === targetSemester;
 
-        // If prerequisites not met → hide completely (don't show blocked)
-        // NSTP 2 should not appear at all until NSTP 1 is passed
-        if (!prereqsMet) continue;
+        if (!prereqsMet) {
+          // Only show blocked if this NSTP is offered this semester
+          // Otherwise hide completely
+          if (isTargetSem) {
+            const missingPrereqs = prereqIds
+              .filter(pid => !passedIds.has(pid))
+              .map(pid => allSubjects.find(s => s.id === pid)?.code)
+              .filter(Boolean);
+            blocked.push({
+              ...subject,
+              missing_prerequisites: missingPrereqs,
+              missing_reasons: [`Must complete first: ${missingPrereqs.join(', ')}`]
+            });
+          }
+          // Wrong semester + prereq not met → hidden
+          continue;
+        }
 
         // Prerequisites met
         if (failedIds.has(subject.id)) {
