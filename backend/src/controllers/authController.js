@@ -218,6 +218,12 @@ const forgotPassword = async (req, res) => {
     // Build reset link pointing to frontend
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
+console.log("========== PRODUCTION RESET DEBUG ==========");
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+console.log("RESET LINK:", resetLink);
+console.log("RECIPIENT:", email);
+console.log("============================================");
+
     // Send to student's REAL WUP email via Brevo
     await sendPasswordReset(email, resetLink, student.first_name);
 

@@ -151,9 +151,6 @@ const sendPasswordReset = async (email, resetLink, firstName) => {
 
             <div style="background: linear-gradient(135deg, #085830, #136537); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 24px;">CurricuCheck</h1>
-              <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0 0; font-size: 14px;">
-                Wesleyan University Philippines — CECT
-              </p>
             </div>
 
             <div style="background: #f5faf7; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #c8e6d4;">
