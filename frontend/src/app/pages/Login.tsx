@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import logoImg from "../../imports/CurricuCheck_Logo.png";
 import { useAuth } from '../../context/AuthContext';
+import api from '../../lib/api';
 
 export function Login() {
   const navigate = useNavigate();
@@ -11,8 +12,12 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMessage, setForgotMessage] = useState('');
+  const [forgotError, setForgotError] = useState('');
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -37,6 +42,19 @@ export function Login() {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+    const handleForgotPassword = async () => {
+    setForgotLoading(true);
+    setForgotError('');
+    try {
+      const res = await api.post('/auth/forgot-password', { email: forgotEmail });
+      setForgotMessage(res.data.message);
+    } catch (err: any) {
+      setForgotError(err.response?.data?.error || 'Something went wrong.');
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -71,15 +89,14 @@ export function Login() {
             )}
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Student ID Number</label>
+              <label className="text-sm font-medium text-gray-700">Student ID Number or WUP Email</label>
               <input
                 type="text"
                 value={studentNumber}
                 onChange={(e) => setStudentNumber(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400"
-                placeholder="23-1998-610"
-              />
+                placeholder="ID Number or Email" />
             </div>
 
             <div className="space-y-1.5">
@@ -92,6 +109,70 @@ export function Login() {
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#F2AB50] focus:ring-2 focus:ring-[#F2AB50]/20 outline-none transition-all text-[#085830] bg-gray-50/50 focus:bg-white placeholder-gray-400"
                 placeholder="••••••••"
               />
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs text-[#136537] hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+
+                    {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-8 max-w-md w-full">
+            <h2 className="text-lg font-bold text-[#085830] mb-2">Reset Password</h2>
+            
+
+            {forgotMessage ? (
+              <div className="px-4 py-3 rounded-lg bg-[#EEF7F2] text-[#136537] text-sm font-medium mb-4">
+                {forgotMessage}
+              </div>
+            ) : (
+                            <div className="space-y-4">
+                {forgotError && (
+                  <div className="px-4 py-2 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
+                    {forgotError}
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">WUP Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 placeholder-gray-400"
+                    placeholder="lastname.firstname@wesleyan.edu.ph"
+                  />
+                </div>
+                <button
+  type="button"
+  onClick={handleForgotPassword}
+  disabled={forgotLoading}
+  className="w-full py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium disabled:opacity-60"
+>
+  {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+</button>
+                            </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => { setShowForgotPassword(false); setForgotMessage(''); setForgotError(''); }}
+              className="w-full mt-3 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Back to Login
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
             </div>
 
             <div className="pt-2">

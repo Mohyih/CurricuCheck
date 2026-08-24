@@ -137,7 +137,71 @@ const sendAdvisingSummaryPDF = async (
   }
 };
 
-module.exports = {
-  sendOTP,
-  sendAdvisingSummaryPDF,
+const sendPasswordReset = async (email, resetLink, firstName) => {
+  try {
+    await axios.post(
+      BREVO_API,
+      {
+        sender,
+        to: [{ email }],
+        subject: "CurricuCheck — Password Reset Request",
+
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+            <div style="background: linear-gradient(135deg, #085830, #136537); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">CurricuCheck</h1>
+              <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0 0; font-size: 14px;">
+                Wesleyan University Philippines — CECT
+              </p>
+            </div>
+
+            <div style="background: #f5faf7; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #c8e6d4;">
+
+              <p style="color: #085830; font-size: 16px;">
+                Hello, <strong>${firstName || 'Student'}</strong>!
+              </p>
+
+              <p style="color: #444; font-size: 14px;">
+                We received a request to reset your CurricuCheck password.
+                Click the button below to continue.
+              </p>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a
+                  href="${resetLink}"
+                  style="background: linear-gradient(135deg, #085830, #136537); color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 15px;"
+                >
+                  Reset My Password
+                </a>
+              </div>
+
+              <p style="color: #444; font-size: 13px;">
+                This link expires in <strong>30 minutes</strong>.
+                If you did not request this, please ignore this email.
+              </p>
+
+              <p style="color: #888; font-size: 12px; margin-top: 20px;">
+                If the button does not work, copy and paste this link:<br/>
+                <a href="${resetLink}" style="color: #136537;">
+                  ${resetLink}
+                </a>
+              </p>
+
+            </div>
+          </div>
+        `,
+      },
+      { headers }
+    );
+
+    console.log(`Password reset email sent to: ${email}`);
+
+  } catch (err) {
+    console.error("Brevo Password Reset Error:");
+    console.error(err.response?.data || err.message);
+    throw err;
+  }
 };
+
+module.exports = { sendOTP, sendAdvisingSummaryPDF, sendPasswordReset};

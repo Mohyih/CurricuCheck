@@ -13,6 +13,7 @@ import { AdvisingSummary } from "./pages/AdvisingSummary";
 import { ProtectedRoute } from "../routes/ProtectedRoute";
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyNotice } from './pages/PrivacyNotice';
+import { ResetPassword } from './pages/ResetPassword';
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       { path: "dashboard/student-info", element: <ProtectedRoute><StudentInfo /></ProtectedRoute> },
       { path: 'terms-of-service', Component: TermsOfService },
       { path: 'privacy-notice', Component: PrivacyNotice },
+      { path: 'reset-password', Component: ResetPassword },
     ],
   },
 ]);
