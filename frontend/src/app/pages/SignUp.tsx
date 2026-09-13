@@ -164,6 +164,20 @@ useEffect(() => {
     }
   };
 
+  const isFormComplete =
+  lastName.trim() !== '' &&
+  firstName.trim() !== '' &&
+  studentNumber.trim() !== '' &&
+  email.trim() !== '' &&
+  emailVerified &&
+  password.length >= 8 &&
+  confirmPassword === password &&
+  programId !== '' &&
+  curriculumId !== '' &&
+  yearLevel !== '' &&
+  preferredLoad !== '' &&
+  agreedToTerms;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -238,11 +252,15 @@ navigate('/login');
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Last Name</label>
+                  <label className="text-xs font-medium text-gray-700">
+  Last Name <span className="text-red-500">*</span>
+</label>
                   <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputClass} placeholder="Dela Cruz" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">First Name</label>
+                  <label className="text-xs font-medium text-gray-700">
+  First Name <span className="text-red-500">*</span>
+</label>
                   <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputClass} placeholder="Juan" />
                 </div>
               </div>
@@ -253,14 +271,18 @@ navigate('/login');
                   <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)} className={inputClass} placeholder="Santos" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Student ID Number</label>
+                  <label className="text-xs font-medium text-gray-700">
+  Student ID Number <span className="text-red-500">*</span>
+</label>
                   <input type="text" required value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} className={inputClass} placeholder="23-1998-610" />
                 </div>
               </div>
 
               {/* WUP Email + OTP */}
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-700">WUP Email Address</label>
+                <label className="text-xs font-medium text-gray-700">
+  WUP Email Address <span className="text-red-500">*</span>
+</label>
                 {!emailVerified ? (
                   <>
                     <div className="flex gap-2">
@@ -322,7 +344,9 @@ navigate('/login');
               {/* Passwords */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Password</label>
+                  <label className="text-xs font-medium text-gray-700">
+  Password <span className="text-red-500">*</span>
+</label>
                   <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -343,7 +367,9 @@ navigate('/login');
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-gray-700">Confirm Password</label>
+                  <label className="text-xs font-medium text-gray-700">
+  Confirm Password <span className="text-red-500">*</span>
+</label>
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -373,7 +399,9 @@ navigate('/login');
   </h2>
 
   <div className="space-y-1">
-    <label className="text-xs font-medium text-gray-700">Degree Program</label>
+    <label className="text-xs font-medium text-gray-700">
+  Degree Program <span className="text-red-500">*</span>
+</label>
     <div className="relative w-full min-w-0">
       <select 
         required 
@@ -393,7 +421,9 @@ navigate('/login');
   <div className="grid grid-cols-3 gap-3">
     {/* Curriculum Version */}
     <div className="space-y-1 min-w-0">
-      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Curriculum Version</label>
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">
+  Curriculum Version <span className="text-red-500">*</span>
+</label>
       <div className="relative w-full">
         <select 
           required 
@@ -402,7 +432,7 @@ navigate('/login');
           disabled={!programId} 
           className={`${selectClass} w-full truncate pr-8 disabled:opacity-50`}
         >
-          <option value="" disabled>{programId ? 'Select Version' : 'Select program*'}</option>
+          <option value="" disabled>{programId ? 'Select Version' : 'Select program'}</option>
           {curriculums.map((c) => (
             <option key={c.id} value={c.id}>{c.version} Curriculum</option>
           ))}
@@ -413,7 +443,9 @@ navigate('/login');
 
     {/* Target Year Level */}
     <div className="space-y-1 min-w-0">
-      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Target Year Level</label>
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">
+  Target Year Level <span className="text-red-500">*</span>
+</label>
       <div className="relative w-full">
         <select 
           required 
@@ -433,7 +465,9 @@ navigate('/login');
 
     {/* Preferred Load */}
     <div className="space-y-1 min-w-0">
-      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">Preferred Load</label>
+      <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">
+  Preferred Load <span className="text-red-500">*</span>
+</label>
       <div className="relative w-full">
         <select 
           required 
@@ -463,30 +497,32 @@ navigate('/login');
                 className="mt-0.5 w-4 h-4 text-[#136537] border-gray-300 rounded focus:ring-[#136537]/20 cursor-pointer flex-shrink-0"
               />
               <label htmlFor="terms" className="text-xs text-gray-600 cursor-pointer leading-relaxed">
-                I agree to the{' '}
-                <Link to="/terms-of-service" className="text-[#136537] hover:underline font-bold">
-                  Terms of Service
-                </Link>
-                {' '}and{' '}
-                <Link to="/privacy-notice" className="text-[#136537] hover:underline font-bold">
-                  Privacy Notice
-                </Link>
-              </label>
+  I agree to the{' '}
+  <Link to="/terms-of-service" className="text-[#136537] hover:underline font-bold">
+    Terms of Service
+  </Link>
+  {' '}and{' '}
+  <Link to="/privacy-notice" className="text-[#136537] hover:underline font-bold">
+    Privacy Policy
+  </Link>
+  {' '}<span className="text-red-500">*</span>
+</label>
             </div>
 
-            {/* Submit */}
-            <div className="pt-1"></div>
-
-            {/* Submit */}
-            <div className="pt-1">
-              <button
-                type="submit"
-                disabled={loading || !emailVerified || !agreedToTerms}
-                className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                {loading ? 'Creating Account...' : !emailVerified ? 'Verify Email to Continue' : !agreedToTerms ? 'Please Agree to Terms' : 'Create Account'}
-              </button>
-            </div>
+           {/* Submit */}
+<div className="pt-1">
+  <button
+    type="submit"
+    disabled={loading || !isFormComplete}
+    className="w-full px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+  >
+    {loading
+  ? 'Creating Account...'
+  : isFormComplete
+    ? 'Create Account'
+    : 'Complete all required fields (*)'}
+  </button>
+</div>
 
           </form>
         </div>

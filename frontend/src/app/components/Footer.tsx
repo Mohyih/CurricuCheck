@@ -53,7 +53,7 @@ export function Footer() {
   }}
   className="hover:text-[#136537] transition-colors"
 >
-  Privacy Notice
+  Privacy Policy
 </Link>
 
           <span className="hidden sm:inline">·</span>

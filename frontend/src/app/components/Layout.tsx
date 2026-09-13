@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect  } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
-import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X } from 'lucide-react';
+import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X, Map } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 
@@ -73,11 +73,18 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
           Curriculum Checklist
         </Link>
 
+        <Link to="/dashboard/roadmap" className={navLinkClass('/dashboard/roadmap')} onClick={() => setIsSidebarOpen(false)}>
+          <Map className="w-5 h-5" />
+          Curriculum Roadmap
+        </Link>
+
         <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">Profile</div>
         <Link to="/dashboard/student-info" className={navLinkClass('/dashboard/student-info')} onClick={() => setIsSidebarOpen(false)}>
           <User className="w-5 h-5" />
           Student Information
         </Link>
+
+                
 
 
         

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF } = require('../controllers/studentController');
+const { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap } = require('../controllers/studentController');
 const { protect } = require('../middleware/authMiddleware');
+
 
 router.get('/me', protect, getMe);
 router.get('/me/records', protect, getMyRecords);
@@ -11,5 +12,6 @@ router.patch('/me/preferred-load', protect, updatePreferredLoad);
 router.patch('/me/profile', protect, updateProfile);
 router.delete('/me', protect, deleteAccount);
 router.post('/me/send-advising-pdf', protect, sendAdvisingPDF);
+router.get('/me/roadmap', protect, getRoadmap);
 
 module.exports = router;

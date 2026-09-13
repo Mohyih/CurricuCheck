@@ -219,4 +219,121 @@ const sendAdvisingPDF = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF };
+// GET /api/student/me/roadmap
+const getRoadmap = async (req, res) => {
+  try {
+    const { data: student } = await supabase
+      .from('students')
+      .select('*, programs(*), curriculums(*)')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+
+    // Get all subjects with prerequisites
+    const { data: allSubjects } = await supabase
+      .from('subjects')
+      .select('*, prerequisites!subject_id(required_subject_id)')
+      .eq('curriculum_id', student.curriculum_id)
+      .order('year_level', { ascending: true });
+
+    // Get all academic records
+    const { data: records } = await supabase
+      .from('academic_records')
+      .select('*')
+      .eq('student_id', student.id);
+
+    // Build record map for quick lookup
+    const recordMap = {};
+    records.forEach(r => { recordMap[r.subject_id] = r; });
+
+    // Build passed IDs for prerequisite checking
+    const passedIds = new Set(
+      records.filter(r => r.status === 'passed').map(r => r.subject_id)
+    );
+    const failedIds = new Set(
+      records.filter(r => r.status === 'failed').map(r => r.subject_id)
+    );
+    const incIds = new Set(
+      records.filter(r => r.status === 'inc').map(r => r.subject_id)
+    );
+
+    // Compute status for each subject
+    const subjectsWithStatus = allSubjects.map(subject => {
+      const record = recordMap[subject.id];
+      let status = 'locked'; // default
+
+      if (passedIds.has(subject.id)) {
+        status = 'passed';
+      } else if (incIds.has(subject.id)) {
+        status = 'inc';
+      } else if (failedIds.has(subject.id)) {
+        status = 'retake';
+      } else {
+        // Check if prerequisites are met
+        const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
+        const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
+        if (prereqsMet) {
+          status = 'eligible';
+        } else {
+          status = 'locked';
+        }
+      }
+
+      return {
+        id: subject.id,
+        code: subject.code,
+        name: subject.name,
+        units: subject.units,
+        year_level: subject.year_level,
+        semester: subject.semester,
+        subject_type: subject.subject_type,
+        is_elective: subject.is_elective,
+        standing_requirement: subject.standing_requirement,
+        prerequisites: subject.prerequisites,
+        status,
+        grade: record?.grade || null,
+      };
+    });
+
+    // Compute stats
+    const passedSubjects = subjectsWithStatus.filter(s => s.status === 'passed');
+    const totalUnitsTaken = passedSubjects.reduce((sum, s) => sum + s.units, 0);
+    const totalUnitsRequired = allSubjects.reduce((sum, s) => sum + s.units, 0);
+
+    // GWA computation (CHED weighted average)
+    const gradedSubjects = passedSubjects.filter(s => {
+      const grade = parseFloat(s.grade);
+      return !isNaN(grade);
+    });
+
+    const gwa = gradedSubjects.length > 0
+      ? (
+          gradedSubjects.reduce((sum, s) => sum + (parseFloat(s.grade) * s.units), 0) /
+          gradedSubjects.reduce((sum, s) => sum + s.units, 0)
+        ).toFixed(2)
+      : null;
+
+    res.json({
+      stats: {
+        student_number: student.student_number,
+        full_name: `${student.first_name} ${student.middle_name ? student.middle_name + ' ' : ''}${student.last_name}`,
+        program: student.programs.name,
+        program_code: student.programs.code,
+        curriculum_version: student.curriculums.version,
+        total_units_required: totalUnitsRequired,
+        total_units_taken: totalUnitsTaken,
+        year_level: student.year_level,
+        academic_standing: student.academic_standing,
+        gwa,
+      },
+      subjects: subjectsWithStatus,
+    });
+
+  } catch (err) {
+    console.error('Roadmap error:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap };

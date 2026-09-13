@@ -82,7 +82,7 @@ export function TermsOfService() {
             </Section>
 
             <Section title="4. Data Handling">
-              <p>Your use of CurricuCheck is also governed by our <Link to="/privacy-notice" className="text-[#136537] hover:underline font-medium">Privacy Notice</Link>, which explains what data we collect, how it is stored, how long it is kept, and your rights over it under the Data Privacy Act of 2012 (RA 10173). Please review it before signing up.</p>
+              <p>Your use of CurricuCheck is also governed by our <Link to="/privacy-notice" className="text-[#136537] hover:underline font-medium">Privacy Policy</Link>, which explains what data we collect, how it is stored, how long it is kept, and your rights over it under the Data Privacy Act of 2012 (RA 10173). Please review it before signing up.</p>
             </Section>
 
             <Section title="5. No Warranty">
@@ -100,7 +100,7 @@ export function TermsOfService() {
             </Section>
 
             <Section title="7. Data Retention and Deletion">
-              <p>Data submitted to CurricuCheck is retained only for the duration of the thesis evaluation period. Once this period concludes, all student data will be permanently deleted from our database, as described in our Privacy Notice.</p>
+              <p>Data submitted to CurricuCheck is retained only for the duration of the thesis evaluation period. Once this period concludes, all student data will be permanently deleted from our database, as described in our Privacy Policy.</p>
             </Section>
 
             <Section title="8. Changes to These Terms">
@@ -113,7 +113,7 @@ export function TermsOfService() {
             </Section>
 
             <div className="mt-8 p-4 bg-[#EEF7F2] rounded-xl border border-[#C8E6D4]">
-              <p className="text-sm text-[#085830] font-medium">By checking "I agree to the Terms of Service and Privacy Notice" during sign-up, you acknowledge that you have read, understood, and agreed to this Terms of Service.</p>
+              <p className="text-sm text-[#085830] font-medium">By checking "I agree to the Terms of Service and Privacy Policy" during sign-up, you acknowledge that you have read, understood, and agreed to this Terms of Service.</p>
             </div>
           </div>
         </div>

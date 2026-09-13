@@ -14,6 +14,9 @@ import { ProtectedRoute } from "../routes/ProtectedRoute";
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyNotice } from './pages/PrivacyNotice';
 import { ResetPassword } from './pages/ResetPassword';
+import { CurriculumRoadmap } from './pages/CurriculumRoadmap';
+
+
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +36,7 @@ export const router = createBrowserRouter([
       { path: 'terms-of-service', Component: TermsOfService },
       { path: 'privacy-notice', Component: PrivacyNotice },
       { path: 'reset-password', Component: ResetPassword },
+      { path: 'dashboard/roadmap', Component: CurriculumRoadmap },
     ],
   },
 ]);

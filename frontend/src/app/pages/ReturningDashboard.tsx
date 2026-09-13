@@ -84,7 +84,8 @@ export function ReturningDashboard() {
   const [yearLevel, setYearLevel] = useState(student?.year_level || 1);
   const [editingYear, setEditingYear] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [savingChanges, setSavingChanges] = useState(false);
+const [checkingEligibility, setCheckingEligibility] = useState(false);
   const [showTermModal, setShowTermModal] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState('');
 
@@ -152,39 +153,50 @@ export function ReturningDashboard() {
     setGrades((prev) => ({ ...prev, [subjectId]: value }));
   };
 
-  const handleSaveChanges = async () => {
-    setSaving(true);
-    try {
-      if (yearLevel !== student?.year_level) {
-        await api.patch('/student/me/year-level', { year_level: yearLevel });
-      }
+  const handleSaveChanges = async (proceedToEligibility: boolean = false) => {
+  if (proceedToEligibility) {
+    setCheckingEligibility(true);
+  } else {
+    setSavingChanges(true);
+  }
 
-      const records = subjects
-        .filter((s) => grades[s.id] !== undefined)
-        .map((s) => ({
-          subject_id: s.id,
-          grade: grades[s.id] === 'INC' || grades[s.id] === '' ? null : grades[s.id],
-          status: interpretGrade(grades[s.id] ?? ''),
-        }));
-
-      if (records.length > 0) {
-        const now = new Date();
-        const academicYear = `${now.getFullYear()}-${now.getFullYear() + 1}`;
-        await api.post('/student/me/records', {
-          academic_year: academicYear,
-          term: 'First Semester',
-          records,
-        });
-      }
-
-      await refreshStudent();
-      setShowTermModal(true);
-    } catch (err) {
-      console.error('Failed to save records', err);
-    } finally {
-      setSaving(false);
+  try {
+    if (yearLevel !== student?.year_level) {
+      await api.patch('/student/me/year-level', { year_level: yearLevel });
     }
-  };
+
+    const records = subjects
+      .filter((s) => grades[s.id] !== undefined)
+      .map((s) => ({
+        subject_id: s.id,
+        grade: grades[s.id] === 'INC' || grades[s.id] === '' ? null : grades[s.id],
+        status: interpretGrade(grades[s.id] ?? ''),
+      }));
+
+    if (records.length > 0) {
+      const now = new Date();
+      const academicYear = `${now.getFullYear()}-${now.getFullYear() + 1}`;
+
+      await api.post('/student/me/records', {
+        academic_year: academicYear,
+        term: 'First Semester',
+        records,
+      });
+    }
+
+    await refreshStudent();
+
+    if (proceedToEligibility) {
+      setShowTermModal(true);
+    }
+
+  } catch (err) {
+    console.error('Failed to save records', err);
+  } finally {
+    setSavingChanges(false);
+    setCheckingEligibility(false);
+  }
+};
 
   const handleConfirmTerm = () => {
     if (!selectedTerm) return;
@@ -385,16 +397,27 @@ export function ReturningDashboard() {
           )}
         </div>
 
-        <div className="flex flex-col items-center gap-8 mb-8">
-          <button
-            type="button"
-            onClick={handleSaveChanges}
-            disabled={saving}
-            className="px-10 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
+ <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+  {/* Save Only */}
+  <button
+    type="button"
+    onClick={() => handleSaveChanges(false)}
+    disabled={savingChanges || checkingEligibility}
+    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+  >
+    {savingChanges ? 'Saving...' : 'Save Changes'}
+  </button>
+
+  {/* Save + Check Eligibility */}
+  <button
+    type="button"
+    onClick={() => handleSaveChanges(true)}
+    disabled={savingChanges || checkingEligibility}
+    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+  >
+    {checkingEligibility ? 'Checking...' : 'Check Subject Eligibility'}
+  </button>
+</div>
       </div>
 
       {showTermModal && (

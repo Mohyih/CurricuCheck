@@ -405,7 +405,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
           <button
             onClick={handleConfirm}
             disabled={selectedIds.size === 0}
-            className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-60"
+            className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60"
           >
             Confirm My Subjects
           </button>

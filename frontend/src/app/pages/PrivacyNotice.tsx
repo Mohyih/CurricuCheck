@@ -46,11 +46,11 @@ export function PrivacyNotice() {
 
       <div className="max-w-3xl mx-auto px-6 py-12">
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-8 md:p-12">
-          <h1 className="text-2xl font-bold text-[#085830] mb-2">Privacy Notice</h1>
+          <h1 className="text-2xl font-bold text-[#085830] mb-2">Privacy Policy</h1>
           <p className="text-sm text-gray-400 mb-8">Last Updated: July 30, 2026</p>
 
           <div className="prose prose-sm max-w-none text-gray-600 space-y-6">
-            <p>This Privacy Notice explains how CurricuCheck collects, uses, stores, and protects your personal data in accordance with the <strong className="text-[#085830]">Data Privacy Act of 2012 (Republic Act No. 10173)</strong> of the Philippines.</p>
+            <p>This Privacy Policy explains how CurricuCheck collects, uses, stores, and protects your personal data in accordance with the <strong className="text-[#085830]">Data Privacy Act of 2012 (Republic Act No. 10173)</strong> of the Philippines.</p>
             <p>CurricuCheck is a thesis research prototype developed by students of the College of Engineering and Computer Technology at Wesleyan University-Philippines. This Notice applies to all users who create an account or use the system.</p>
 
             <Section title="1. Data Controller">
@@ -89,7 +89,7 @@ export function PrivacyNotice() {
               </ul>
             </Section>
 
-            <Section title="3. Why We Collect This Information">
+            <Section title="3. Purposes of Data Collection">
               <p>We collect your data solely for the following purposes:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>To provide curriculum evaluation and subject recommendation features</li>
@@ -103,7 +103,7 @@ export function PrivacyNotice() {
             <Section title="4. Legal Basis for Processing">
               <p>We process your personal data based on:</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li><strong>Your consent</strong> — given when you check "I agree to the Terms of Service and Privacy Notice" during sign-up</li>
+                <li><strong>Your consent</strong> — given when you check "I agree to the Terms of Service and Privacy Policy" during sign-up</li>
                 <li><strong>Legitimate research interest</strong> — as part of an undergraduate thesis study conducted under academic supervision</li>
               </ul>
             </Section>
@@ -155,7 +155,7 @@ export function PrivacyNotice() {
             </Section>
 
             <Section title="10. Changes to This Notice">
-              <p>We may update this Privacy Notice as the system develops. Any material changes will be communicated through the system interface or via the contact email on file.</p>
+              <p>We may update this Privacy Policy as the system develops. Any material changes will be communicated through the system interface or via the contact email on file.</p>
             </Section>
 
             <Section title="11. Contact Us">
@@ -164,7 +164,7 @@ export function PrivacyNotice() {
             </Section>
 
             <div className="mt-8 p-4 bg-[#EEF7F2] rounded-xl border border-[#C8E6D4]">
-              <p className="text-sm text-[#085830] font-medium">By using CurricuCheck, you acknowledge that you have read and understood this Privacy Notice and consent to the collection and processing of your personal data as described herein.</p>
+              <p className="text-sm text-[#085830] font-medium">By using CurricuCheck, you acknowledge that you have read and understood this Privacy Policy and consent to the collection and processing of your personal data as described herein.</p>
             </div>
           </div>
         </div>
