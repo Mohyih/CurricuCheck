@@ -403,7 +403,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
     type="button"
     onClick={() => handleSaveChanges(false)}
     disabled={savingChanges || checkingEligibility}
-    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
   >
     {savingChanges ? 'Saving...' : 'Save Changes'}
   </button>
@@ -413,7 +413,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
     type="button"
     onClick={() => handleSaveChanges(true)}
     disabled={savingChanges || checkingEligibility}
-    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
   >
     {checkingEligibility ? 'Checking...' : 'Check Subject Eligibility'}
   </button>
@@ -603,7 +603,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
                   
                 <div className="text-center">
                   <p className="text-xs sm:text-sm font-medium text-[#136537]">Upload Grade Screenshot</p>
-                  <p className="text-xs text-gray-400">JPG, PNG — include header + full table</p>
+                  <p className="text-xs text-gray-400">JPG, PNG - include header + full table</p>
                 </div>
                 <input
                   type="file"
@@ -707,7 +707,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
                   <div className="w-2 h-2 rounded-full bg-[#A8C957]"></div>
                   <p className="text-xs sm:text-sm font-bold text-[#085830]">
                     Screenshot {resultIndex + 1}
-                    {result.semester_detected && ` — ${result.semester_detected}`}
+                    {result.semester_detected && ` - ${result.semester_detected}`}
                     {result.school_year_detected && ` (${result.school_year_detected})`}
                   </p>
                 </div>

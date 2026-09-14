@@ -178,7 +178,7 @@ export function SubjectEligibility() {
             <div>
 <div className="font-bold text-orange-700 text-xs md:text-sm mb-1">Incomplete Grades Need Resolution</div>
               <div className="text-orange-600 text-xs md:text-sm">
-                {data.inc_warnings.map((s) => s.code).join(', ')} — must be resolved within 1 week at the start of next semester, otherwise it becomes a Failed grade (5.00).
+                {data.inc_warnings.map((s) => s.code).join(', ')} - must be resolved within 1 week at the start of next semester, otherwise it becomes a Failed grade (5.00).
               </div>
             </div>
           </div>
@@ -271,7 +271,7 @@ export function SubjectEligibility() {
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-orange-500" />
 <span className="text-sm font-bold text-orange-700">
-                {deferredRows.length} Deferred Subject{deferredRows.length > 1 ? 's' : ''} — Subjects from other terms, consult your adviser
+                {deferredRows.length} Deferred Subject{deferredRows.length > 1 ? 's' : ''} - Subjects from other terms, consult your adviser
               </span>
               </div>
               {showDeferred

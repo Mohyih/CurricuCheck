@@ -19,7 +19,7 @@ const sendOTP = async (email, otp, firstName) => {
       {
         sender,
         to: [{ email }],
-        subject: "CurricuCheck — Email Verification Code",
+        subject: "CurricuCheck - Email Verification Code",
 
         htmlContent: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -77,7 +77,7 @@ const sendAdvisingSummaryPDF = async (
       {
         sender,
         to: [{ email }],
-        subject: `CurricuCheck — Your Advising Summary for ${targetSemester}`,
+        subject: `CurricuCheck - Your Advising Summary for ${targetSemester}`,
 
         htmlContent: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -144,7 +144,7 @@ const sendPasswordReset = async (email, resetLink, firstName) => {
       {
         sender,
         to: [{ email }],
-        subject: "CurricuCheck — Password Reset Request",
+        subject: "CurricuCheck - Password Reset Request",
 
         htmlContent: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

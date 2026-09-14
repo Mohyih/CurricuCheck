@@ -381,7 +381,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
       <p className="leading-5 break-words">
         <span className="font-medium">{s.code}</span>
-        {" — "}
+        {" - "}
         <span className="text-amber-600">{s.name}</span>
         <span className="text-amber-500">
           {" "}

@@ -202,7 +202,7 @@ const addHeader = (doc: jsPDF, pageNum: number) => {
   head: [['Student Information', '']],
   body: [
     ['Student Name', `${student?.last_name}, ${student?.first_name}`],
-    ['Degree Program', `${student?.programs?.code} — Curriculum ${student?.curriculums?.version}`],
+    ['Degree Program', `${student?.programs?.code} - Curriculum ${student?.curriculums?.version}`],
     ['Term', targetSemester],
     ['Academic Standing', student?.academic_standing || ''],
     ['Preferred Load', sessionLoad],
@@ -275,7 +275,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(9);
     doc.setTextColor(80, 80, 80);
-    const generatedText = `This advising summary was generated for ${student?.last_name}, ${student?.first_name} (${student?.programs?.code} — Curriculum ${student?.curriculums?.version}) for ${targetSemester}.`;
+    const generatedText = `This advising summary was generated for ${student?.last_name}, ${student?.first_name} (${student?.programs?.code} - Curriculum ${student?.curriculums?.version}) for ${targetSemester}.`;
     const generatedLines = doc.splitTextToSize(generatedText, CONTENT_WIDTH);
     doc.text(generatedLines, MARGIN, yPos);
     yPos += generatedLines.length * 5 + 8;

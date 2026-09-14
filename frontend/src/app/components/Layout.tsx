@@ -167,7 +167,7 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
     </div>
 
     <div className="text-[10px] md:text-xs text-gray-500">
-      {student?.programs?.code} — {student?.curriculums?.version}
+      {student?.programs?.code} - {student?.curriculums?.version}
     </div>
   </div>
 </div>
