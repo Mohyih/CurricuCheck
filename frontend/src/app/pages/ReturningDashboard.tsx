@@ -364,7 +364,9 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
                             >
                               <td className="px-2 md:px-6 py-2 md:py-3 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
                               <td className="px-2 md:px-6 py-2 md:py-3 text-gray-600 text-xs md:text-sm">
-                                <div className="line-clamp-2 md:line-clamp-none">{subject.name}</div>
+                                <div className="whitespace-normal break-words md:whitespace-normal">
+  {subject.name}
+</div>
                               </td>
                               <td className="px-2 md:px-6 py-2 md:py-3 text-center text-gray-600 text-xs md:text-sm">{subject.units}</td>
                               <td className="px-2 md:px-6 py-2 md:py-3">
@@ -403,7 +405,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
     type="button"
     onClick={() => handleSaveChanges(false)}
     disabled={savingChanges || checkingEligibility}
-    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+    className="w-[240px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
   >
     {savingChanges ? 'Saving...' : 'Save Changes'}
   </button>
@@ -413,7 +415,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
     type="button"
     onClick={() => handleSaveChanges(true)}
     disabled={savingChanges || checkingEligibility}
-    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+    className="w-[240px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
   >
     {checkingEligibility ? 'Checking...' : 'Check Subject Eligibility'}
   </button>
@@ -423,10 +425,12 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
       {showTermModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4]/50 p-8 max-w-md w-full">
-            <h2 className="text-xl font-bold text-[#085830] mb-6 text-center">
+                        <h2 className="text-xl font-bold text-[#085830] mb-2 text-center">
               What term are you planning to enroll?
             </h2>
-
+            <p className="text-sm text-gray-500 text-center mb-6">
+              {yearLevel === 1 ? 'First' : yearLevel === 2 ? 'Second' : yearLevel === 3 ? 'Third' : 'Fourth'} Year
+            </p>
             <div className="space-y-3 mb-8">
               {['1st Semester', '2nd Semester', ...(hasSummerTerm ? ['Summer'] : [])].map((term) => (
                 <button

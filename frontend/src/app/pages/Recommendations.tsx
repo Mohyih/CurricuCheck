@@ -231,6 +231,10 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
           )}
         </div>
 
+        <p className="text-xs text-gray-500 mb-3 px-1">
+  Click a subject row to select or remove it from your subjects.
+</p>
+
         {/* Table */}
         <div className="bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4]/50 overflow-hidden mb-6">
           <div className="overflow-x-auto">
@@ -241,19 +245,27 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
                   <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm flex-1">Subject</th>
                   <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm w-10 md:w-24 text-center">Units</th>
                   <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm w-16 md:w-40 text-center">Priority</th>
-                  <th className="px-2 md:px-6 py-2 md:py-4 font-medium text-xs md:text-sm w-10 md:w-24 text-center">✓</th>
+                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {allSubjects.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-400">
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
                       No subjects available for this term and load.
                     </td>
                   </tr>
                 ) : (
                   allSubjects.map((subject) => (
-                    <tr key={subject.id} className="hover:bg-[#EEF7F2]/30 transition-colors border-b border-gray-50 last:border-b-0">
+                    <tr
+  key={subject.id}
+  onClick={() => toggleSubject(subject.id)}
+  className={`cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 ${
+    selectedIds.has(subject.id)
+  ? 'bg-[#EEF7F2]/60 border-l-4 border-l-[#136537]'
+  : 'hover:bg-[#EEF7F2]/30'
+  }`}
+>
                       <td className="px-2 md:px-6 py-2 md:py-4 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
                       <td className="px-2 md:px-6 py-2 md:py-4 text-gray-600 text-xs md:text-sm">
                         <div className="line-clamp-2 md:line-clamp-none">
@@ -267,14 +279,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
                       <td className="px-2 md:px-6 py-2 md:py-4 text-center text-xs md:text-sm">
                         <div className="flex justify-center"><PriorityBadge category={subject.category} /></div>
                       </td>
-                      <td className="px-2 md:px-6 py-2 md:py-4 text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.has(subject.id)}
-                          onChange={() => toggleSubject(subject.id)}
-                          className="w-4 h-4 text-[#136537] bg-white border-gray-300 rounded focus:ring-2 focus:ring-[#136537]/20 cursor-pointer"
-                        />
-                      </td>
+                      
                     </tr>
                   ))
                 )}
@@ -301,11 +306,11 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
                       key={load}
                       type="button"
                       onClick={() => handleLoadChange(load)}
-                      className={`flex-1 px-4 py-3 rounded-xl border text-center transition-all ${
-                        isSelected
-                          ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white border-transparent shadow-md'
-                          : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-[#136537] hover:text-[#136537] cursor-pointer'
-                      }`}
+                      className={`flex-1 px-4 py-3 rounded-xl border text-center transition-all outline-none ${
+  isSelected
+    ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white border-0 shadow-md'
+    : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-[#136537] hover:text-[#136537] cursor-pointer'
+}`}   
                     >
                       <p className="text-xs font-medium mb-0.5">{info.label}</p>
                       <p className="text-[10px] opacity-80">{info.range}</p>
@@ -381,7 +386,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
       <p className="leading-5 break-words">
         <span className="font-medium">{s.code}</span>
-        {" - "}
+        {" — "}
         <span className="text-amber-600">{s.name}</span>
         <span className="text-amber-500">
           {" "}

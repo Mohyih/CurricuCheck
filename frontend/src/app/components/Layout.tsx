@@ -4,6 +4,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
 import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X, Map } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../lib/api';
 
 
 
@@ -13,9 +14,44 @@ export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { student, logout } = useAuth();
+
+  const [incNotification, setIncNotification] = useState<any[]>([]);
+const [showIncNotif, setShowIncNotif] = useState(false);
   
 
 const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+
+useEffect(() => {
+  const fetchIncGrades = async () => {
+    try {
+      const res = await api.get('/student/me/records');
+      const records = res.data.records || [];
+
+      const incRecords = records.filter(
+        (r: any) => r.status === 'inc'
+      );
+
+      if (incRecords.length > 0) {
+        setIncNotification(incRecords);
+
+        const dismissed = sessionStorage.getItem(
+          'incNotificationDismissed'
+        );
+
+        if (!dismissed) {
+          setShowIncNotif(true);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch records for INC check');
+    }
+  };
+
+  if (student) {
+    fetchIncGrades();
+  }
+}, [student]);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -84,6 +120,69 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
           Student Information
         </Link>
 
+{/* INC Notification */}
+{showIncNotif && incNotification.length > 0 && (
+  <div className="fixed bottom-4 left-4 right-4 md:right-auto z-50 max-w-xs w-auto md:w-80 bg-white border-2 border-amber-400 rounded-[1rem] shadow-2xl p-4 animate-fade-in">
+    
+    <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex items-center gap-2">
+        
+        <p className="text-sm font-bold text-amber-700">
+          INC Grade{incNotification.length > 1 ? 's' : ''} Reminder
+        </p>
+      </div>
+
+      <button
+        onClick={() => {
+          sessionStorage.setItem(
+            'incNotificationDismissed',
+            'true'
+          );
+          setShowIncNotif(false);
+        }}
+        className="text-gray-400 hover:text-gray-600 text-lg leading-none flex-shrink-0"
+      >
+        ×
+      </button>
+    </div>
+
+    <p className="text-xs text-amber-600 mb-2">
+      You have {incNotification.length} incomplete grade
+      {incNotification.length > 1 ? 's' : ''} that must be
+      resolved within 1 week at the start of next semester:
+    </p>
+
+    <div className="space-y-1">
+      {incNotification.map((record: any) => (
+        <div
+          key={record.id}
+          className="flex items-center gap-2 text-xs"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+
+          <span className="font-medium text-amber-800">
+            {record.subjects?.code || 'Unknown'} - Year{' '}
+            {record.subjects?.year_level}, {record.subjects?.semester}
+          </span>
+        </div>
+      ))}
+    </div>
+
+    <button
+      onClick={() => {
+        sessionStorage.setItem(
+          'incNotificationDismissed',
+          'true'
+        );
+        setShowIncNotif(false);
+      }}
+      className="mt-3 w-full py-1.5 rounded-full bg-amber-400 text-white text-xs font-bold hover:bg-amber-500 transition-all"
+    >
+      Got it
+    </button>
+
+  </div>
+)}
                 
 
 

@@ -392,30 +392,48 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
     return doc;
   };
 
-  const handleExportPDF = () => {
+ const handleExportPDF = () => {
     const doc = buildPDF();
-    doc.save('CurricuCheck_Advising_Summary.pdf');
-};
 
-const handleSendToEmail = async () => {
+    // Detect mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Generate blob and trigger explicit anchor download
+      const blob = doc.output('blob');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'CurricuCheck_Advising_Summary.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } else {
+      // Desktop standard behavior
+      doc.save('CurricuCheck_Advising_Summary.pdf');
+    }
+  };
+
+  const handleSendToEmail = async () => {
     setSendingEmail(true);
 
     try {
-        const doc = buildPDF();
-        const pdfBase64 = doc.output('datauristring').split(',')[1];
+      const doc = buildPDF();
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
 
-        await api.post('/student/me/send-advising-pdf', {
-            pdf_base64: pdfBase64,
-            target_semester: targetSemester,
-        });
+      await api.post('/student/me/send-advising-pdf', {
+        pdf_base64: pdfBase64,
+        target_semester: targetSemester,
+      });
 
-        setEmailSent(true);
+      setEmailSent(true);
     } catch (err) {
-        console.error('Failed to send PDF to email:', err);
+      console.error('Failed to send PDF to email:', err);
     } finally {
-        setSendingEmail(false);
+      setSendingEmail(false);
     }
-};
+  };
 
   if (loading) {
     return (
