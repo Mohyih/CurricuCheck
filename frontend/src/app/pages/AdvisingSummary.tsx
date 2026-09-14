@@ -391,11 +391,19 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
 
     return doc;
   };
+    const handleExportPDF = () => {
+    const doc = buildPDF();
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
- const handleExportPDF = () => {
-  const doc = buildPDF();
-  doc.save('CurricuCheck_Advising_Summary.pdf');
-};
+    if (isIOS) {
+      const pdfBlob = doc.output('blob');
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      window.open(blobUrl, '_blank');
+    } else {
+      doc.save('CurricuCheck_Advising_Summary.pdf');
+    }
+  };
+    
 
     
   const handleSendToEmail = async () => {
@@ -682,12 +690,13 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
         {/* Bottom Actions */}
         <div className="flex flex-col items-center gap-8 mt-12 mb-8">
           <div className="flex flex-col sm:flex-row gap-3 items-center">
-            <button
+                        <button
               onClick={handleExportPDF}
-              className="w-[220px] sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+              className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
             >
               <FileDown className="w-5 h-5" />
-              Download PDF
+              <span className="hidden md:inline">Download PDF</span>
+              <span className="md:hidden">View PDF</span>
             </button>
             <button
   onClick={handleSendToEmail}
