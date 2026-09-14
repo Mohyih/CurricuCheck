@@ -369,7 +369,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
       <div>
         <p className="text-sm font-bold text-amber-700 mb-2">
-          Subjects Available This Semester — Adviser Confirmation Required
+          Subjects Available This Semester - Adviser Confirmation Required
         </p>
 
         <p className="text-xs text-amber-600 mb-3">
@@ -386,7 +386,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
 
       <p className="leading-5 break-words">
         <span className="font-medium">{s.code}</span>
-        {" — "}
+        {" - "}
         <span className="text-amber-600">{s.name}</span>
         <span className="text-amber-500">
           {" "}
@@ -410,7 +410,7 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
           <button
             onClick={handleConfirm}
             disabled={selectedIds.size === 0}
-            className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60"
+            className="w-[220px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
           >
             Confirm My Subjects
           </button>

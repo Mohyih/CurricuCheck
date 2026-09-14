@@ -325,7 +325,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(80, 80, 80);
-      const consultNote = 'The following subjects are offered this semester but belong to a different year level or were previously failed. These are not included in your confirmed enrollment — please consult your academic adviser.';
+      const consultNote = 'The following subjects are offered this semester but belong to a different year level or were previously failed. These are not included in your confirmed enrollment - please consult your academic adviser.';
       const consultLines = doc.splitTextToSize(consultNote, CONTENT_WIDTH);
       doc.text(consultLines, MARGIN, yPos);
       yPos += consultLines.length * 4 + 4;
@@ -334,8 +334,8 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
         yPos = checkNewPage(doc, yPos, pageNum, 8);
         const label = s.same_semester
           ? 'Available this semester'
-          : 'Previously failed — not offered this semester';
-        const line = `\u2022 ${s.code} — ${s.name} (${s.units} units · ${label})`;
+          : 'Previously failed - not offered this semester';
+        const line = `\u2022 ${s.code} - ${s.name} (${s.units} units · ${label})`;
         const lines = doc.splitTextToSize(line, CONTENT_WIDTH - 4);
         doc.text(lines, MARGIN + 4, yPos);
         yPos += lines.length * 5;
@@ -393,28 +393,11 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
   };
 
  const handleExportPDF = () => {
-    const doc = buildPDF();
+  const doc = buildPDF();
+  doc.save('CurricuCheck_Advising_Summary.pdf');
+};
 
-    // Detect mobile device
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      // Generate blob and trigger explicit anchor download
-      const blob = doc.output('blob');
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'CurricuCheck_Advising_Summary.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 100);
-    } else {
-      // Desktop standard behavior
-      doc.save('CurricuCheck_Advising_Summary.pdf');
-    }
-  };
-
+    
   const handleSendToEmail = async () => {
     setSendingEmail(true);
 
@@ -593,7 +576,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
           </h2>
           <div className="space-y-6">
             <p className="text-sm italic text-gray-600 leading-relaxed">
-              This advising summary was generated for {student?.last_name}, {student?.first_name} ({student?.programs?.code} — Curriculum {student?.curriculums?.version}) for {targetSemester}.
+              This advising summary was generated for {student?.last_name}, {student?.first_name} ({student?.programs?.code} - Curriculum {student?.curriculums?.version}) for {targetSemester}.
             </p>
 
             <div className="pt-6 border-t border-gray-100">
@@ -644,19 +627,19 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
                   <p className="text-xs text-amber-700">
                     The following subjects are offered this semester but belong to a different year level or were previously failed.
-                    These are not included in your confirmed enrollment — please consult your academic adviser to determine if you are eligible to enroll in them this term.
+                    These are not included in your confirmed enrollment - please consult your academic adviser to determine if you are eligible to enroll in them this term.
                   </p>
                   <ul className="space-y-2">
                     {sameSemesterDeferred.map((s: any) => (
                       <li key={s.id} className="flex items-start gap-2 text-xs text-amber-700">
                         <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1"></div>
                         <span>
-                          <span className="font-semibold">{s.code}</span> — {s.name}
+                          <span className="font-semibold">{s.code}</span> - {s.name}
                           <span className="text-amber-500 ml-1">
                             ({s.units} units ·{' '}
                             {s.same_semester
                               ? 'Available this semester'
-                              : 'Previously failed — not offered this semester'}
+                              : 'Previously failed - not offered this semester'}
                             )
                           </span>
                         </span>
@@ -701,7 +684,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <button
               onClick={handleExportPDF}
-              className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+              className="w-[220px] sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
             >
               <FileDown className="w-5 h-5" />
               Download PDF
@@ -709,7 +692,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
             <button
   onClick={handleSendToEmail}
   disabled={sendingEmail}
-  className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
+  className="w-[220px] sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
 >
   <Mail className="w-5 h-5" />
   {sendingEmail

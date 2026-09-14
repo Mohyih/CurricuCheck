@@ -72,7 +72,7 @@ export function PrivacyNotice() {
                 <li>Full name (last name, first name, middle name)</li>
                 <li>Student ID number</li>
                 <li>WUP email address</li>
-                <li>Password (stored in encrypted form via Supabase Auth — the Researchers cannot view your password)</li>
+                <li>Password (stored in encrypted form via Supabase Auth - the Researchers cannot view your password)</li>
               </ul>
               <p className="mt-2"><strong className="text-[#085830]">Academic Information:</strong></p>
               <ul className="list-disc pl-5 space-y-1">
@@ -85,7 +85,7 @@ export function PrivacyNotice() {
               <ul className="list-disc pl-5 space-y-1">
                 <li>Evaluation results (eligible, blocked, deferred subjects)</li>
                 <li>Recommended and confirmed subject selections</li>
-                <li>Advising summary exports (generated locally on your device — not stored on our servers)</li>
+                <li>Advising summary exports (generated locally on your device - not stored on our servers)</li>
               </ul>
             </Section>
 
@@ -103,15 +103,15 @@ export function PrivacyNotice() {
             <Section title="4. Legal Basis for Processing">
               <p>We process your personal data based on:</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li><strong>Your consent</strong> — given when you check "I agree to the Terms of Service and Privacy Policy" during sign-up</li>
-                <li><strong>Legitimate research interest</strong> — as part of an undergraduate thesis study conducted under academic supervision</li>
+                <li><strong>Your consent</strong> - given when you check "I agree to the Terms of Service and Privacy Policy" during sign-up</li>
+                <li><strong>Legitimate research interest</strong> - as part of an undergraduate thesis study conducted under academic supervision</li>
               </ul>
             </Section>
 
             <Section title="5. Where Your Data Is Stored">
               <p>Your data is stored on <strong className="text-[#085830]">Supabase</strong>, a cloud database platform hosted in Singapore. Supabase applies industry-standard security practices including encryption at rest and in transit.</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Passwords are never stored in plaintext — they are managed by Supabase Auth using secure hashing.</li>
+                <li>Passwords are never stored in plaintext - they are managed by Supabase Auth using secure hashing.</li>
                 <li>Access to the database is restricted to the Researchers only.</li>
                 <li>Authentication uses JSON Web Tokens (JWT) to secure your session.</li>
               </ul>
@@ -121,9 +121,9 @@ export function PrivacyNotice() {
             <Section title="6. Who Has Access to Your Data">
               <p>We do not sell, rent, or share your personal data with third parties, except:</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li><strong>Supabase</strong> — as our database and authentication provider (data processor)</li>
-                <li><strong>Anthropic (Claude API)</strong> — when you use the AI Grade Scanner feature, your uploaded grade table image is sent to Claude for processing. The image is not stored by us after processing. Please refer to Anthropic's Privacy Policy for how they handle API data.</li>
-                <li><strong>Brevo (email service)</strong> — used to send OTP verification emails and advising summary PDFs to your registered email address</li>
+                <li><strong>Supabase</strong> - as our database and authentication provider (data processor)</li>
+                <li><strong>Anthropic (Claude API)</strong> - when you use the AI Grade Scanner feature, your uploaded grade table image is sent to Claude for processing. The image is not stored by us after processing. Please refer to Anthropic's Privacy Policy for how they handle API data.</li>
+                <li><strong>Brevo (email service)</strong> - used to send OTP verification emails and advising summary PDFs to your registered email address</li>
               </ul>
               <p>We do not share your data with Wesleyan University-Philippines administrators, faculty, or staff.</p>
             </Section>
@@ -136,11 +136,11 @@ export function PrivacyNotice() {
             <Section title="8. Your Rights">
               <p>Under the Data Privacy Act of 2012, you have the right to:</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li><strong>Access</strong> — request a copy of the personal data we hold about you</li>
-                <li><strong>Correction</strong> — update inaccurate information through the Student Information page</li>
-                <li><strong>Erasure</strong> — delete your account and all associated data through the Student Information page</li>
-                <li><strong>Withdraw Consent</strong> — stop using the system and request account deletion at any time</li>
-                <li><strong>Lodge a Complaint</strong> — file a complaint with the National Privacy Commission (NPC) if you believe your rights have been violated</li>
+                <li><strong>Access</strong> - request a copy of the personal data we hold about you</li>
+                <li><strong>Correction</strong> - update inaccurate information through the Student Information page</li>
+                <li><strong>Erasure</strong> - delete your account and all associated data through the Student Information page</li>
+                <li><strong>Withdraw Consent</strong> - stop using the system and request account deletion at any time</li>
+                <li><strong>Lodge a Complaint</strong> - file a complaint with the National Privacy Commission (NPC) if you believe your rights have been violated</li>
               </ul>
               <p>To exercise your rights, contact us at <a href="mailto:curricucheck@gmail.com" className="text-[#136537] hover:underline">curricucheck@gmail.com</a>.</p>
             </Section>

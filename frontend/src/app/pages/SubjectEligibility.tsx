@@ -318,10 +318,9 @@ export function SubjectEligibility() {
         <div className="mt-6 md:mt-12 mb-8 flex flex-col items-center gap-6">
           <Link
   to="/dashboard/recommendations"
-  className="px-8 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+  className="w-[190px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold text-center shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
 >
-  Recommendations
-</Link>
+  Recommendations</Link>
           <div className="w-full border-t border-[#C8E6D4]/50 pt-6 md:pt-8 flex justify-start items-center px-2 md:px-4">
             <Link
               to="/dashboard/returning"
