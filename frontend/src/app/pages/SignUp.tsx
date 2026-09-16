@@ -255,20 +255,20 @@ navigate('/login');
                   <label className="text-xs font-medium text-gray-700">
   Last Name <span className="text-red-500">*</span>
 </label>
-                  <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputClass} placeholder="Dela Cruz" />
+                  <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputClass} placeholder="De Guzman" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">
   First Name <span className="text-red-500">*</span>
 </label>
-                  <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputClass} placeholder="Juan" />
+                  <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputClass} placeholder="John" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">Middle Name <span className="text-gray-400">(optional)</span></label>
-                  <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)} className={inputClass} placeholder="Santos" />
+                  <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)} className={inputClass} placeholder="Cruz" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-gray-700">
@@ -334,7 +334,7 @@ navigate('/login');
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#EEF7F2] border border-[#C8E6D4]">
                     <CheckCircle className="w-4 h-4 text-[#136537] flex-shrink-0" />
                     <span className="text-sm font-medium text-[#136537]">{email}</span>
-                    <span className="text-xs text-[#136537]/60 ml-auto">Verified ✓</span>
+                    <span className="text-xs text-[#136537]/60 ml-auto">Verified</span>
                   </div>
                 )}
               </div>

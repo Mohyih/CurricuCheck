@@ -24,6 +24,7 @@ const STATUS_COLORS: Record<string, { bg: string; border: string; text: string; 
   retake:   { bg: '#e1d5e7', border: '#9673a6', text: '#4a1a6b', label: 'Retake',   dot: '#9673a6' },
   inc:      { bg: '#fff2cc', border: '#d6b656', text: '#6b4a00', label: 'INC',      dot: '#d6b656' },
   locked:   { bg: '#f5f5f5', border: '#cccccc', text: '#888888', label: 'Locked',   dot: '#cccccc' },
+  
 };
 
 const SEMESTER_ORDER = ['First Semester', 'Second Semester', 'Summer'];
@@ -110,6 +111,21 @@ boxShadow = '0 0 0 3px #1f7a4d, 0 4px 12px rgba(31,122,77,0.25)';
       <div style={{ fontSize: 8, textAlign: 'center', padding: '2px 8px', borderRadius: 10, background: isPrerequisite ? '#b83b3b' : isUnlocks ? '#1f7a4d' : border, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>
         {colors.label}
       </div>
+
+            {data.standing_requirement && (
+        <div style={{
+          fontSize: 7,
+          textAlign: 'center',
+          padding: '1px 5px',
+          borderRadius: 8,
+          background: '#b7d682',
+          color: '#fff',
+          fontWeight: 'bold',
+          marginTop: 3,
+        }}>
+          Yr {data.standing_requirement}+ Required
+        </div>
+      )}
 
       <Handle type="source" position={Position.Right} style={{ opacity: 0, width: 8, height: 8 }} />
     </div>
@@ -497,6 +513,20 @@ background: 'linear-gradient(90deg, #085830 0%, #4F823F 50%, #A8C957 100%)',
                 <span className="text-gray-500">Semester</span>
                 <span className="font-medium text-[#085830]">{selectedSubject.semester}</span>
               </div>
+
+              {selectedSubject.standing_requirement && (
+                <div className="flex justify-between text-xs items-center">
+                  <span className="text-gray-500">Required Year</span>
+                  <span
+                    className="font-bold px-2 py-0.5 rounded-full text-xs text-white"
+                    style={{ background: '#b7d682' }}
+                  >
+                    Year {selectedSubject.standing_requirement}+
+                  </span>
+                </div>
+              )}
+
+
               <div className="flex justify-between text-xs items-center">
                 <span className="text-gray-500">Status</span>
                 <span
