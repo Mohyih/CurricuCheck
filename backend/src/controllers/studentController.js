@@ -269,11 +269,15 @@ const getRoadmap = async (req, res) => {
         status = 'inc';
       } else if (failedIds.has(subject.id)) {
         status = 'retake';
-      } else {
-        // Check if prerequisites are met
+            } else {
         const prereqIds = subject.prerequisites.map(p => p.required_subject_id);
         const prereqsMet = prereqIds.every(pid => passedIds.has(pid));
-        if (prereqsMet) {
+        
+        // Check standing requirement
+        const standingMet = !subject.standing_requirement ||
+          student.year_level >= subject.standing_requirement;
+
+        if (prereqsMet && standingMet) {
           status = 'eligible';
         } else {
           status = 'locked';
