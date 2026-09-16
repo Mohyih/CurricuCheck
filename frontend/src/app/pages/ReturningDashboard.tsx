@@ -475,6 +475,16 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
       {showEncodingModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-5 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            
+       <button
+  type="button"
+  onClick={() => navigate(-1)}
+  className="inline-flex items-center gap-1.5 text-gray-500 hover:text-[#085830] transition-colors mb-4 text-xl sm:text-2xl leading-none"
+  aria-label="Go back"
+>
+  ←
+</button>
+            
             <h2 className="text-base sm:text-lg sm:text-xl font-bold text-[#085830] mb-2 text-center">
               How would you like to encode your grades?
             </h2>
@@ -559,11 +569,15 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-base sm:text-lg font-bold text-[#085830]">AI Grade Scanner</h2>
               <button
-                onClick={() => { setShowScanModal(false); setEncodingMethod('manual'); }}
-                className="text-gray-400 hover:text-gray-600 text-xs sm:text-sm"
-              >
-                Encode Manually
-              </button>
+  type="button"
+  onClick={() => {
+    setShowScanModal(false);
+    setShowEncodingModal(true);
+  }}
+  className="inline-flex items-center gap-1.5 text-gray-400 hover:text-gray-600 text-lg sm:text-2xl leading-none"
+>
+  ←
+</button>
             </div>
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 sm:p-4 mb-6">

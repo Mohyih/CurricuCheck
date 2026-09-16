@@ -69,6 +69,9 @@ export function AdvisingSummary() {
   const targetSemester = localStorage.getItem('target_semester') || '';
   const targetYearLevel = localStorage.getItem('target_year_level') || '';
 
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
+const [pdfDownloaded, setPdfDownloaded] = useState(false);
+
   const [sendingEmail, setSendingEmail] = useState(false);
 const [emailSent, setEmailSent] = useState(false);
 
@@ -391,45 +394,60 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
 
     return doc;
   };
-    const handleExportPDF = async () => {
-  const doc = buildPDF();
+const handleExportPDF = async () => {
+  setDownloadingPDF(true);
+  setPdfDownloaded(false);
 
-  const isIOS =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  try {
+    const doc = buildPDF();
 
-  if (isIOS) {
-    const blob = doc.output('blob');
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-    const file = new File(
-      [blob],
-      'CurricuCheck_Advising_Summary.pdf',
-      { type: 'application/pdf' }
-    );
+    if (isIOS) {
+      const blob = doc.output('blob');
 
-    // Use iOS Share Sheet
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: 'CurricuCheck Advising Summary',
-        });
-      } catch (error) {
-        // User closed the share sheet
-        console.log('Share cancelled');
+      const file = new File(
+        [blob],
+        'CurricuCheck_Advising_Summary.pdf',
+        { type: 'application/pdf' }
+      );
+
+      // Use iOS Share Sheet
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'CurricuCheck Advising Summary',
+          });
+
+          // Only mark as downloaded/shared if Share Sheet completed
+          setPdfDownloaded(true);
+        } catch (error) {
+          // User closed the share sheet
+          console.log('Share cancelled');
+        }
+      } else {
+        // Fallback if Share API isn't supported
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60000);
+
+        setPdfDownloaded(true);
       }
     } else {
-      // Fallback if Share API isn't supported
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-
-      setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 60000);
+      // Desktop + Android
+      doc.save('CurricuCheck_Advising_Summary.pdf');
+      setPdfDownloaded(true);
     }
-  } else {
-    // Desktop + Android
-    doc.save('CurricuCheck_Advising_Summary.pdf');
+  } catch (error) {
+    console.error('PDF download failed:', error);
+  } finally {
+    setDownloadingPDF(false);
   }
 };
     
@@ -721,12 +739,17 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
         <div className="flex flex-col items-center gap-8 mt-12 mb-8">
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <button
-              onClick={handleExportPDF}
-              className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
-            >
-              <FileDown className="w-5 h-5" />
-              Download PDF
-            </button>
+  onClick={handleExportPDF}
+  disabled={downloadingPDF}
+  className="flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
+>
+  <FileDown className="w-5 h-5" />
+  {downloadingPDF
+    ? 'Downloading...'
+    : pdfDownloaded
+    ? 'Downloaded'
+    : 'Download PDF'}
+</button>
             <button
   onClick={handleSendToEmail}
   disabled={sendingEmail}
@@ -736,7 +759,7 @@ yPos = (doc as any).lastAutoTable.finalY + 12;
   {sendingEmail
     ? 'Sending...'
     : emailSent
-    ? 'Sent to Email ✓'
+    ? 'Sent to Email'
     : 'Send to My Email'}
 </button>
           </div>

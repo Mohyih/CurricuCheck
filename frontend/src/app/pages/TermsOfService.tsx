@@ -38,13 +38,14 @@ export function TermsOfService() {
     </button>
 
     {/* Back Button */}
-    <button
-      type="button"
-      onClick={() => navigate(-1)}
-      className="text-sm text-[#136537] font-medium hover:underline"
-    >
-      ←
-    </button>
+<button
+  type="button"
+  onClick={() => navigate(-1)}
+  className="inline-flex items-center text-[#136537] font-medium hover:text-[#085830] transition-colors text-xl sm:text-2xl leading-none"
+  aria-label="Go back"
+>
+  ←
+</button>
 
   </div>
 

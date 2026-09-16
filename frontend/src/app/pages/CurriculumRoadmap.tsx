@@ -158,21 +158,20 @@ function RoadmapInner({
 
   return (
     <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onNodeClick={onClickNode}
-      onPaneClick={handlePaneClick}
-      nodeTypes={nodeTypes}
-      fitView
-      fitViewOptions={{ padding: 0.2 }}
-      minZoom={0.1}
-      maxZoom={2}
-      nodesConnectable={false}
-      edgesFocusable={false}
-      proOptions={{ hideAttribution: true }}
-    >
+       nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onClickNode}
+            onPaneClick={handlePaneClick}
+            nodeTypes={nodeTypes}
+            defaultViewport={{ x: 60, y: 60, zoom: 0.7 }}
+            minZoom={0.1}
+            maxZoom={2}
+            nodesConnectable={false}
+            edgesFocusable={false}
+            proOptions={{ hideAttribution: true }}
+          >
       <Background color="#f5faf7" gap={20} />
       <Controls />
         {window.innerWidth >= 768 && (

@@ -219,6 +219,20 @@ navigate('/login');
   return (
     <div className="min-h-screen lg:h-screen bg-[#F5FAF7] font-['Inter'] flex flex-col lg:flex-row lg:overflow-hidden">
 
+
+ {/* Back Button */}
+    <div className="absolute top-4 right-4 z-50">
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="inline-flex items-center text-[#085830] hover:text-[#136537] transition-colors text-2xl sm:text-2xl leading-none p-1.5 rounded-lg hover:bg-[#EEF7F2]"
+        aria-label="Go back"
+      >
+        ←
+      </button>
+      </div>
+
+
       {/* Left Panel */}
       <div className="w-full md:w-72 flex-shrink-0 bg-gradient-to-b from-[#085830] to-[#A8C957] flex flex-col items-center justify-center p-6 md:p-8 text-white">
         <div className="w-24 h-24 mb-5">
@@ -236,6 +250,8 @@ navigate('/login');
       {/* Right Panel */}
       <div className="flex-1 flex items-center justify-center p-3 lg:p-6 overflow-y-auto lg:overflow-hidden">
         <div className="bg-white w-full max-w-xl rounded-[1.25rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#C8E6D4] p-6">
+
+          
           <form className="space-y-3 lg:space-y-2.5" onSubmit={handleSubmit}>
 
             {error && (
