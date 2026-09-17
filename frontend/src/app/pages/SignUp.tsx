@@ -137,7 +137,7 @@ useEffect(() => {
 
   const handleSendOTP = async () => {
     setOtpError('');
-    if (!email) { setOtpError('Please enter your WUP email first.'); return; }
+    if (!email) { setOtpError('Please enter your email first.'); return; }
     setSendingOtp(true);
     try {
       await api.post('/otp/send', { email, first_name: firstName || 'Student' });
@@ -182,7 +182,7 @@ useEffect(() => {
     e.preventDefault();
     setError('');
 
-    if (!emailVerified) { setError('Please verify your WUP email before submitting.'); return; }
+    if (!emailVerified) { setError('Please verify your email before submitting.'); return; }
     if (password.length < 8) { setError('Password must be at least 8 characters long.'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     if (!programId || !curriculumId || !yearLevel || !preferredLoad) {
@@ -296,9 +296,7 @@ navigate('/login');
 
               {/* WUP Email + OTP */}
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-700">
-  WUP Email Address <span className="text-red-500">*</span>
-</label>
+                                <label className="text-xs font-medium text-gray-700">Email Address</label>
                 {!emailVerified ? (
                   <>
                     <div className="flex gap-2">
@@ -308,7 +306,7 @@ navigate('/login');
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); setOtpSent(false); setOtpCode(''); setOtpError(''); }}
                         className={`${inputClass} flex-1`}
-                        placeholder="lastname.firstname@wesleyan.edu.ph"
+                                            placeholder="your@email.com"
                         disabled={otpSent}
                       />
                       <button

@@ -100,7 +100,7 @@ export function Login() {
             )}
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Student ID Number or WUP Email</label>
+              <label className="text-sm font-medium text-gray-700">Student ID Number or Email</label>
               <input
                 type="text"
                 value={studentNumber}
@@ -150,14 +150,14 @@ export function Login() {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">WUP Email Address</label>
+                  <label className="text-sm font-medium text-gray-700">Email Address</label>
                   <input
                     type="email"
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#136537] focus:ring-2 focus:ring-[#136537]/20 outline-none transition-all text-[#085830] bg-gray-50/50 placeholder-gray-400"
-                    placeholder="lastname.firstname@wesleyan.edu.ph"
+                                        placeholder="your@email.com"
                   />
                 </div>
                 <button

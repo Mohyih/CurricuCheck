@@ -17,12 +17,8 @@ const sendOTPHandler = async (req, res) => {
   const { email, first_name } = req.body;
 
   try {
-    // Validate WUP email format
-    if (!validateWUPEmail(email)) {
-      return res.status(400).json({
-        error: 'Invalid email format. Please use your WUP email (lastname.firstname@wesleyan.edu.ph)'
-      });
-    }
+        // WUP email validation temporarily disabled
+    // Accept any valid email format
 
     // Check if email already registered
     const { data: existingStudent } = await supabase
