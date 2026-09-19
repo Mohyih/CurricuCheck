@@ -15,7 +15,7 @@ import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyNotice } from './pages/PrivacyNotice';
 import { ResetPassword } from './pages/ResetPassword';
 import { CurriculumRoadmap } from './pages/CurriculumRoadmap';
-
+import { AuthenticatedRoute } from "../app/AuthenticatedRoute";
 
 
 export const router = createBrowserRouter([
@@ -23,9 +23,30 @@ export const router = createBrowserRouter([
     path: "/",
     Component: Root,
     children: [
-      { index: true, Component: Home },
-      { path: "signup", Component: SignUp },
-      { path: "login", Component: Login },
+      { 
+  index: true, 
+  element: (
+    <AuthenticatedRoute>
+      <Home />
+    </AuthenticatedRoute>
+  )
+},
+{ 
+  path: "signup", 
+  element: (
+    <AuthenticatedRoute>
+      <SignUp />
+    </AuthenticatedRoute>
+  )
+},
+{ 
+  path: "login", 
+  element: (
+    <AuthenticatedRoute>
+      <Login />
+    </AuthenticatedRoute>
+  )
+},
       { path: "dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
       { path: "dashboard/returning", element: <ProtectedRoute><ReturningDashboard /></ProtectedRoute> },
       { path: "dashboard/eligibility", element: <ProtectedRoute><SubjectEligibility /></ProtectedRoute> },

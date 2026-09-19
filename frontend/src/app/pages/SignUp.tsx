@@ -480,7 +480,7 @@ navigate('/login');
     {/* Preferred Load */}
     <div className="space-y-1 min-w-0">
       <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">
-  Preferred Load <span className="text-red-500">*</span>
+  Preferred Load Unit <span className="text-red-500">*</span>
 </label>
       <div className="relative w-full">
         <select 

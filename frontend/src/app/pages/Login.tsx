@@ -37,7 +37,7 @@ export function Login() {
 
     try {
       await login(studentNumber, password);
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {
@@ -67,7 +67,7 @@ export function Login() {
 {/* Back Button */}
     <button
       type="button"
-      onClick={() => navigate(-1)}
+      onClick={() => navigate('/')}
       className="absolute top-4 right-4 inline-flex items-center text-[#085830] hover:text-[#136537] transition-colors text-2xl sm:text-2xl leading-none p-1 rounded-lg hover:bg-[#EEF7F2]"
       aria-label="Go back"
     >
