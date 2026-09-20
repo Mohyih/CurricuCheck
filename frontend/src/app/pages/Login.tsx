@@ -18,6 +18,8 @@ export function Login() {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotMessage, setForgotMessage] = useState('');
   const [forgotError, setForgotError] = useState('');
+  const [showSlowLogin, setShowSlowLogin] = useState(false);
+  
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -30,33 +32,46 @@ export function Login() {
     };
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
+  setShowSlowLogin(false);
 
-    try {
-      await login(studentNumber, password);
-      navigate('/dashboard', { replace: true });
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const slowLoginTimer = setTimeout(() => {
+    setShowSlowLogin(true);
+  }, 7000);
 
-    const handleForgotPassword = async () => {
-    setForgotLoading(true);
-    setForgotError('');
-    try {
-      const res = await api.post('/auth/forgot-password', { email: forgotEmail });
-      setForgotMessage(res.data.message);
-    } catch (err: any) {
-      setForgotError(err.response?.data?.error || 'Something went wrong.');
-    } finally {
-      setForgotLoading(false);
-    }
-  };
+  try {
+    await login(studentNumber, password);
+    navigate('/dashboard', { replace: true });
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Login failed. Please try again.');
+  } finally {
+    clearTimeout(slowLoginTimer);
+    setLoading(false);
+    setShowSlowLogin(false);
+  }
+};
+
+const handleForgotPassword = async () => {
+  setForgotLoading(true);
+  setForgotError('');
+
+  try {
+    const res = await api.post('/auth/forgot-password', {
+      email: forgotEmail
+    });
+
+    setForgotMessage(res.data.message);
+  } catch (err: any) {
+    setForgotError(
+      err.response?.data?.error || 'Something went wrong.'
+    );
+  } finally {
+    setForgotLoading(false);
+  }
+};
 
   return (
 
@@ -88,6 +103,21 @@ export function Login() {
           You are offline. Some features may not work until you reconnect.
         </div>
       )}
+
+
+      {/* Slow Login Indicator */}
+{showSlowLogin && (
+  <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
+    <div className="bg-white border border-[#C8E6D4] shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl px-4 py-3 text-center">
+      <p className="text-sm font-semibold text-[#085830]">
+        This is taking a little longer...
+      </p>
+      <p className="text-xs text-gray-500 mt-1">
+        The server may be waking up. Please wait while we complete your login.
+      </p>
+    </div>
+  </div>
+)}
 
 
       <div className="w-full max-w-md">

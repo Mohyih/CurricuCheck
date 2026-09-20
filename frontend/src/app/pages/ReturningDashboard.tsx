@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation, useBlocker } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
@@ -104,6 +104,9 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
 
   const [showSampleImage, setShowSampleImage] = useState(false);
 
+  const [savedGrades, setSavedGrades] = useState<Record<string, string>>({});
+const [savedYearLevel, setSavedYearLevel] = useState(student?.year_level || 1);
+
   useEffect(() => {
   if (location.state?.openModal) {
     setShowEncodingModal(true);
@@ -139,6 +142,8 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
           gradeMap[r.subject_id] = r.grade || (r.status === 'inc' ? 'INC' : '');
         });
         setGrades(gradeMap);
+setSavedGrades(gradeMap);
+setSavedYearLevel(student.year_level);
       } catch (err) {
         console.error('Failed to load data', err);
       } finally {
@@ -148,6 +153,32 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
 
     fetchData();
   }, [student, yearLevel]);
+
+
+  const hasUnsavedChanges =
+  yearLevel !== savedYearLevel ||
+  Object.keys(grades).some(
+    (subjectId) => (grades[subjectId] || '') !== (savedGrades[subjectId] || '')
+  );
+
+const blocker = useBlocker(hasUnsavedChanges);
+
+
+useEffect(() => {
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (!hasUnsavedChanges) return;
+
+    e.preventDefault();
+    e.returnValue = '';
+  };
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, [hasUnsavedChanges]);
+
 
   const handleGradeChange = (subjectId: string, value: string) => {
     setGrades((prev) => ({ ...prev, [subjectId]: value }));
@@ -185,6 +216,9 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
     }
 
     await refreshStudent();
+
+    setSavedGrades({ ...grades });
+setSavedYearLevel(yearLevel);
 
     if (proceedToEligibility) {
       setShowTermModal(true);
@@ -832,6 +866,42 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
   </div>
 )}
 
+
+{blocker.state === 'blocked' && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+    <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-6 sm:p-8 max-w-md w-full">
+      
+      
+
+      <h2 className="text-lg sm:text-xl font-bold text-[#085830] text-center mb-2">
+        Unsaved Grades
+      </h2>
+
+      <p className="text-sm text-gray-500 text-center leading-relaxed mb-6">
+        You have grades that haven't been saved yet. If you leave this page,
+        your changes will be lost.
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          type="button"
+          onClick={() => blocker.reset()}
+          className="flex-1 px-5 py-3 rounded-full border-2 border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-all"
+        >
+          Stay on Page
+        </button>
+
+        <button
+          type="button"
+          onClick={() => blocker.proceed()}
+          className="flex-1 px-5 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all"
+        >
+          Leave Page
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
     </Layout>
   );

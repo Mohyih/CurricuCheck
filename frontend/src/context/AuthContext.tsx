@@ -13,6 +13,7 @@ interface Student {
   year_level: number;
   preferred_load: string;
   academic_standing: string;
+  is_admin: boolean;
   programs?: any;
   curriculums?: any;
 }

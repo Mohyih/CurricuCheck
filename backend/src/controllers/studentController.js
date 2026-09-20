@@ -1,5 +1,43 @@
 const { supabase, supabaseAdmin } = require('../config/supabase');
 
+
+
+// GET /api/student/curriculum-documents
+const getCurriculumDocuments = async (req, res) => {
+  try {
+    const { supabaseAdmin } = require('../config/supabase');
+
+    const { data, error } = await supabaseAdmin
+      .storage
+      .from('curriculum-documents')
+      .list('', { limit: 100, sortBy: { column: 'name', order: 'asc' } });
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    // Get public URL for each file
+    const files = (data || [])
+      .filter(f => f.name !== '.emptyFolderPlaceholder')
+      .map(f => {
+        const { data: urlData } = supabaseAdmin
+          .storage
+          .from('curriculum-documents')
+          .getPublicUrl(f.name);
+        return {
+          name: f.name,
+          url: urlData.publicUrl,
+        };
+      });
+
+    res.json({ files });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+
 // GET student profile
 const getMe = async (req, res) => {
   try {
@@ -340,4 +378,4 @@ const getRoadmap = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap };
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap, getCurriculumDocuments };
