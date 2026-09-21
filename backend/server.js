@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const supabase = require('./src/config/supabase');
+const { supabase } = require('./src/config/supabase');
 
 console.log('SUPABASE MODULE KEYS:', Object.keys(supabase));
 console.log('HAS FROM:', typeof supabase.from);
