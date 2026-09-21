@@ -159,7 +159,7 @@ useEffect(() => {
               onClick={() => setIsSidebarOpen(false)}
             >
               <LayoutDashboard className="w-5 h-5" />
-              Dashboard
+              Academic Records
             </Link>
 
             <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
