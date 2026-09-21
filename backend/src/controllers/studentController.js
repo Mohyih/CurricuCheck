@@ -378,4 +378,31 @@ const getRoadmap = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap, getCurriculumDocuments };
+
+// GET total student count for admin
+const getAdminStats = async (req, res) => {
+  try {
+    const { count: studentCount } = await supabase
+      .from('students')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_admin', false);
+
+    const { data: programs } = await supabase
+      .from('programs')
+      .select('id');
+
+    const { data: curriculums } = await supabase
+      .from('curriculums')
+      .select('id');
+
+    res.json({
+      total_students: studentCount || 0,
+      total_programs: programs?.length || 0,
+      total_curriculums: curriculums?.length || 0,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap, getCurriculumDocuments, getAdminStats };

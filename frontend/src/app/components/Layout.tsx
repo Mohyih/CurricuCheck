@@ -11,6 +11,8 @@ import api from '../../lib/api';
 export function Layout({ children }: { children: ReactNode }) {
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [hasUnsavedGrades, setHasUnsavedGrades] = useState(false);
+  const [showLogoutWarning, setShowLogoutWarning] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { student, logout } = useAuth();
@@ -66,7 +68,38 @@ useEffect(() => {
 
 
 
+  useEffect(() => {
+    const syncUnsavedGradeState = () => {
+      const nextState = sessionStorage.getItem('curricucheck:hasUnsavedGrades') === 'true';
+      setHasUnsavedGrades(nextState);
+    };
+
+    syncUnsavedGradeState();
+
+    const handleUnsavedGradeChange = (event: Event) => {
+      const customEvent = event as CustomEvent<boolean>;
+      setHasUnsavedGrades(Boolean(customEvent.detail));
+    };
+
+    window.addEventListener('curricucheck:unsaved-grades', handleUnsavedGradeChange);
+
+    return () => {
+      window.removeEventListener('curricucheck:unsaved-grades', handleUnsavedGradeChange);
+    };
+  }, []);
+
   const handleLogout = () => {
+    if (hasUnsavedGrades) {
+      setShowLogoutWarning(true);
+      return;
+    }
+
+    logout();
+    navigate('/');
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutWarning(false);
     logout();
     navigate('/');
   };
@@ -96,29 +129,75 @@ useEffect(() => {
         </button>
       </div>
 
-      <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-1">Main</div>
-        <Link to="/dashboard" className={navLinkClass('/dashboard')} onClick={() => setIsSidebarOpen(false)}>
-          <LayoutDashboard className="w-5 h-5" />
-          Dashboard
-        </Link>
+            <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
+        {student?.is_admin ? (
+          // Admin nav — minimal
+          <>
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-1">
+              Admin
+            </div>
 
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">Academic</div>
-        <Link to="/dashboard/checklist" className={navLinkClass('/dashboard/checklist')} onClick={() => setIsSidebarOpen(false)}>
-          <ListChecks className="w-5 h-5" />
-          Curriculum Checklist
-        </Link>
+            <Link
+              to="/dashboard"
+              className={navLinkClass('/dashboard')}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              Dashboard
+            </Link>
+          </>
+        ) : (
+          // Student nav — full
+          <>
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-1">
+              Main
+            </div>
 
-        <Link to="/dashboard/roadmap" className={navLinkClass('/dashboard/roadmap')} onClick={() => setIsSidebarOpen(false)}>
-          <Map className="w-5 h-5" />
-          Curriculum Roadmap
-        </Link>
+            <Link
+              to="/dashboard"
+              className={navLinkClass('/dashboard')}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              Dashboard
+            </Link>
 
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">Profile</div>
-        <Link to="/dashboard/student-info" className={navLinkClass('/dashboard/student-info')} onClick={() => setIsSidebarOpen(false)}>
-          <User className="w-5 h-5" />
-          Student Information
-        </Link>
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
+              Academic
+            </div>
+
+            <Link
+              to="/dashboard/checklist"
+              className={navLinkClass('/dashboard/checklist')}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <ListChecks className="w-5 h-5" />
+              Curriculum Checklist
+            </Link>
+
+            <Link
+              to="/dashboard/roadmap"
+              className={navLinkClass('/dashboard/roadmap')}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <Map className="w-5 h-5" />
+              Curriculum Roadmap
+            </Link>
+
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
+              Profile
+            </div>
+
+            <Link
+              to="/dashboard/student-info"
+              className={navLinkClass('/dashboard/student-info')}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <User className="w-5 h-5" />
+              Student Information
+            </Link>
+          </>
+        )}
 
 {/* INC Notification */}
 {showIncNotif && incNotification.length > 0 && (
@@ -229,6 +308,38 @@ useEffect(() => {
         </div>
       )}
 
+      {showLogoutWarning && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-6 sm:p-8 max-w-md w-full">
+            <h2 className="text-lg sm:text-xl font-bold text-[#085830] text-center mb-2">
+              Unsaved Grades
+            </h2>
+
+            <p className="text-sm text-gray-500 text-center leading-relaxed mb-6">
+              You have unsaved grades. Logging out will discard your changes.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => setShowLogoutWarning(false)}
+                className="flex-1 px-5 py-3 rounded-full border-2 border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-all"
+              >
+                Stay on Page
+              </button>
+
+              <button
+                type="button"
+                onClick={confirmLogout}
+                className="flex-1 px-5 py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                Log Out Anyway
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
@@ -258,18 +369,26 @@ useEffect(() => {
 
           <div className="flex-1 md:flex-none" />
 
-          {/* User dropdown */}
+                    {/* User info — different for admin */}
           <div className="flex items-center p-2 pr-0">
-  <div className="text-right">
-    <div className="text-xs md:text-sm font-bold text-[#085830]">
-      {student ? `${student.last_name}, ${student.first_name}` : 'Loading...'}
-    </div>
+            {student?.is_admin ? (
+              // Admin header
+              <span className="px-3 py-1 rounded-full bg-[#F2AB50]/20 text-[#085830] text-xs font-bold border border-[#F2AB50]">
+                Admin
+              </span>
+            ) : (
+              // Student header
+              <div className="text-right">
+                <div className="text-xs md:text-sm font-bold text-[#085830]">
+                  {student ? `${student.last_name}, ${student.first_name}` : 'Loading...'}
+                </div>
 
-    <div className="text-[10px] md:text-xs text-gray-500">
-      {student?.programs?.code} - {student?.curriculums?.version}
-    </div>
-  </div>
-</div>
+                <div className="text-[10px] md:text-xs text-gray-500">
+                  {student?.programs?.code} - {student?.curriculums?.version}
+                </div>
+              </div>
+            )}
+          </div>
         </header>
 
         <div className="flex-1 p-4 md:p-8 overflow-y-auto">{children}</div>

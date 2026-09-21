@@ -161,6 +161,29 @@ setSavedYearLevel(student.year_level);
     (subjectId) => (grades[subjectId] || '') !== (savedGrades[subjectId] || '')
   );
 
+  useEffect(() => {
+    const hasChanges = Boolean(hasUnsavedChanges);
+
+    if (hasChanges) {
+      sessionStorage.setItem('curricucheck:hasUnsavedGrades', 'true');
+    } else {
+      sessionStorage.removeItem('curricucheck:hasUnsavedGrades');
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('curricucheck:unsaved-grades', { detail: hasChanges })
+    );
+  }, [hasUnsavedChanges]);
+
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('curricucheck:hasUnsavedGrades');
+      window.dispatchEvent(
+        new CustomEvent('curricucheck:unsaved-grades', { detail: false })
+      );
+    };
+  }, []);
+
 const blocker = useBlocker(hasUnsavedChanges);
 
 
@@ -283,7 +306,7 @@ setSavedYearLevel(yearLevel);
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-8 bg-white rounded-2xl border border-[#C8E6D4]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-[#136537]">Target Year Level</div>
+            <div className="text-sm font-bold text-[#136537]">Enrollment Year Level</div>
             {editingYear ? (
               <select
                 value={yearLevel}
@@ -870,8 +893,6 @@ setSavedYearLevel(yearLevel);
 {blocker.state === 'blocked' && (
   <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
     <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-6 sm:p-8 max-w-md w-full">
-      
-      
 
       <h2 className="text-lg sm:text-xl font-bold text-[#085830] text-center mb-2">
         Unsaved Grades

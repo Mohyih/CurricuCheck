@@ -458,7 +458,7 @@ navigate('/login');
     {/* Target Year Level */}
     <div className="space-y-1 min-w-0">
       <label className="block min-h-[2.5rem] lg:min-h-fit text-xs font-medium text-gray-600">
-  Target Year Level <span className="text-red-500">*</span>
+  Enrollment Year Level <span className="text-red-500">*</span>
 </label>
       <div className="relative w-full">
         <select 
