@@ -2,6 +2,10 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const supabase = require('./src/config/supabase');
+
+console.log('SUPABASE MODULE KEYS:', Object.keys(supabase));
+console.log('HAS FROM:', typeof supabase.from);
+console.log('NESTED SUPABASE HAS FROM:', typeof supabase.supabase?.from);
 const authRoutes = require('./src/routes/authRoutes');
 const curriculumRoutes = require('./src/routes/curriculumRoutes');
 // 1. ADDED: Import the student routes right here with the others
