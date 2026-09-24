@@ -745,10 +745,10 @@ const handleExportPDF = async () => {
 >
   <FileDown className="w-5 h-5" />
   {downloadingPDF
-    ? 'Downloading...'
+    ? 'Exporting...'
     : pdfDownloaded
-    ? 'Downloaded'
-    : 'Download PDF'}
+    ? 'Exported'
+    : 'Export PDF'}
 </button>
             <button
   onClick={handleSendToEmail}
@@ -759,7 +759,7 @@ const handleExportPDF = async () => {
   {sendingEmail
     ? 'Sending...'
     : emailSent
-    ? 'Sent to Email'
+    ? 'Sent to Email ✓'
     : 'Send to My Email'}
 </button>
           </div>

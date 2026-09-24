@@ -3,7 +3,7 @@ const { supabase } = require('../config/supabase');
 const LOAD_LIMITS = {
   light: 12,
   normal: 18,
-  heavy: 21
+  heavy: 24
 };
 
 const recommend = async (req, res) => {

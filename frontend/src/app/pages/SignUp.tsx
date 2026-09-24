@@ -296,7 +296,9 @@ navigate('/login');
 
               {/* WUP Email + OTP */}
               <div className="space-y-1">
-                                <label className="text-xs font-medium text-gray-700">Email Address</label>
+                                <label className="text-xs font-medium text-gray-700">
+  Email Address <span className="text-red-500">*</span>
+</label>
                 {!emailVerified ? (
                   <>
                     <div className="flex gap-2">
@@ -492,7 +494,7 @@ navigate('/login');
           <option value="" disabled>Select</option>
           <option value="light">Light (≤12)</option>
           <option value="normal">Normal (≤18)</option>
-          <option value="heavy">Heavy (≤21)</option>
+          <option value="heavy">Heavy (≤24)</option>
         </select>
         <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
       </div>

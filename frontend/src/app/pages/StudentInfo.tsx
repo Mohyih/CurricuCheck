@@ -216,7 +216,7 @@ export function StudentInfo() {
     >
       <option value="light">Light (up to 12 units)</option>
       <option value="normal">Normal (up to 18 units)</option>
-      <option value="heavy">Heavy (up to 21 units)</option>
+      <option value="heavy">Heavy (up to 24 units)</option>
     </select>
     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
   </div>

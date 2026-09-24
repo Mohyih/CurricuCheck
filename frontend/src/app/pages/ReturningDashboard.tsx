@@ -301,6 +301,86 @@ setSavedYearLevel(yearLevel);
     (s) => s.year_level === yearLevel && s.semester === 'Summer'
   );
 
+    // Compute available semesters smartly
+  const getAvailableSemesters = () => {
+    if (!subjects || subjects.length === 0) return [];
+
+    // Group subjects by year_level + semester
+    const semesterMap: Record<string, { yearLevel: number; semester: string; subjects: any[] }> = {};
+
+    subjects.forEach((s: any) => {
+      const key = `${s.year_level}-${s.semester}`;
+      if (!semesterMap[key]) {
+        semesterMap[key] = { yearLevel: s.year_level, semester: s.semester, subjects: [] };
+      }
+      semesterMap[key].subjects.push(s);
+    });
+
+    const SEMESTER_ORDER = ['First Semester', 'Second Semester', 'Summer'];
+
+    // Sort by year then semester
+    const sortedKeys = Object.keys(semesterMap).sort((a, b) => {
+      const [yearA] = a.split('-');
+      const semA = a.substring(a.indexOf('-') + 1);
+      const [yearB] = b.split('-');
+      const semB = b.substring(b.indexOf('-') + 1);
+      if (parseInt(yearA) !== parseInt(yearB)) return parseInt(yearA) - parseInt(yearB);
+      return SEMESTER_ORDER.indexOf(semA) - SEMESTER_ORDER.indexOf(semB);
+    });
+
+    const available: { yearLevel: number; semester: string; reason: string }[] = [];
+
+    sortedKeys.forEach(key => {
+      const { yearLevel, semester, subjects: semSubjects } = semesterMap[key];
+
+      // Skip if student hasn't reached this year level
+      if (yearLevel > (student?.year_level || 1)) return;
+
+      // Check grades for subjects in this semester
+      const subjectIds = semSubjects.map((s: any) => s.id);
+      const semGrades = subjectIds
+        .map((id: string) => grades[id])
+        .filter(Boolean);
+
+      const hasAnyGrade = semGrades.length > 0;
+      const hasFailedSubject = subjectIds.some((id: string) => {
+        const grade = grades[id];
+        if (!grade || grade === 'INC') return false;
+        const numGrade = parseFloat(grade);
+        return numGrade > 3.00;
+      });
+      const hasINC = subjectIds.some((id: string) => grades[id] === 'INC');
+
+            // Check if ALL subjects in this semester are passed
+      const allPassed = subjectIds.every((id: string) => {
+        const grade = grades[id];
+        if (!grade || grade === '' ) return false;
+        if (grade === 'INC') return false;
+        const numGrade = parseFloat(grade);
+        return numGrade >= 1.00 && numGrade <= 3.00;
+      });
+
+      if (!allPassed) {
+        // Not all passed → show (includes partial grades, no grades, failed, INC)
+        available.push({
+          yearLevel,
+          semester,
+          reason: hasFailedSubject ? 'Has failed subjects' : hasINC ? 'Has INC subjects' : 'No grades yet'
+        });
+      } else if (hasFailedSubject || hasINC) {
+        // Has failed or INC subjects → show for retake
+        available.push({
+          yearLevel,
+          semester,
+          reason: hasFailedSubject ? 'Has failed subjects' : 'Has INC subjects'
+        });
+      }
+      // If all passed → don't show this semester
+    });
+
+    return available;
+  };
+
   return (
     <Layout>
       <div className="max-w-[1200px] mx-auto">
@@ -468,53 +548,124 @@ setSavedYearLevel(yearLevel);
   </button>
 
   {/* Save + Check Eligibility */}
-  <button
-    type="button"
-    onClick={() => handleSaveChanges(true)}
-    disabled={savingChanges || checkingEligibility}
-    className="w-[240px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
-  >
-    {checkingEligibility ? 'Checking...' : 'Check Subject Eligibility'}
-  </button>
+  <div className="relative group">
+    <button
+      type="button"
+      onClick={() => handleSaveChanges(true)}
+      disabled={savingChanges || checkingEligibility}
+      className="w-[240px] sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      {checkingEligibility ? 'Checking...' : 'Check Semester Eligibility'}
+    </button>
+
+    {/* Hover Note */}
+    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 whitespace-nowrap rounded-lg bg-gray-800 px-3 py-2 text-xs font-medium text-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+      Also saves your changes!
+      
+      <div className="absolute left-1/2 -translate-x-1/2 top-full border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800" />
+    </div>
+  </div>
 </div>
       </div>
 
-      {showTermModal && (
+            {showTermModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4]/50 p-8 max-w-md w-full">
-                        <h2 className="text-xl font-bold text-[#085830] mb-2 text-center">
-              What term are you planning to enroll?
-            </h2>
-            <p className="text-sm text-gray-500 text-center mb-6">
-              {yearLevel === 1 ? 'First' : yearLevel === 2 ? 'Second' : yearLevel === 3 ? 'Third' : 'Fourth'} Year
-            </p>
-            <div className="space-y-3 mb-8">
-              {['1st Semester', '2nd Semester', ...(hasSummerTerm ? ['Summer'] : [])].map((term) => (
-                <button
-                  key={term}
-                  onClick={() => setSelectedTerm(term)}
-                  className={`w-full px-6 py-3.5 rounded-full font-medium transition-all ${
-                    selectedTerm === term
-                      ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white shadow-md'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-[#136537]'
-                  }`}
-                >
-                  {term}
-                </button>
-              ))}
+          <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4]/50 p-6 md:p-8 max-w-md w-full">
+            
+            <div className="text-center mb-6">
+              <h2 className="text-lg md:text-xl font-bold text-[#085830] mb-1">
+                Check Semester Eligibility
+              </h2>
+              <p className="text-sm text-gray-500">
+                Select the semester you want to check eligibility for
+              </p>
             </div>
 
-            <button
-              onClick={handleConfirmTerm}
-              disabled={!selectedTerm}
-              className={`w-full px-8 py-3.5 rounded-full font-bold shadow-md transition-all ${
-                selectedTerm
-                  ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white hover:shadow-lg'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              Confirm
-            </button>
+            {(() => {
+              const availableSemesters = getAvailableSemesters();
+
+              if (availableSemesters.length === 0) {
+                return (
+                  <div className="text-center py-6">
+                    <div className="text-4xl mb-3">🎓</div>
+                    <p className="text-sm font-medium text-[#085830] mb-1">
+                      All semesters completed!
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      No available semesters to check eligibility for.
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3 mb-6">
+                  {availableSemesters.map(({ yearLevel: yl, semester, reason }) => {
+                    const yearLabel = yl === 1 ? 'First' : yl === 2 ? 'Second' : yl === 3 ? 'Third' : 'Fourth';
+                    const termKey = `${yl}-${semester}`;
+                    const isSelected = selectedTerm === termKey;
+                    const isRetake = reason === 'Has failed subjects' || reason === 'Has INC subjects';
+
+                    return (
+                      <button
+                        key={termKey}
+                        onClick={() => setSelectedTerm(termKey)}
+                        className={`w-full px-4 md:px-6 py-3.5 rounded-xl font-medium transition-all text-left flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white shadow-md'
+                            : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-[#136537] hover:bg-[#EEF7F2]'
+                        }`}
+                      >
+                        <div>
+                          <p className="text-sm font-bold">
+                            {yearLabel} Year - {semester}
+                          </p>
+                          <p className={`text-xs mt-0.5 ${isSelected ? 'text-white/70' : 'text-gray-400'}`}>
+                            {isRetake ? 'Has retake/INC subjects' : 'No grades yet'}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <div className="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowTermModal(false); setSelectedTerm(''); }}
+                className="flex-1 py-3 rounded-full border-2 border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (!selectedTerm) return;
+                  // Parse the termKey back to year_level and semester
+                  const firstDash = selectedTerm.indexOf('-');
+                  const yl = parseInt(selectedTerm.substring(0, firstDash));
+                  const sem = selectedTerm.substring(firstDash + 1);
+                  localStorage.setItem('target_year_level', yl.toString());
+                  localStorage.setItem('target_semester', sem);
+                  localStorage.setItem('session_load', student?.preferred_load || 'normal');
+                  sessionStorage.setItem(`encoding_chosen_${student?.id}`, 'done');
+                  navigate('/dashboard/eligibility');
+                }}
+                disabled={!selectedTerm}
+                className={`flex-1 py-3 rounded-full font-bold text-sm shadow-md transition-all ${
+                  selectedTerm
+                    ? 'bg-gradient-to-r from-[#085830] to-[#A8C957] text-white hover:shadow-lg'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Check Eligibility
+              </button>
+            </div>
           </div>
         </div>
       )}

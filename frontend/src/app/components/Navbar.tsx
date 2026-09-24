@@ -16,17 +16,17 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#C8E6D4] shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/45 backdrop-blur-xl border-b border-white/40 shadow-sm">
       <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollTo('home')}>
-          <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
             <ImageWithFallback src={logoImg} alt="CurricuCheck Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-bold text-lg text-[#085830] tracking-tight">CurricuCheck</span>
         </div>
         
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1E1E2E]">
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#16452D]">
           <button onClick={() => scrollTo('home')} className="hover:text-[#136537] transition-colors">Home</button>
           <button onClick={() => scrollTo('about')} className="hover:text-[#136537] transition-colors">About</button>
           <button onClick={() => scrollTo('help')} className="hover:text-[#136537] transition-colors">Help</button>
