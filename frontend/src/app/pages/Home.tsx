@@ -14,6 +14,7 @@ export function Home() {
     const handleOffline = () => setIsOnline(false);
     const savedScroll = sessionStorage.getItem("homeScroll");
 
+    
     if (savedScroll) {
   requestAnimationFrame(() => {
     window.scrollTo({
