@@ -780,7 +780,7 @@ setSavedYearLevel(yearLevel);
   type="button"
   onClick={() => {
     setShowScanModal(false);
-    setShowEncodingModal(true);
+    
   }}
   className="inline-flex items-center gap-1.5 text-gray-400 hover:text-gray-600 text-lg sm:text-2xl leading-none"
 >
