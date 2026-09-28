@@ -305,11 +305,11 @@ navigate('/login');
                       <input
                         type="email"
                         required
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value); setOtpSent(false); setOtpCode(''); setOtpError(''); }}
+                                              value={email}
+                        onChange={(e) => { setEmail(e.target.value); setOtpSent(false); setOtpCode(''); setOtpError(''); setEmailVerified(false); }}
                         className={`${inputClass} flex-1`}
-                                            placeholder="your@email.com"
-                        disabled={otpSent}
+                        placeholder="your@email.com"
+                        
                       />
                       <button
                         type="button"

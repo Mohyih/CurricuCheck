@@ -257,13 +257,13 @@ const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
                   </tr>
                 ) : (
                   allSubjects.map((subject) => (
-                    <tr
+                  <tr
   key={subject.id}
   onClick={() => toggleSubject(subject.id)}
-  className={`cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 ${
+  className={`cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 border-l-4 ${
     selectedIds.has(subject.id)
-  ? 'bg-[#EEF7F2]/60 border-l-4 border-l-[#136537]'
-  : 'hover:bg-[#EEF7F2]/30'
+      ? 'bg-[#EDF5EF] border-l-[#085830]'
+      : 'border-l-[#DDE9E1] hover:bg-[#F5FAF7]'
   }`}
 >
                       <td className="px-2 md:px-6 py-2 md:py-4 font-semibold text-[#085830] text-xs md:text-sm">{subject.code}</td>
