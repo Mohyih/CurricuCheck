@@ -494,7 +494,7 @@ navigate('/login');
           <option value="" disabled>Select</option>
           <option value="light">Light (≤12)</option>
           <option value="normal">Normal (≤18)</option>
-          <option value="heavy">Heavy (≤24)</option>
+          <option value="heavy">Heavy (≤26)</option>
         </select>
         <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
       </div>

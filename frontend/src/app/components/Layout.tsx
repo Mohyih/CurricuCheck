@@ -2,9 +2,10 @@ import { ReactNode, useState, useEffect  } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImg from '../../imports/CurricuCheck_Logo.png';
-import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X, Map } from 'lucide-react';
+import { ChevronDown, LogOut, LayoutDashboard, ListChecks, User, Menu, X, Map, HelpCircle, Info, History } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
+
 
 
 
@@ -129,11 +130,11 @@ useEffect(() => {
         </button>
       </div>
 
-            <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
+            <nav className="flex-1 py-4 px-3 flex flex-col gap-1 min-h-0 overflow-hidden">
         {student?.is_admin ? (
           // Admin nav — minimal
           <>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-1">
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-1">
               Admin
             </div>
 
@@ -162,7 +163,13 @@ useEffect(() => {
               Academic Records
             </Link>
 
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-1">
+           
+<Link to="/dashboard/history" className={navLinkClass('/dashboard/history')} onClick={() => setIsSidebarOpen(false)}>
+  <History className="w-5 h-5" />
+  Advising History
+</Link>
+
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mt-3 mb-1">
               Academic
             </div>
 
@@ -277,7 +284,7 @@ useEffect(() => {
     Logout
   </button>
 
-  <div className="border-t border-[#C8E6D4]/50 my-4"></div>
+  <div className="border-t border-[#C8E6D4]/50 my-3"></div>
 
   <div className="px-4 py-3 rounded-xl bg-[#EEF7F2] text-xs text-[#085830]">
     <div className="font-bold mb-2">Contact Support:</div>

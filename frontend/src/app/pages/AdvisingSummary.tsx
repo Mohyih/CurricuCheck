@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
@@ -65,6 +65,7 @@ export function AdvisingSummary() {
   const [confirmedSubjects, setConfirmedSubjects] = useState<Subject[]>([]);
   const [sameSemesterDeferred, setSameSemesterDeferred] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+    const sessionSaved = useRef(false);
 
   const targetSemester = localStorage.getItem('target_semester') || '';
   const targetYearLevel = localStorage.getItem('target_year_level') || '';
@@ -96,6 +97,52 @@ const [emailSent, setEmailSent] = useState(false);
         setSameSemesterDeferred(deferred.filter((s: any) =>
           s.same_semester === true || s.is_retake === true
         ));
+
+                // Auto-save advising session snapshot
+        if (!sessionSaved.current) {
+          sessionSaved.current = true;
+
+          const confirmedRaw = localStorage.getItem('confirmed_subjects');
+          const confirmed = confirmedRaw ? JSON.parse(confirmedRaw) : [];
+          const sessionLoad = localStorage.getItem('session_load') || 'normal';
+
+          const [recRes, evalRes] = await Promise.all([
+            api.get('/recommendation/recommend', {
+              params: {
+                target_year_level: targetYearLevel,
+                target_semester: targetSemester,
+                load: sessionLoad,
+              },
+            }),
+            api.get('/evaluation/evaluate', {
+              params: {
+                target_year_level: targetYearLevel,
+                target_semester: targetSemester,
+              },
+            }),
+          ]);
+
+          const evaluation = evalRes.data.evaluation;
+          const recommendation = recRes.data;
+
+          const confirmedUnitsCalc = confirmed
+            .filter((s: any) => s.subject_type !== 'nstp')
+            .reduce((sum: number, s: any) => sum + (s.units || 0), 0);
+
+          await api.post('/student/me/advising-sessions', {
+            target_year_level: parseInt(targetYearLevel),
+            target_semester: targetSemester,
+            preferred_load: sessionLoad,
+            confirmed_subjects: confirmed,
+            eligible: evaluation.eligible || [],
+            blocked: evaluation.blocked || [],
+            deferred: evaluation.deferred || [],
+            retakes: evaluation.retakes || [],
+            recommended: recommendation.recommended || [],
+            optional: recommendation.optional || [],
+            total_units: confirmedUnitsCalc,
+          });
+        }
       } catch (err) {
         console.error('Failed to load advising summary', err);
       } finally {

@@ -3,7 +3,7 @@ import { useNavigate, useLocation, useBlocker } from 'react-router';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
-import { Check, X, Clock, AlertCircle, ChevronDown, Pencil } from 'lucide-react';
+import { Check, X, Clock, AlertCircle, ChevronDown, Pencil, Trophy } from 'lucide-react';
 import SSModalImg  from '../../imports/SS_Modal.png';
 
 interface Subject {
@@ -44,6 +44,47 @@ function interpretGrade(gradeInput: string): string {
   if (num === 4.0 || num === 5.0) return 'failed';
   return 'not_taken';
 }
+
+const computeSemGWA = (
+  semSubjects: Subject[],
+  grades: Record<string, string>
+): string | null => {
+  const graded = semSubjects.filter((s) => {
+    const grade = grades[s.id];
+    if (!grade || grade === 'INC') return false;
+
+    const num = parseFloat(grade);
+    return !isNaN(num) && num >= 1.00 && num <= 3.00;
+  });
+
+  if (graded.length === 0) return null;
+
+  const totalWeighted = graded.reduce((sum, subject) => {
+    return sum + parseFloat(grades[subject.id]) * subject.units;
+  }, 0);
+
+  const totalUnits = graded.reduce((sum, subject) => {
+    return sum + subject.units;
+  }, 0);
+
+  return (totalWeighted / totalUnits).toFixed(2);
+};
+
+const getLatestSavedYear = (
+  semSubjects: Subject[],
+  savedDates: Record<string, string>
+): string | null => {
+  const dates = semSubjects
+    .map((subject) => savedDates[subject.id])
+    .filter(Boolean)
+    .sort()
+    .reverse();
+
+  if (dates.length === 0) return null;
+
+  return new Date(dates[0]).getFullYear().toString();
+};
+
 
 const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
@@ -106,6 +147,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
 
   const [savedGrades, setSavedGrades] = useState<Record<string, string>>({});
 const [savedYearLevel, setSavedYearLevel] = useState(student?.year_level || 1);
+  const [savedDates, setSavedDates] = useState<Record<string, string>>({});
 
   useEffect(() => {
   if (location.state?.openModal) {
@@ -144,6 +186,12 @@ const [savedYearLevel, setSavedYearLevel] = useState(student?.year_level || 1);
         setGrades(gradeMap);
 setSavedGrades(gradeMap);
 setSavedYearLevel(student.year_level);
+        const savedDateMap: Record<string, string> = {};
+        recordsRes.data.records.forEach((r: any) => {
+          const savedDate = r.updated_at || r.created_at;
+          if (savedDate) savedDateMap[r.subject_id] = savedDate;
+        });
+        setSavedDates(savedDateMap);
       } catch (err) {
         console.error('Failed to load data', err);
       } finally {
@@ -231,10 +279,18 @@ useEffect(() => {
       const now = new Date();
       const academicYear = `${now.getFullYear()}-${now.getFullYear() + 1}`;
 
-      await api.post('/student/me/records', {
+      const response = await api.post('/student/me/records', {
         academic_year: academicYear,
         term: 'First Semester',
         records,
+      });
+      setSavedDates((previous) => {
+        const next = { ...previous };
+        response.data.records.forEach((record: any) => {
+          const savedDate = record.updated_at || record.created_at;
+          if (savedDate) next[record.subject_id] = savedDate;
+        });
+        return next;
       });
     }
 
@@ -464,18 +520,59 @@ setSavedYearLevel(yearLevel);
             SEMESTER_ORDER.filter((sem) => grouped[year][sem]).map((semester) => {
               const semSubjects = grouped[year][semester];
               const completedCount = semSubjects.filter(
-                (s) => interpretGrade(grades[s.id] || '') === 'passed'
-              ).length;
+  (s) => interpretGrade(grades[s.id] || '') === 'passed'
+).length;
+
+const semGWA = computeSemGWA(semSubjects, grades);
+
+const allPassed = semSubjects.every(
+  (s) => interpretGrade(grades[s.id] || '') === 'passed'
+);
+
+const isDeansList =
+  semGWA !== null &&
+  parseFloat(semGWA) <= 1.75 &&
+  allPassed;
+const savedYear = getLatestSavedYear(semSubjects, savedDates);
 
               return (
                 <div key={`${year}-${semester}`} className="border-b border-gray-100 last:border-b-0">
-                  <div className="px-4 sm:px-6 py-4 bg-gray-50/50 flex items-center justify-between gap-3 border-b border-gray-100">
+                  <div className="px-4 sm:px-6 py-4 bg-gray-50/50 flex flex-col items-start gap-3 border-b border-gray-100 sm:flex-row sm:items-center sm:justify-between">
                     <h2 className="font-bold text-[#085830] text-[13.5px] sm:text-lg flex-1">
                       {YEAR_LABELS[year]} - {semester}
                     </h2>
-                    <div className="shrink-0 text-[11px] sm:text-sm font-bold text-[#136537] bg-[#EEF7F2] px-2 sm:px-3 py-1 rounded-full border border-[#C8E6D4] shadow-sm whitespace-nowrap">
-                      {completedCount}/{semSubjects.length} Completed
-                    </div>
+                    <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
+
+  {savedYear && ( 
+  <span className="inline-flex items-center rounded-full border border-gray-200 bg-white px-2 py-1 text-[10px] sm:text-xs text-gray-500 font-medium whitespace-nowrap"> 
+    <span>{savedYear}</span> 
+  </span> 
+)}
+
+  {/* Dean's Lister */}
+  {isDeansList && (
+    <span
+      title="Dean's Lister"
+      className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-[#FFF4CC] text-[#9A6B00] text-[10px] sm:text-xs font-bold whitespace-nowrap"
+    >
+      <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+      Dean's Lister
+    </span>
+  )}
+
+  {/* GWA */}
+{semGWA && (
+  <span className="text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-1 rounded-full whitespace-nowrap bg-white text-gray-600">
+    GWA {semGWA}
+  </span>
+)}
+
+  {/* Completed */}
+  <span className="text-[10px] sm:text-xs font-bold text-[#136537] bg-[#EEF7F2] px-2 sm:px-3 py-1 rounded-full border border-[#C8E6D4] whitespace-nowrap">
+    {completedCount}/{semSubjects.length} Completed
+  </span>
+
+</div>
                   </div>
 
                   <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-1">

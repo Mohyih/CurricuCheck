@@ -1,6 +1,86 @@
 const { supabase, supabaseAdmin } = require('../config/supabase');
 
 
+// POST /api/student/me/advising-sessions
+const saveAdvisingSession = async (req, res) => {
+  try {
+    const { data: student } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+
+    const {
+      target_year_level,
+      target_semester,
+      preferred_load,
+      confirmed_subjects,
+      eligible,
+      blocked,
+      deferred,
+      retakes,
+      recommended,
+      optional,
+      total_units,
+    } = req.body;
+
+    const { data, error } = await supabase
+      .from('advising_sessions')
+      .insert([{
+        student_id: student.id,
+        target_year_level,
+        target_semester,
+        preferred_load,
+        confirmed_subjects,
+        eligible,
+        blocked,
+        deferred,
+        retakes,
+        recommended,
+        optional,
+        total_units,
+      }])
+      .select()
+      .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    res.json({ message: 'Advising session saved.', session: data });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/student/me/advising-sessions
+const getAdvisingSessions = async (req, res) => {
+  try {
+    const { data: student } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+
+    const { data, error } = await supabase
+      .from('advising_sessions')
+      .select('*')
+      .eq('student_id', student.id)
+      .order('created_at', { ascending: false });
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    res.json({ sessions: data });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 
 // GET /api/student/curriculum-documents
 const getCurriculumDocuments = async (req, res) => {
@@ -405,4 +485,4 @@ const getAdminStats = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap, getCurriculumDocuments, getAdminStats };
+module.exports = { getMe, getMyRecords, saveMyRecords, updateYearLevel, updatePreferredLoad, updateProfile, deleteAccount, sendAdvisingPDF, getRoadmap, getCurriculumDocuments, getAdminStats, saveAdvisingSession, getAdvisingSessions };

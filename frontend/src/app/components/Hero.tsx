@@ -142,7 +142,7 @@ export function Hero() {
     ctx.save();
 
     ctx.globalAlpha = 0.065;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.3;
 
     for (let i = 0; i < 12; i++) {
       ctx.beginPath();

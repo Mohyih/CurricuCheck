@@ -26,7 +26,7 @@ interface RecommendationData {
 const LOAD_LIMITS: Record<string, { label: string; range: string; max: number }> = {
   light: { label: 'Light', range: 'up to 12 units', max: 12 },
   normal: { label: 'Normal', range: 'up to 18 units', max: 18 },
-  heavy: { label: 'Heavy', range: 'up to 24 units', max: 24 },
+  heavy: { label: 'Heavy', range: 'up to 26 units', max: 26 },
 };
 
 const PriorityBadge = ({ category }: { category: string }) => {

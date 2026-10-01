@@ -17,6 +17,12 @@ import {
 import '@xyflow/react/dist/style.css';
 import { Layout } from '../components/Layout';
 import api from '../../lib/api';
+import {
+  Palette,
+  MousePointer2,
+  Move,
+  ChartNoAxesColumnIncreasing,
+} from 'lucide-react';
 
 const STATUS_COLORS: Record<string, { bg: string; border: string; text: string; label: string; dot: string }> = {
   passed:   { bg: '#d5e8d4', border: '#82b366', text: '#1a5c1a', label: 'Passed',   dot: '#82b366' },
@@ -203,6 +209,34 @@ export function CurriculumRoadmap() {
   const [selectedSubject, setSelectedSubject] = useState<any>(null);
   const [baseNodes, setBaseNodes] = useState<any[]>([]);
 
+ const [showHelpModal, setShowHelpModal] = useState(false);
+
+const [dontShowAgain, setDontShowAgain] = useState(() => {
+  return localStorage.getItem('roadmap_help_seen') === 'true';
+});
+
+useEffect(() => {
+  const neverShow = localStorage.getItem('roadmap_help_seen');
+
+  if (!neverShow) {
+    setShowHelpModal(true);
+  }
+}, []);
+
+const handleDontShowAgainChange = (checked: boolean) => {
+  setDontShowAgain(checked);
+
+  if (checked) {
+    localStorage.setItem('roadmap_help_seen', 'true');
+  } else {
+    localStorage.removeItem('roadmap_help_seen');
+  }
+};
+
+const handleCloseHelp = () => {
+  setShowHelpModal(false);
+};
+
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
@@ -342,70 +376,6 @@ export function CurriculumRoadmap() {
     <Layout>
       <div className="flex flex-col h-full gap-3">
 
-      {/* Stats Bar */}
-{stats && (
-  <div className="bg-white rounded-[1.25rem] border border-[#C8E6D4] shadow-sm p-4 md:p-5">
-    <div className="grid grid-cols-2 lg:grid-cols-6">
-
-      {/* Student */}
-      <div className="col-span-2 lg:col-span-2 px-2 lg:px-4 pb-4 lg:pb-0">
-        <p className="text-xs text-gray-500 font-medium mb-0.5">
-          Student
-        </p>
-        <p className="text-sm font-bold text-[#085830] leading-snug break-words">
-          {stats.full_name}
-        </p>
-        <p className="text-xs text-gray-400 mt-0.5">
-          {stats.student_number}
-        </p>
-      </div>
-
-      {/* Program */}
-      <div className="px-2 lg:px-4 pb-4 lg:pb-0 lg:border-l border-[#E1EEE6]">
-        <p className="text-xs text-gray-500 font-medium mb-0.5">
-          Program
-        </p>
-        <p className="text-sm font-bold text-[#085830]">
-          {stats.program_code}
-        </p>
-        <p className="text-xs text-gray-400 mt-0.5">
-          {stats.curriculum_version} Curriculum
-        </p>
-      </div>
-
-      {/* Year */}
-      <div className="px-2 lg:px-4 pb-4 lg:pb-0 lg:border-l border-[#E1EEE6]">
-        <p className="text-xs text-gray-500 font-medium mb-0.5">
-          Year
-        </p>
-        <p className="text-sm font-bold text-[#085830]">
-          Year {stats.year_level}
-        </p>
-      </div>
-
-      {/* Standing */}
-      <div className="px-2 lg:px-4 lg:border-l border-[#E1EEE6]">
-        <p className="text-xs text-gray-500 font-medium mb-0.5">
-          Standing
-        </p>
-        <p className="text-sm font-bold text-[#085830] capitalize">
-          {stats.academic_standing}
-        </p>
-      </div>
-
-      {/* GWA */}
-      <div className="px-2 lg:px-4 lg:border-l border-[#E1EEE6]">
-        <p className="text-xs text-gray-500 font-medium mb-0.5">
-          GWA
-        </p>
-        <p className="text-sm font-bold text-[#085830]">
-          {stats.gwa || '—'}
-        </p>
-      </div>
-
-    </div>
-  </div>
-)}
         {/* Overall Progress Bar */}
         {stats && (
           <div className="bg-white rounded-xl border border-[#C8E6D4] px-4 md:px-5 py-3">
@@ -453,31 +423,43 @@ background: 'linear-gradient(90deg, #085830 0%, #4F823F 50%, #A8C957 100%)',
               <span className="text-xs text-gray-600">Unlocks</span>
             </div>
           </div>
-          <p className="text-xs text-gray-400 italic hidden md:block">
-            Click any subject to see its prerequisites and what it unlocks
-          </p>
+         
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1 bg-white rounded-[1.25rem] border border-[#C8E6D4] overflow-hidden" style={{ minHeight: '500px' }}>
-          <ReactFlowProvider>
-            <RoadmapInner
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              handleNodeClick={handleNodeClick}
-              handlePaneClick={handlePaneClick}
-              stats={stats}
-              allSubjects={allSubjects}
-              selectedSubject={selectedSubject}
-              setSelectedSubject={setSelectedSubject}
-              setNodes={setNodes}
-              baseNodes={baseNodes}
-              setSelectedSubjectId={setSelectedSubjectId}
-            />
-          </ReactFlowProvider>
-        </div>
+       {/* React Flow Canvas */}
+<div
+  className="relative flex-1 bg-white rounded-[1.25rem] border border-[#C8E6D4] overflow-hidden"
+  style={{ minHeight: '500px' }}
+>
+  {/* How to use button */}
+  <button
+    onClick={() => setShowHelpModal(true)}
+    className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white/95 border border-[#C8E6D4] text-[#085830] text-sm font-bold shadow-sm hover:bg-[#EEF7F2] hover:shadow-md transition-all"
+    title="How to use"
+    aria-label="How to use the Curriculum Roadmap"
+  >
+    ℹ
+  </button>
+
+  <ReactFlowProvider>
+    <RoadmapInner
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      handleNodeClick={handleNodeClick}
+      handlePaneClick={handlePaneClick}
+      stats={stats}
+      allSubjects={allSubjects}
+      selectedSubject={selectedSubject}
+      setSelectedSubject={setSelectedSubject}
+      setNodes={setNodes}
+      baseNodes={baseNodes}
+      setSelectedSubjectId={setSelectedSubjectId}
+    />
+  </ReactFlowProvider>
+</div>
 
         {/* Detail Panel — responsive */}
                 {selectedSubject && (
@@ -585,6 +567,107 @@ background: 'linear-gradient(90deg, #085830 0%, #4F823F 50%, #A8C957 100%)',
           </div>
         )}
       </div>
+
+              {/* Help Modal */}
+        {showHelpModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-[1.25rem] shadow-[0_20px_60px_rgb(0,0,0,0.3)] border border-[#C8E6D4] p-6 md:p-8 max-w-md w-full">
+
+              <div className="text-center mb-6">
+               
+                <h2 className="text-lg font-bold text-[#085830] mb-1">
+                  How to use the Curriculum Roadmap
+                </h2>
+                <p className="text-xs text-gray-400">
+                  A visual guide to your curriculum progression
+                </p>
+              </div>
+
+            <div className="space-y-3 mb-6">
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-[#EEF7F2]">
+    <Palette
+      className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#085830]"
+      strokeWidth={1.8}
+    />
+    <div>
+      <p className="text-xs font-bold text-[#085830] mb-0.5">
+        Color Coded Status
+      </p>
+      <p className="text-xs text-gray-500">
+        Each subject is colored based on your current status - Green for Passed, Blue for Eligible, Gray for Locked, Purple for Retake, and Yellow for INC.
+      </p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-[#EEF7F2]">
+    <MousePointer2
+      className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#085830]"
+      strokeWidth={1.8}
+    />
+    <div>
+      <p className="text-xs font-bold text-[#085830] mb-0.5">
+        Click to Highlight
+      </p>
+      <p className="text-xs text-gray-500">
+        Click any subject to see its prerequisite chain. Required subjects glow red, subjects it unlocks glow green, and everything else dims.
+      </p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-[#EEF7F2]">
+    <Move
+      className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#085830]"
+      strokeWidth={1.8}
+    />
+    <div>
+      <p className="text-xs font-bold text-[#085830] mb-0.5">
+        Zoom and Pan
+      </p>
+      <p className="text-xs text-gray-500">
+        Scroll to zoom in or out. Click and drag to pan across the map. Use the controls at the bottom right to fit the view.
+      </p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-[#EEF7F2]">
+    <ChartNoAxesColumnIncreasing
+      className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#085830]"
+      strokeWidth={1.8}
+    />
+    <div>
+      <p className="text-xs font-bold text-[#085830] mb-0.5">
+        Progress Bar
+      </p>
+      <p className="text-xs text-gray-500">
+        The progress bar at the top shows your total units taken vs total units required, along with your overall GWA.
+      </p>
+    </div>
+  </div>
+</div>
+
+              {/* Don't show again */}
+              <div className="flex items-center gap-2 mb-4">
+                <input
+  type="checkbox"
+  id="dontShow"
+  checked={dontShowAgain}
+  onChange={(e) => handleDontShowAgainChange(e.target.checked)}
+  className="w-4 h-4 text-[#136537] border-gray-300 rounded cursor-pointer"
+/>
+                <label htmlFor="dontShow" className="text-xs text-gray-500 cursor-pointer">
+                  Don't show this again
+                </label>
+              </div>
+
+              <button
+                onClick={handleCloseHelp}
+                className="w-full py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold text-sm hover:shadow-lg transition-all"
+              >
+                Got it, let's explore!
+              </button>
+            </div>
+          </div>
+        )}
     </Layout>
   );
 }

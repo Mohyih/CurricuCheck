@@ -16,6 +16,7 @@ import { PrivacyNotice } from './pages/PrivacyNotice';
 import { ResetPassword } from './pages/ResetPassword';
 import { CurriculumRoadmap } from './pages/CurriculumRoadmap';
 import { AuthenticatedRoute } from "../app/AuthenticatedRoute";
+import { AdvisingHistory } from './pages/AdvisingHistory';
 
 
 export const router = createBrowserRouter([
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
       { path: 'privacy-notice', Component: PrivacyNotice },
       { path: 'reset-password', Component: ResetPassword },
       { path: 'dashboard/roadmap', Component: CurriculumRoadmap },
+      { path: 'dashboard/history', Component: AdvisingHistory },
     ],
   },
 ]);
