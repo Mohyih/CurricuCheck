@@ -39,24 +39,31 @@ const scanGrades = async (req, res) => {
               },
             },
             {
-              type: 'text',
+                            type: 'text',
               text: `You are reading a WUP (Wesleyan University Philippines) grade table screenshot from their Automate system.
 
-Extract ALL subject grades from this image.
+First determine if this image actually contains a WUP Automate grade table.
+A valid grade table has columns like: Subject Code, Subject Name, Credit/Units, Instructor, Grade, Remarks.
 
 Here are the subjects in this student's curriculum for reference (to help you match subject codes):
 ${subjectList}
 
 Instructions:
-1. Read the grade table in the image carefully
-2. Extract Subject Code and Grade for each row
-3. Match each extracted subject code to the closest subject in the curriculum list above
+1. First check if this image contains a valid WUP Automate grade table
+   - If NOT a grade table → set is_valid_grade_table to false and explain why
+   - If YES a grade table → proceed with extraction
+2. Read the student info block at the top if visible:
+   - Student ID, Student Name, Course/Major, Year
+3. Extract Subject Code and Grade for each row
+4. Match each extracted subject code to the closest subject in the curriculum list above
    - Ignore spacing differences (e.g. "CPE 11 - LAB" matches "CPE 11-LAB")
    - Ignore case differences
-4. Also detect the semester and school year from the header if visible
-5. Respond ONLY with a valid JSON object, no other text:
+5. Also detect the semester and school year from the header if visible
+6. Respond ONLY with a valid JSON object, no other text:
 
 {
+  "is_valid_grade_table": true or false,
+  "invalid_reason": "explanation if not valid, otherwise null",
   "semester_detected": "1st Semester" or "2nd Semester" or "Summer" or null,
   "school_year_detected": "2025-2026" or null,
   "grades": [
