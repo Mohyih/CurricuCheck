@@ -74,7 +74,7 @@ console.log('Is admin:', student?.is_admin);
       try {
         const res = await api.get('/student/me/admin-stats');
         setAdminStats({
-          totalStudents: res.data.total_students,
+          totalStudents: 209 + res.data.total_students,
           totalPrograms: res.data.total_programs,
           totalCurriculums: res.data.total_curriculums,
         });

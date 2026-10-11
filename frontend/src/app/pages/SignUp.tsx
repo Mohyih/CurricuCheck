@@ -61,7 +61,7 @@ export function SignUp() {
   setLastName(data.lastName || "");
   setFirstName(data.firstName || "");
   setMiddleName(data.middleName || "");
-  setStudentNumber(data.studentNumber || "");
+  setStudentNumber((data.studentNumber || "").replace(/[^0-9-]/g, ""));
   setEmail(data.email || "");
   setPassword(data.password || "");
   setConfirmPassword(data.confirmPassword || "");
@@ -290,7 +290,7 @@ navigate('/login');
                   <label className="text-xs font-medium text-gray-700">
   Student ID Number <span className="text-red-500">*</span>
 </label>
-                  <input type="text" required value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} className={inputClass} placeholder="23-1998-610" />
+                  <input type="text" required value={studentNumber} onChange={(e) => setStudentNumber(e.target.value.replace(/[^0-9-]/g, ""))} className={inputClass} placeholder="23-1998-610" />
                 </div>
               </div>
 

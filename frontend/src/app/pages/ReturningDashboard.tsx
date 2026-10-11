@@ -140,6 +140,7 @@ const [checkingEligibility, setCheckingEligibility] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResults, setScanResults] = useState<any[]>([]);
   const [showScanPreview, setShowScanPreview] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
 
   const suggestedScreenshots = student?.year_level || 1;
 
@@ -920,6 +921,15 @@ const savedYear = getLatestSavedYear(semSubjects, savedDates);
 </div>
 
             {/* Upload Area */}
+            {scanError && (
+              <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{scanError}</span>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3 mb-6">
               <label className="flex flex-col items-center justify-center gap-3 px-4 py-5 sm:py-6 rounded-xl border-2 border-dashed border-[#136537]/40 bg-[#F5FAF7] cursor-pointer hover:bg-[#EEF7F2] transition-all">
                 
@@ -940,6 +950,7 @@ const savedYear = getLatestSavedYear(semSubjects, savedDates);
                       preview: URL.createObjectURL(file)
                     }));
                     setScanImages(prev => [...prev, ...newImages]);
+                    setScanError(null);
                   }}
                 />
               </label>
@@ -956,7 +967,10 @@ const savedYear = getLatestSavedYear(semSubjects, savedDates);
                       </div>
                       <button
                         type="button"
-                        onClick={() => setScanImages(prev => prev.filter((_, i) => i !== index))}
+                        onClick={() => {
+                          setScanImages(prev => prev.filter((_, i) => i !== index));
+                          setScanError(null);
+                        }}
                         className="text-red-400 hover:text-red-600 text-xs"
                       >
                         Remove
@@ -973,39 +987,58 @@ const savedYear = getLatestSavedYear(semSubjects, savedDates);
               disabled={scanImages.length === 0 || scanning}
               onClick={async () => {
                 setScanning(true);
-                const allResults: any[] = [];
+              setScanError(null);
+              const allResults: any[] = [];
 
-                for (const img of scanImages) {
-                  const base64 = await new Promise<string>((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                      const result = reader.result as string;
-                      resolve(result.split(',')[1]);
-                    };
-                    reader.readAsDataURL(img.file);
+              for (const img of scanImages) {
+                const base64 = await new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    const result = reader.result as string;
+                    resolve(result.split(',')[1]);
+                  };
+                  reader.readAsDataURL(img.file);
+                });
+
+                const mediaType = img.file.type;
+
+                try {
+                  const res = await api.post('/scan-grades', {
+                    image_base64: base64,
+                    media_type: mediaType,
+                    curriculum_id: student?.curriculum_id,
                   });
 
-                  const mediaType = img.file.type;
-
-                  try {
-                    const res = await api.post('/scan-grades', {
-                      image_base64: base64,
-                      media_type: mediaType,
-                      curriculum_id: student?.curriculum_id,
-                    });
-
-                    allResults.push(res.data);
-                  } catch (err) {
-                    console.error('Scan failed for image:', img.file.name, err);
-                  }
+                  allResults.push(res.data);
+                } catch (err: any) {
+                  console.error('Scan failed for image:', img.file.name, err);
+                  const backendMessage = err?.response?.data?.error || 'Unable to scan this image. Please try a clearer screenshot of your grade table.';
+                  setScanError(backendMessage);
                 }
+              }
 
-                setScanResults(allResults);
-                setScanning(false);
-                setShowScanPreview(true);
-                setShowScanModal(false);
-              }}
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              const hasExtractedGrades = allResults.some((result) => {
+                const matched = result?.matched_grades?.length || 0;
+                const unmatched = result?.unmatched_grades?.length || 0;
+                return matched + unmatched > 0;
+              });
+
+              setScanResults(allResults);
+              setScanning(false);
+
+              if (!hasExtractedGrades) {
+                setShowScanPreview(false);
+                setShowScanModal(true);
+                setScanError(
+                  'No valid grade table was detected. Please upload a clear screenshot of your WUP Automate grade table.'
+                );
+                return;
+              }
+
+              setShowScanPreview(true);
+              setShowScanModal(false);
+            }}
+            className="w-full py-3 rounded-full bg-gradient-to-r from-[#085830] to-[#A8C957] text-white font-bold disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             >
               {scanning
                 ? `Scanning ${scanImages.length} screenshot${scanImages.length > 1 ? 's' : ''}...`
@@ -1054,7 +1087,7 @@ const savedYear = getLatestSavedYear(semSubjects, savedDates);
                 {/* Unmatched grades */}
                 {result.unmatched_grades?.length > 0 && (
                   <div>
-                    <p className="text-xs font-medium text-amber-600 mb-2">⚠️ {result.unmatched_grades.length} subjects not found in curriculum:</p>
+                    <p className="text-xs font-medium text-amber-600 mb-2">{result.unmatched_grades.length} subjects not found in curriculum:</p>
                     <div className="space-y-1">
                       {result.unmatched_grades.map((g: any, i: number) => (
                         <div key={i} className="flex items-center justify-between px-3 py-2 bg-amber-50 rounded-lg border border-amber-100 text-xs">
